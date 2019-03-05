@@ -1,44 +1,46 @@
-#This file represents the parameters for sensor fusion, it has not been tuned
-#yet or optinmized in any way, and is designed to be bare bones
-#go here for more detailed documentation - https://github.com/cra-ros-pkg/robot_localization/blob/kinetic-devel/params/ekf_template.yaml
+# This file represents the parameters for sensor fusion, it has not been tuned
+# yet or optinmized in any way, and is designed to be bare bones
+# go here for more detailed documentation - https://github.com/cra-ros-pkg/robot_localization/blob/kinetic-devel/params/ekf_template.yaml
 
-#We also have not delved into covariances at all, and this is still //TODO
-#We are getting information from fiducial_odom_publisher on covariances but we are not using it here.
-#IMU and drivebase_odom_publisher is also providing covariance information. 
+# We also have not delved into covariances at all, and this is still //TODO
+# We are getting information from fiducial_odom_publisher on covariances but
+# we are not using it here. IMU and drivebase_odom_publisher is also providing
+# covariance information.
 
-#This is the frequency in Hz, this outputs a position estimate. Every 1/5 of a second 
-#outputting at pretty low frequency
-frequency: 5 
+# This is the frequency in Hz, this outputs a position estimate. Every 1/5 of a
+# second outputting at pretty low frequency
+frequency: 5
 
-#These are all map variable definations for the kalman filter.
-#stock settings for robots without gps and no big hills
+# These are all map variable definations for the kalman filter.
+# stock settings for robots without gps and no big hills
 odom_frame: odom
 base_link_frame: base_footprint
-world_frame: odom 
+world_frame: odom
 two_d_mode: true
 sensor_timeout: 0.5
 transform_timeout: 0.4
 
-#push all of this information to the transform node
-#this is the most reliable position we want to use so we want this to publish
-#tf, and no one else for the odom->base_footprint transform
+# push all of this information to the transform node
+# this is the most reliable position we want to use so we want this to publish
+# tf, and no one else for the odom->base_footprint transform
 publish_tf: true
 
-#outputs debugging information on /diagnostics topic
+# outputs debugging information on /diagnostics topic
 print_diagnostics: true
 
 
-#NOTE: the imus have to be set to differential because they put out rotation
-#data (and odom does as well). You can only have one absolute rotation for 
-#stable output
+# NOTE: the imus have to be set to differential because they put out rotation
+# data (and odom does as well). You can only have one absolute rotation for
+# stable output
 
-#NOTE: I also don't do any outlier removal or thresholding, it doesn't play
-#well with fiducial odometry
-    
-#The two trues are set of true for angular rotation (turning).  
-#The only reason he was using the sensor data in the IMU was to combate the accuracy in turning.   
-#basic 2d settings for xsens
-#This is messaging the change in yaw over time.
+# NOTE: I also don't do any outlier removal or thresholding, it doesn't play
+# well with fiducial odometry
+
+# The two trues are set of true for angular rotation (turning).
+# The only reason he was using the sensor data in the IMU was to combate the
+# accuracy in turning.
+# basic 2d settings for xsens
+# This is messaging the change in yaw over time.
 imu0: /sensors/mti/sensor/imu
 imu0_config: [false, false, false,
               false,  false,  true,
@@ -47,17 +49,18 @@ imu0_config: [false, false, false,
               false,  false,  false]
 imu0_differential: true
 imu0_relative: false
-#outputs at ~50 hz whic is >> than fusion hz (10) so we need a big queue
-imu0_queue_size: 80  
+# outputs at ~50 hz whic is >> than fusion hz (10) so we need a big queue
+imu0_queue_size: 80
 imu0_remove_gravitational_acceleration: true
 
-#basic 2d configuration for the fiducial odom publisher we don't use it's
-#velocity, because it is very unreliable, and we get good velocity 
-#data from the imu's.
-#arm inputs from the aruco and navigational aid.
-#He is using the position for the x and the turning here.
-#It records x and y position because it can do that using geometry.
-#It records yaw because based off the position of the navigational marker, it has to know how it is facing. 
+# basic 2d configuration for the fiducial odom publisher we don't use it's
+# velocity, because it is very unreliable, and we get good velocity
+# data from the imu's.
+# arm inputs from the aruco and navigational aid.
+# He is using the position for the x and the turning here.
+# It records x and y position because it can do that using geometry.
+# It records yaw because based off the position of the navigational marker, it
+# has to know how it is facing.
 odom0: /fiducial_odom
 odom0_config: [true,  true, false,
                false, false,  true,
@@ -68,36 +71,42 @@ odom0_differential:  false
 odom0_relative: false
 odom0_queue_size: 10
 
-#This is the drivebase controller. 
-#This is also mesuring the change in yaw over time to counteract error. 
+# This is the drivebase controller.
+# This is also mesuring the change in yaw over time to counteract error.
 odom1: /drivebase_odom
 odom1_config: [true, true,  false,
                false, false,  true,
                true, true, false,
                false,  false,  true,
                false,  false,  false]
-odom1_differential: false 
+odom1_differential: false
 odom1_relative: false
 odom1_queue_size: 10
 
 
-    ## Whether or not we use the control input during predicition. Defaults to false.
-    #use_control: true
-    ## Whether the input (assumed to be cmd_vel) is a geometry_msgs/Twist or geometry_msgs/TwistStamped message. Defaults to
-    ## false.
-    #stamped_control: false
-    ## The last issued control command will be used in prediction for this period. Defaults to 0.2.
-    #control_timeout: 0.5
-    ## Which velocities are being controlled. Order is vx, vy, vz, vroll, vpitch, vyaw.
-    #control_config: [true, false, false, false, false, true]
-    ## Places limits on how large the acceleration term will be. Should match your robot's kinematics.
-    #acceleration_limits: [0.4, 0.0, 0.0, 0.0, 0.0, 0.9]
-    ## Acceleration and deceleration limits are not always the same for robots.
-    #deceleration_limits: [0.4, 0.0, 0.0, 0.0, 0.0, 0.9]
-    #
-    ##if your robot cannot instantaneously reach its acceleration limit, the permitted change can be controlled with these
-    ## gains
-    #acceleration_gains: [1.0, 0.0, 0.0, 0.0, 0.0,1.0 ]
-    ## If your robot cannot instantaneously reach its deceleration limit, the permitted change can be controlled with these
-    ## gains
-    #deceleration_gains: [1.0, 0.0, 0.0, 0.0, 0.0, 1.0]
+# # Whether or not we use the control input during predicition. Defaults to
+# # false.
+# use_control: true
+# # Whether the input (assumed to be cmd_vel) is a geometry_msgs/Twist or
+# # geometry_msgs/TwistStamped message. Defaults to false.
+# stamped_control: false
+# # The last issued control command will be used in prediction for this period.
+# # Defaults to 0.2.
+# control_timeout: 0.5
+# # Which velocities are being controlled. Order is vx, vy, vz, vroll, vpitch,
+# # vyaw.
+# control_config: [true, false, false, false, false, true]
+# # Places limits on how large the acceleration term will be. Should match your
+# # robot's kinematics.
+# acceleration_limits: [0.4, 0.0, 0.0, 0.0, 0.0, 0.9]
+# # Acceleration and deceleration limits are not always the same for robots.
+# deceleration_limits: [0.4, 0.0, 0.0, 0.0, 0.0, 0.9]
+#
+# # if your robot cannot instantaneously reach its acceleration limit, the
+# # permitted change can be controlled with these
+# # gains
+# acceleration_gains: [1.0, 0.0, 0.0, 0.0, 0.0,1.0 ]
+# # If your robot cannot instantaneously reach its deceleration limit, the
+# # permitted change can be controlled with these
+# # gains
+# deceleration_gains: [1.0, 0.0, 0.0, 0.0, 0.0, 1.0]
