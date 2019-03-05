@@ -83,6 +83,16 @@ odom1_differential: false
 odom1_relative: false
 odom1_queue_size: 10
 
+# Values for reading rtabmap's values into robot_localization
+odom2: rtabmap/odom/
+odom2_config: [true,true,true,
+               true,true,true,
+               true,true,true,
+               true,true,true,
+               true,true,true]
+odom2_relative: true
+odom2_pose_rejection_threshold: 10000000
+odom2_twist_rejection_threshold: 10000000
 
 # # Whether or not we use the control input during predicition. Defaults to
 # # false.
