@@ -59,9 +59,10 @@ class TFR_Aruco {
             // convert ROS message to opencv image
             // the image is stored at imageHolder->image
             cv_bridge::CvImagePtr imageHolder;
-            try 
+            try
             {
-                imageHolder = cv_bridge::toCvCopy(goal->image, sensor_msgs::image_encodings::BGR8);
+                imageHolder = cv_bridge::toCvCopy(goal->image,
+                  sensor_msgs::image_encodings::BGR8);
             }
             catch (cv_bridge::Exception& e)
             {
@@ -74,16 +75,18 @@ class TFR_Aruco {
             std::vector<int> markerIds;
             std::vector<std::vector<cv::Point2f> > markerCorners;
 
-            cv::aruco::detectMarkers(imageHolder->image, dictionary, markerCorners, markerIds, params);
+            cv::aruco::detectMarkers(imageHolder->image, dictionary,
+              markerCorners, markerIds, params);
 
             // get individual marker poses
             cv::Mat cameraMatrix = cv::Mat(cameraModel.fullIntrinsicMatrix()).clone();
             cv::Mat distCoeffs = cameraModel.distortionCoeffs().clone();
 
-            
- 
+
+
             cv::Vec3d boardRotVec, boardTransVec;
-            int markersDetected = cv::aruco::estimatePoseBoard(markerCorners, markerIds, board, cameraMatrix, distCoeffs, boardRotVec, boardTransVec);
+            int markersDetected = cv::aruco::estimatePoseBoard(markerCorners,
+              markerIds, board, cameraMatrix, distCoeffs, boardRotVec, boardTransVec);
 
             tfr_msgs::ArucoResult result;
             result.number_found = markersDetected;
@@ -118,9 +121,9 @@ int main(int argc, char** argv)
     ros::init(argc, argv, "aruco_action_server");
     ros::NodeHandle n;
     TFR_Aruco aruco;
-    Server server(n, "aruco_action_server", boost::bind(&TFR_Aruco::execute, aruco, _1, &server), false);
+    Server server(n, "aruco_action_server", boost::bind(&TFR_Aruco::execute,
+      aruco, _1, &server), false);
     server.start();
     ros::spin();
     return 0;
 }
-

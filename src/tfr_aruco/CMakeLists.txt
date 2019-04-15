@@ -34,3 +34,7 @@ include_directories(
 add_executable(aruco_action_server src/aruco_action_server.cpp)
 target_link_libraries(aruco_action_server ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
 add_dependencies(aruco_action_server ${catkin_EXPORTED_TARGETS})
+
+add_executable(tfr_aruco_example_client src/tfr_aruco_example_client.cpp)
+target_link_libraries(tfr_aruco_example_client ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
+add_dependencies(tfr_aruco_example_client ${catkin_EXPORTED_TARGETS})
