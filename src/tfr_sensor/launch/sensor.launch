@@ -4,4 +4,6 @@
     <include file="$(find tfr_sensor)/launch/fiducial_odom.launch"/>
     <include file="$(find tfr_sensor)/launch/drivebase_odom.launch"/>
     <include file="$(find tfr_sensor)/launch/fusion.launch"/>
+
+    <remap from="imu" to="/sensors/mti/sensor/imu"/>
 </launch>
