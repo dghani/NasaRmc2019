@@ -81,7 +81,7 @@
   <joint name="left_tread_joint" type="fixed">
     <parent link="base_link" />
     <child link="tread_left_link" />
-    <origin xyz="0 ${tread_spacing / 2 + tread_width / 2} 0" />
+    <origin xyz="${2*itom} ${tread_spacing / 2 + tread_width / 2} ${3*itom}" />
   </joint>
 
   <link name="tread_right_link">
@@ -100,7 +100,7 @@
   <joint name="right_tread_joint" type="fixed">
     <parent link="base_link" />
     <child link="tread_right_link" />
-    <origin xyz="0 ${-tread_spacing / 2 - tread_width / 2} 0" />
+    <origin xyz="${2*itom} ${-tread_spacing / 2 - tread_width / 2} ${3*itom}" />
   </joint>
 
   <link name="tread_left_front_link">
@@ -121,7 +121,7 @@
   <joint name="tread_left_front_joint" type="fixed">
     <parent link="tread_left_link" />
     <child link="tread_left_front_link" />
-    <origin xyz="${intertread_length / 2} 0 ${-1.38*itom}" />
+    <origin xyz="${(intertread_length / 2)} 0 ${-3*itom}" />
   </joint>
 
   <link name="tread_left_rear_link">
@@ -142,7 +142,7 @@
   <joint name="tread_left_rear_joint" type="fixed">
     <parent link="tread_left_link" />
     <child link="tread_left_rear_link" />
-    <origin xyz="${-intertread_length / 2} 0 ${-1.38*itom}" />
+    <origin xyz="${(-intertread_length / 2)} 0 ${-3*itom}" />
   </joint>
 
   <link name="tread_right_front_link">
@@ -163,7 +163,7 @@
   <joint name="tread_right_front_joint" type="fixed">
     <parent link="tread_right_link" />
     <child link="tread_right_front_link" />
-    <origin xyz="${intertread_length / 2} 0 ${-1.38*itom}" />
+    <origin xyz="${(intertread_length / 2)} 0 ${-3*itom}" />
   </joint>
 
   <link name="tread_right_rear_link">
@@ -184,7 +184,7 @@
   <joint name="tread_right_rear_joint" type="fixed">
     <parent link="tread_right_link" />
     <child link="tread_right_rear_link" />
-    <origin xyz="${-intertread_length / 2} 0 ${-1.38*itom}" />
+    <origin xyz="${(-intertread_length / 2)} 0 ${-3*itom}" />
   </joint>
 
   <link name="front_right_slope_link">

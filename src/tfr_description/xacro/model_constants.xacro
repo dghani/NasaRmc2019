@@ -11,19 +11,19 @@
   <!-- Drivebase parameters -->
   <xacro:property name="base_length" value="${50*itom}" />
 
-  <xacro:property name="tube_width" value="${2*itom}" />
-  <xacro:property name="drivebase_beam_width" value="${11.5*itom}" />
-  <xacro:property name="drivebase_front_beam_height" value="${4*itom}" />
-  <xacro:property name="drivebase_total_height" value="${6*itom}" />
+  <xacro:property name="tube_width" value="${2.25*itom}" />
+  <xacro:property name="drivebase_beam_width" value="${13.75*itom}" />
+  <xacro:property name="drivebase_front_beam_height" value="${2*itom}" />
+  <xacro:property name="drivebase_total_height" value="${4.5*itom}" />
 
   <!-- Drivetrain parameters -->
-  <xacro:property name="tread_end_radius" value="${(15.5/2)*itom}" />
-  <xacro:property name="tread_mid_height" value="${19*itom}" />
-  <xacro:property name="tread_mid_length" value="${24*itom}" />
-  <xacro:property name="tread_width" value="${6*itom}" />
-  <xacro:property name="tread_spacing" value="${16*itom}" />
-  <xacro:property name="intertread_length" value="${39*itom}" />
-  <xacro:property name="tread_slope_length" value="${11*itom}" />
+  <xacro:property name="tread_end_radius" value="${6*itom}" />
+  <xacro:property name="tread_mid_height" value="${18.5*itom}" />
+  <xacro:property name="tread_mid_length" value="${14*itom}" />
+  <xacro:property name="tread_width" value="${4*itom}" />
+  <xacro:property name="tread_spacing" value="${20*itom}" />
+  <xacro:property name="intertread_length" value="${32*itom}" />
+  <xacro:property name="tread_slope_length" value="${1*itom}" />
 
   <!-- Bin parameters -->
   <!-- Length of top of bin, length of bottom is 13.86 -->
