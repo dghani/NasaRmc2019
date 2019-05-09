@@ -47,7 +47,9 @@
 #include <tfr_msgs/ArmMoveAction.h>
 #include <actionlib/server/simple_action_server.h>
 #include <actionlib/client/simple_action_client.h>
-
+#include <iostream>
+#include <chrono>
+#include <thread>
 
 
 class TeleopExecutive
@@ -111,6 +113,36 @@ class TeleopExecutive
 
     private:
     
+		
+	
+		int calculateCommandDuration(int effort, int max_time)
+		{
+			int command_duration_millis = 
+				static_cast<int>(
+					(static_cast<double>(effort) / 1000.0) * max_time
+				);
+			return command_duration_millis;
+		}
+		
+		int calculateCommandDuration(int effort)
+		{
+			int max_arm_command_duration_millis = 100;
+			if (not ros::param::getCached("~max_arm_command_duration_millis", max_arm_command_duration_millis))
+			{
+				max_arm_command_duration_millis = 100;
+			}
+			
+			return calculateCommandDuration(effort, max_arm_command_duration_millis);
+		}
+		
+		
+	
+		void stop_arm_movement_after_millis(int millis)
+		{
+			std::this_thread::sleep_for(std::chrono::milliseconds(millis));
+			stop_arm_movement();	
+		}
+	
         //dev 4
         void stop_arm_movement(){
             std_msgs::Int32 msg;
@@ -228,8 +260,11 @@ class TeleopExecutive
                         if (not ros::param::getCached("~turntable_effort", effort)) {effort = 1;}
 						ROS_INFO("Writing effort: %d", effort);
                         std_msgs::Int32 msg;
-                        msg.data = -effort;
+                        msg.data = -1000;
                         turntable_pub.publish(msg);
+						
+						int command_duration_millis = calculateCommandDuration(effort);
+						stop_arm_movement_after_millis(command_duration_millis);
                         break;
                     }
 
@@ -241,8 +276,11 @@ class TeleopExecutive
                         if (not ros::param::getCached("~turntable_effort", effort)) {effort = 1;}
 						ROS_INFO("Writing effort: %d", effort);
                         std_msgs::Int32 msg;
-                        msg.data = effort;
+                        msg.data = 1000;
                         turntable_pub.publish(msg);
+						
+						int command_duration_millis = calculateCommandDuration(effort);
+						stop_arm_movement_after_millis(command_duration_millis);
                         break;
                     }
                     
@@ -254,8 +292,11 @@ class TeleopExecutive
                         if (not ros::param::getCached("~arm_lower_effort", effort)) {effort = 1;}
 						ROS_INFO("Writing effort: %d", effort);
                         std_msgs::Int32 msg;
-                        msg.data = effort;
+                        msg.data = 1000;
                         lower_arm_pub.publish(msg);
+						
+						int command_duration_millis = calculateCommandDuration(effort);
+						stop_arm_movement_after_millis(command_duration_millis);
                         break;
                     }
                     
@@ -267,8 +308,11 @@ class TeleopExecutive
 						int effort = 1;
 						if (not ros::param::getCached("~arm_lower_effort", effort)) {effort = 1;}
 						std_msgs::Int32 msg;
-                        msg.data = -effort;
+                        msg.data = -1000;
                         lower_arm_pub.publish(msg);
+						
+						int command_duration_millis = calculateCommandDuration(effort);
+						stop_arm_movement_after_millis(command_duration_millis);
                         break;
                     }
                     
@@ -279,8 +323,11 @@ class TeleopExecutive
 						int effort = 1;
                         if (not ros::param::getCached("~arm_upper_effort", effort)) {effort = 1;}
 						std_msgs::Int32 msg;
-                        msg.data = -effort;
+                        msg.data = -1000;
                         upper_arm_pub.publish(msg);
+						
+						int command_duration_millis = calculateCommandDuration(effort);
+						stop_arm_movement_after_millis(command_duration_millis);
                         break;
                     }
                     
@@ -291,8 +338,11 @@ class TeleopExecutive
 						int effort = 1;
                         if (not ros::param::getCached("~arm_upper_effort", effort)) {effort = 1;}
 						std_msgs::Int32 msg;
-                        msg.data = effort;
+                        msg.data = 1000;
                         upper_arm_pub.publish(msg);
+						
+						int command_duration_millis = calculateCommandDuration(effort);
+						stop_arm_movement_after_millis(command_duration_millis);
                         break;
                     }
                     
@@ -303,8 +353,11 @@ class TeleopExecutive
                         int effort = 1;
                         if (not ros::param::getCached("~arm_scoop_effort", effort)) {effort = 1;}
 						std_msgs::Int32 msg;
-                        msg.data = -effort;
+                        msg.data = -1000;
                         scoop_pub.publish(msg);
+						
+						int command_duration_millis = calculateCommandDuration(effort);
+						stop_arm_movement_after_millis(command_duration_millis);
                         break;
                     }
                     
@@ -315,8 +368,11 @@ class TeleopExecutive
                         int effort = 1;
                         if (not ros::param::getCached("~arm_scoop_effort", effort)) {effort = 1;}
 						std_msgs::Int32 msg;
-                        msg.data = effort;
+                        msg.data = 1000;
                         scoop_pub.publish(msg);
+						
+						int command_duration_millis = calculateCommandDuration(effort);
+						stop_arm_movement_after_millis(command_duration_millis);
                         break;
                     }
 
