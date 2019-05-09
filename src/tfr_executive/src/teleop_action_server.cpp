@@ -152,6 +152,7 @@ class TeleopExecutive
 				t2 = high_resolution_clock::now();
 			}
 			stop_arm_movement();	
+			///abcd
 		}
 	
         //dev 4
