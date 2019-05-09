@@ -143,13 +143,13 @@ class TeleopExecutive
 		{
 			//std::this_thread::sleep_for(std::chrono::milliseconds(millis));
 			
-			high_resolution_clock::time_point t1 = std::chrono::high_resolution_clock::now();
+			std::chrono::high_resolution_clock::time_point t1 = std::chrono::high_resolution_clock::now();
 			
 			std::chrono::high_resolution_clock::time_point t2 = t1;
 			
-			while (std::chrono::duration_cast<duration<std::chrono::milliseconds>>(t2 - t1) < std::chrono::milliseconds(millis))
+			while (std::chrono::duration_cast<std::chrono::duration<float, std::milli> > (t2 - t1) < std::chrono::milliseconds(millis))
 			{
-				t2 = high_resolution_clock::now();
+				t2 = std::chrono::high_resolution_clock::now();
 			}
 			stop_arm_movement();	
 			///abcd
