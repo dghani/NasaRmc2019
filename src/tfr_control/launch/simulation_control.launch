@@ -24,7 +24,7 @@
         args="left_tread_velocity_controller
         right_tread_velocity_controller"/>
 
-	<param name="left_tread_scale" value="3000" type="int"/>
-	<param name="right_tread_scale" value="3000" type="int"/>
+	<param name="left_tread_scale" value="1" type="int"/>
+	<param name="right_tread_scale" value="1" type="int"/>
 	<param name="/write_arm_values" value="false" type="bool"/>
 </launch>
