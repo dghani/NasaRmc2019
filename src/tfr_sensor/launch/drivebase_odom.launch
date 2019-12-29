@@ -7,7 +7,7 @@
             ticksPerRevolution: 5120
             <!--wheel radius should be in meeters (.15) but that did not travel at the orrect scale in RViz, numbers make more sense with 
                it set at 150, but this could be wrong and might need changed -->
-            wheelRadius: 0.15
+            wheelRadius: 150
         </rosparam>
     </node>
     <node name="drivebase_odom_publisher" pkg="tfr_sensor" type="drivebase_odom_publisher" output="screen">
