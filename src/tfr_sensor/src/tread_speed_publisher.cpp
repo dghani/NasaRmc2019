@@ -15,7 +15,7 @@ public:
         auto ticksMoved = calcTickDiff(newCount);
         double pi = 3.1415926;
         double wheelCircumference= 2 * pi * wheelRadius;
-        double refreshRate = 50 // refreshes per second. Should match the drivetrain motor controller and CAN code. 
+        double refreshRate = 256 // refreshes per second. Should match the drivetrain motor controller and CAN code. 
         speed = ((wheelCircumference * ticksMoved) / ticksPerRevolution) * refreshRate;
         prevTickCount = newCount;
     }
@@ -67,7 +67,7 @@ int main(int argc, char** argv) {
     auto leftTreadCountSub = n.subscribe<std_msgs::Int32>("/left_tread_count", 10, leftTreadCallback);
     auto rightTreadCountSub = n.subscribe<std_msgs::Int32>("/right_tread_count", 10, rightTreadCallback);
     
-    ros::param::param<double>("~rate", rate, 10.0);
+    ros::param::param<double>("~rate", rate, 256);
     ros::Rate loop_rate(rate);
     while (ros::ok()) {
         ros::spinOnce();
