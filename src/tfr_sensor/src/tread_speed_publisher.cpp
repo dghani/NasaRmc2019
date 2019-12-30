@@ -15,7 +15,8 @@ public:
         auto ticksMoved = calcTickDiff(newCount);
         double pi = 3.1415926;
         double wheelCircumference= 2 * pi * wheelRadius;
-        speed = ((wheelCircumference * ticksMoved) / ticksPerRevolution)*10;
+        double refreshRate = 50 // refreshes per second. Should match the drivetrain motor controller and CAN code. 
+        speed = ((wheelCircumference * ticksMoved) / ticksPerRevolution) * refreshRate;
         prevTickCount = newCount;
     }
     
