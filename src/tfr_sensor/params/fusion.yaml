@@ -8,7 +8,7 @@
 
 #This is the frequency in Hz, this outputs a position estimate. Every 1/5 of a second 
 #outputting at pretty low frequency
-frequency: 5 
+frequency: 64
 
 #These are all map variable definations for the kalman filter.
 #stock settings for robots without gps and no big hills
