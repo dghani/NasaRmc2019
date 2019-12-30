@@ -144,7 +144,8 @@ class DrivebaseOdometryPublisher
 
         msg.twist.twist.linear.x = v_x;
         msg.twist.twist.linear.y = v_y;
-        msg.twist.twist.linear.z = 0;
+        //msg.twist.twist.linear.z = 0;
+	msg.twist.twist.linear.z = sqrt((v_x)^2 + (v_y)^2);
         msg.twist.twist.angular.x = 0;
         msg.twist.twist.angular.y = 0;
         msg.twist.twist.angular.z = v_ang;
