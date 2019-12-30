@@ -44,8 +44,8 @@ int main(int argc, char** argv) {
     requiredParamsFound = requiredParamsFound && ros::param::get("~maxTicks", maxTicks);
     //if (!requiredParamsFound) {//throw an error or something...}
     
-    ros::Publisher leftTreadPublisher = n.advertise<std_msgs::Float64>("/left_tread_speed", 15);
-    ros::Publisher rightTreadPublisher = n.advertise<std_msgs::Float64>("/right_tread_speed", 15);
+    ros::Publisher leftTreadPublisher = n.advertise<std_msgs::Float64>("/left_tread_speed", 150);
+    ros::Publisher rightTreadPublisher = n.advertise<std_msgs::Float64>("/right_tread_speed", 150);
     TreadSpeed leftTread(ticksPerRevolution, maxTicks, wheelRadius), rightTread(ticksPerRevolution, maxTicks, wheelRadius);
     boost::function<void(const std_msgs::Int32&)> leftTreadCallback = [&leftTread, &leftTreadPublisher](const std_msgs::Int32& msg) {
         std_msgs::Float64 new_msg;
@@ -61,10 +61,10 @@ int main(int argc, char** argv) {
         rightTreadPublisher.publish(new_msg);
 
     };
-    auto leftTreadCountSub = n.subscribe<std_msgs::Int32>("/left_tread_count", 10, leftTreadCallback);
-    auto rightTreadCountSub = n.subscribe<std_msgs::Int32>("/right_tread_count", 10, rightTreadCallback);
+    auto leftTreadCountSub = n.subscribe<std_msgs::Int32>("/left_tread_count", 100, leftTreadCallback);
+    auto rightTreadCountSub = n.subscribe<std_msgs::Int32>("/right_tread_count", 100, rightTreadCallback);
     
-    ros::param::param<double>("~rate", rate, 10.0);
+    ros::param::param<double>("~rate", rate, 100.0);
     ros::Rate loop_rate(rate);
     while (ros::ok()) {
         ros::spinOnce();
