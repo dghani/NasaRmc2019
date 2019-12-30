@@ -1,4 +1,4 @@
-controller_frequency: 20 
+controller_frequency: 10 
 shutdown_costmaps: false 
 
 controller_patience: 3
