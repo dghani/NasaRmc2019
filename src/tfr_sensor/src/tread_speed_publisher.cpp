@@ -14,9 +14,8 @@ public:
     void updateFromNewCount(const int newCount) {
         auto ticksMoved = calcTickDiff(newCount);
         double pi = 3.1415926;
-        double wheelCircumference= 2 * pi * wheelRadius;
-        double refreshRate = 60; // refreshes per second. Should match the drivetrain motor controller and CAN code. 
-        speed = ((wheelCircumference * ticksMoved) / ticksPerRevolution) * refreshRate;
+        double wheelCircumference= 2 * pi * wheelRadius; 
+        speed = ((wheelCircumference * ticksMoved) / ticksPerRevolution)
         prevTickCount = newCount;
     }
     
