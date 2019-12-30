@@ -13,7 +13,9 @@ public:
 
     void updateFromNewCount(const int newCount) {
         auto ticksMoved = calcTickDiff(newCount);
-        speed = ((2*3.14159 * wheelRadius * ticksMoved) / ticksPerRevolution)*10;
+        double pi = 3.1415926;
+        double wheelCircumference= 2 * pi * wheelRadius;
+        speed = ((wheelCircumference * ticksMoved) / ticksPerRevolution)*rate;
         prevTickCount = newCount;
     }
     
