@@ -15,7 +15,7 @@ public:
         auto ticksMoved = calcTickDiff(newCount);
         double pi = 3.1415926;
         double wheelCircumference= 2 * pi * wheelRadius; 
-        speed = ((wheelCircumference * ticksMoved) / ticksPerRevolution)
+        speed = ((wheelCircumference * ticksMoved) / ticksPerRevolution);
         prevTickCount = newCount;
     }
     
