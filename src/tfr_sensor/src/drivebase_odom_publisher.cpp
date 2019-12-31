@@ -307,7 +307,7 @@ int main(int argc, char **argv)
     double rate; //rate: how quickly to publish hz.
     ros::param::param<std::string>("~parent_frame", parent_frame, "odom");
     ros::param::param<std::string>("~child_frame", child_frame, "base_footprint");
-    ros::param::param<double>("~wheel_span", wheel_span, 0.5715);
+    ros::param::param<double>("~wheel_span", wheel_span, 0.4);
     ros::param::param<double>("~rate", rate, 30.0);
     DrivebaseOdometryPublisher publisher{n, parent_frame, child_frame, wheel_span};
     ros::Rate loop_rate(rate);
