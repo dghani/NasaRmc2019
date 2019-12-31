@@ -107,7 +107,7 @@ class DrivebaseOdometryPublisher
         double v_right = 30 * rightTreadSpeed;
 	double v_left = 30 * leftTreadSpeed;
 	double v_ang = (v_right - v_left) / wheel_span;
-        double v_lin = 30 * ((rightTreadSpeed+leftTreadSpeed)/2);
+        double v_lin = (v_right + v_left)/2;
         
         //break into xy components and increment
         double d_angle = v_ang * d_t;
@@ -132,9 +132,10 @@ class DrivebaseOdometryPublisher
         msg.header.stamp = ros::Time::now();
         msg.header.frame_id = parent_frame;
         msg.child_frame_id = child_frame;
+	
 
-        msg.pose.pose.position.x = x;
-        msg.pose.pose.position.y = y;
+        msg.pose.pose.position.x = v_right;
+        msg.pose.pose.position.y = v_left;
         msg.pose.pose.position.z = 0;
         msg.pose.pose.orientation = angle;
         msg.pose.covariance = 
