@@ -143,8 +143,8 @@ class DrivebaseOdometryPublisher
             0,    0,    0,    0, 1e-1,    0,
             0,    0,    0,    0,    0, 1e-1 };
 
-        msg.twist.twist.linear.x = v_x * 128;
-        msg.twist.twist.linear.y = v_y * 128;
+        msg.twist.twist.linear.x = v_x * 30;
+        msg.twist.twist.linear.y = v_y * 30;
         //msg.twist.twist.linear.z = 0;
 	msg.twist.twist.linear.z = 0;
         msg.twist.twist.angular.x = 0;
@@ -305,7 +305,7 @@ int main(int argc, char **argv)
     ros::param::param<std::string>("~parent_frame", parent_frame, "odom");
     ros::param::param<std::string>("~child_frame", child_frame, "base_footprint");
     ros::param::param<double>("~wheel_span", wheel_span, 0.3);
-    ros::param::param<double>("~rate", rate, 128.0);
+    ros::param::param<double>("~rate", rate, 30.0);
     DrivebaseOdometryPublisher publisher{n, parent_frame, child_frame, wheel_span};
     ros::Rate loop_rate(rate);
     while(ros::ok())
