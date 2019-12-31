@@ -66,7 +66,7 @@ int main(int argc, char** argv) {
     auto leftTreadCountSub = n.subscribe<std_msgs::Int32>("/left_tread_count", 10, leftTreadCallback);
     auto rightTreadCountSub = n.subscribe<std_msgs::Int32>("/right_tread_count", 10, rightTreadCallback);
     
-    ros::param::param<double>("~rate", rate, 128);
+    ros::param::param<double>("~rate", rate, 30);
     ros::Rate loop_rate(rate);
     while (ros::ok()) {
         ros::spinOnce();
