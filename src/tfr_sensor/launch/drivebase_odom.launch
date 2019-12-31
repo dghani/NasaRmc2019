@@ -5,8 +5,6 @@
         <rosparam>
             maxTicks: 2147483647
             ticksPerRevolution: 5120
-            <!--wheel radius should be in meeters (.15) but that did not travel at the orrect scale in RViz, numbers make more sense with 
-               it set at 150, but this could be wrong and might need changed -->
             wheelRadius: 0.15
         </rosparam>
     </node>
@@ -14,7 +12,7 @@
         <rosparam>
             parent_frame: odom
             child_frame: base_footprint
-            wheel_span: 0.3 
+            wheel_span: 0.7112
         </rosparam>
     </node>
 </launch>
