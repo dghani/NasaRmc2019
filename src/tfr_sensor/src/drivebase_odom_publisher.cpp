@@ -134,8 +134,8 @@ class DrivebaseOdometryPublisher
         msg.child_frame_id = child_frame;
 	
 
-        msg.pose.pose.position.x = v_right;
-        msg.pose.pose.position.y = v_left;
+        msg.pose.pose.position.x = x;
+        msg.pose.pose.position.y = y;
         msg.pose.pose.position.z = 0;
         msg.pose.pose.orientation = angle;
         msg.pose.covariance = 
