@@ -62,7 +62,7 @@ class DrivebaseOdometryPublisher
         boost::function<void(const std_msgs::Float64&)> rightTreadCallback = [this](const std_msgs::Float64& msg) {this->rightTreadSpeed = msg.data; };
         
 
-		leftTreadCountSub = n.subscribe<std_msgs::Float64>("/left_tread_speed", 15, leftTreadCallback);
+	leftTreadCountSub = n.subscribe<std_msgs::Float64>("/left_tread_speed", 15, leftTreadCallback);
         rightTreadCountSub = n.subscribe<std_msgs::Float64>("/right_tread_speed", 15, rightTreadCallback);
         
         //odometry_publisher: publish to the location of the base_footprint tracked by tread motion.
@@ -142,10 +142,10 @@ class DrivebaseOdometryPublisher
             0,    0,    0,    0, 1e-1,    0,
             0,    0,    0,    0,    0, 1e-1 };
 
-        msg.twist.twist.linear.x = v_x;
-        msg.twist.twist.linear.y = v_y;
+        msg.twist.twist.linear.x = v_x * rate;
+        msg.twist.twist.linear.y = v_y * rate;
         //msg.twist.twist.linear.z = 0;
-	msg.twist.twist.linear.z = v_lin * rate;
+	msg.twist.twist.linear.z = 0;
         msg.twist.twist.angular.x = 0;
         msg.twist.twist.angular.y = 0;
         msg.twist.twist.angular.z = v_ang;
