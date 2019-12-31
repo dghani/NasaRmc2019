@@ -1,13 +1,6 @@
-#This file represents the parameters for sensor fusion, it has not been tuned
-#yet or optinmized in any way, and is designed to be bare bones
-#go here for more detailed documentation - https://github.com/cra-ros-pkg/robot_localization/blob/kinetic-devel/params/ekf_template.yaml
 
-#We also have not delved into covariances at all, and this is still //TODO
-#We are getting information from fiducial_odom_publisher on covariances but we are not using it here.
-#IMU and drivebase_odom_publisher is also providing covariance information. 
 
-#This is the frequency in Hz, this outputs a position estimate. Every 1/5 of a second 
-#outputting at pretty low frequency
+#This is the frequency in Hz, this outputs a position estimate. 
 frequency: 30
 
 #These are all map variable definations for the kalman filter.
