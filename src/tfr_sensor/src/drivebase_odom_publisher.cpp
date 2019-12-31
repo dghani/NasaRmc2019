@@ -143,8 +143,8 @@ class DrivebaseOdometryPublisher
             0,    0,    0,    0, 1e-1,    0,
             0,    0,    0,    0,    0, 1e-1 };
 
-        msg.twist.twist.linear.x = v_x * 30;
-        msg.twist.twist.linear.y = v_y * 30;
+        msg.twist.twist.linear.x = d_x;
+        msg.twist.twist.linear.y = d_y;
         //msg.twist.twist.linear.z = 0;
 	msg.twist.twist.linear.z = 0;
         msg.twist.twist.angular.x = 0;
