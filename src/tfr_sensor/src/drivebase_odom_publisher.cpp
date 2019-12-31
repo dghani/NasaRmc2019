@@ -104,8 +104,8 @@ class DrivebaseOdometryPublisher
         }
 
         //basic differential kinematics to get combined velocities
-        double v_ang = (rightTreadSpeed-leftTreadSpeed)/wheel_span;
-        double v_lin = (rightTreadSpeed+leftTreadSpeed)/2;
+        double v_ang = d_t * (rightTreadSpeed-leftTreadSpeed)/wheel_span * 30;
+        double v_lin = d_t * (rightTreadSpeed+leftTreadSpeed)/2 * 30;
         
         //break into xy components and increment
         double d_angle = v_ang * d_t;
@@ -131,8 +131,8 @@ class DrivebaseOdometryPublisher
         msg.header.frame_id = parent_frame;
         msg.child_frame_id = child_frame;
 
-        msg.pose.pose.position.x += v_x;
-        msg.pose.pose.position.y += v_y;
+        msg.pose.pose.position.x = x;
+        msg.pose.pose.position.y = y;
         msg.pose.pose.position.z = 0;
         msg.pose.pose.orientation = angle;
         msg.pose.covariance = 
@@ -143,8 +143,8 @@ class DrivebaseOdometryPublisher
             0,    0,    0,    0, 1e-1,    0,
             0,    0,    0,    0,    0, 1e-1 };
 
-        msg.twist.twist.linear.x = d_x;
-        msg.twist.twist.linear.y = d_y;
+        msg.twist.twist.linear.x = v_x;
+        msg.twist.twist.linear.y = v_y;
         //msg.twist.twist.linear.z = 0;
 	msg.twist.twist.linear.z = 0;
         msg.twist.twist.angular.x = 0;
