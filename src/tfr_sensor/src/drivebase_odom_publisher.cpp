@@ -104,9 +104,10 @@ class DrivebaseOdometryPublisher
         }
 
         //basic differential kinematics to get combined velocities
+	double wheel_radius = 0.15;
         double v_right = 1/d_t * rightTreadSpeed;
 	double v_left = 1/d_t * leftTreadSpeed;
-	double v_ang = (v_right - v_left) / wheel_span;
+	double v_ang = wheel_radius * ((v_right - v_left) / wheel_span);
         double v_lin = (v_right + v_left)/2;
         
         //break into xy components and increment
@@ -115,15 +116,15 @@ class DrivebaseOdometryPublisher
 
         // yaw (z-axis rotation)
         auto yaw = quaternionToYaw(angle);
-        double v_x = v_lin*cos(yaw);
-        double v_y = v_lin*sin(yaw);
+        double v_x = wheel_radius * v_lin*cos(yaw);
+        double v_y = wheel_radius * v_lin*sin(yaw);
 
 
-        double d_x = v_x * d_t;
-        x += d_x;
+        //double d_x = v_x * d_t;
+        x += v_x;
 
-        double d_y = v_y * d_t;
-        y += d_y;
+        //double d_y = v_y * d_t;
+        y += v_y;
 
         t_0 = t_1;
 
