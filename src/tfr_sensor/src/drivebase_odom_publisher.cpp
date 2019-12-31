@@ -104,7 +104,7 @@ class DrivebaseOdometryPublisher
         }
 
         //basic differential kinematics to get combined velocities
-        double v_ang = 30 * ((rightTreadSpeed-leftTreadSpeed)/wheel_span);
+        double v_ang = (((30 * rightTreadSpeed) - (30 * leftTreadSpeed))/wheel_span);
         double v_lin = 30 * ((rightTreadSpeed+leftTreadSpeed)/2);
         
         //break into xy components and increment
