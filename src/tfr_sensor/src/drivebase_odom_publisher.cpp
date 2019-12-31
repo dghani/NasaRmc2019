@@ -119,11 +119,11 @@ class DrivebaseOdometryPublisher
         double v_y = v_lin*sin(yaw);
 
 
-        //double d_x = v_x * d_t;
-        x += v_x;
+        double d_x = v_x * d_t;
+        x += d_x;
 
-        //double d_y = v_y * d_t;
-        y += v_y;
+        double d_y = v_y * d_t;
+        y += d_y;
 
         t_0 = t_1;
 
