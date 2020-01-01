@@ -12,7 +12,7 @@
         <rosparam>
             parent_frame: odom
             child_frame: base_footprint
-            wheel_span: 0.7112
+            wheel_span: 0.61
         </rosparam>
     </node>
 </launch>
