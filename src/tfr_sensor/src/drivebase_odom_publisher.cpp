@@ -104,9 +104,9 @@ class DrivebaseOdometryPublisher
         }
 
         //basic differential kinematics to get combined velocities
-        double v_right = 1/d_t * rightTreadSpeed;
-	double v_left = 1/d_t * leftTreadSpeed;
-	double v_ang = ((v_right - v_left) / wheel_span);
+        double v_right = rightTreadSpeed/d_t;
+	double v_left = leftTreadSpeed/d_t;
+	double v_ang = (v_right - v_left) / wheel_span;
         double v_lin = (v_right + v_left)/2;
         
         //break into xy components and increment
@@ -115,9 +115,8 @@ class DrivebaseOdometryPublisher
 
         // yaw (z-axis rotation)
         auto yaw = quaternionToYaw(angle);
-        double v_x = v_lin*cos(yaw);
-        double v_y = v_lin*sin(yaw);
-
+        double v_x = v_lin*cos(angle);
+        double v_y = v_lin*sin(angle);
 
         double d_x = v_x * d_t;
         x += d_x;
@@ -127,6 +126,7 @@ class DrivebaseOdometryPublisher
 
         t_0 = t_1;
 
+	    
         //let's package up the message
         nav_msgs::Odometry msg;
         msg.header.stamp = ros::Time::now();
@@ -136,30 +136,14 @@ class DrivebaseOdometryPublisher
 
         msg.pose.pose.position.x = x;
         msg.pose.pose.position.y = y;
-        msg.pose.pose.position.z = 0;
-        msg.pose.pose.orientation = angle;
-        msg.pose.covariance = 
-       { 1e-1,    0,    0,    0,    0,    0,
-            0, 1e-1,    0,    0,    0,    0,
-            0,    0, 1e-1,    0,    0,    0,
-            0,    0,    0, 1e-1,    0,    0,
-            0,    0,    0,    0, 1e-1,    0,
-            0,    0,    0,    0,    0, 1e-1 };
+        msg.pose.pose.position.z = 0.0;
+        msg.pose.pose.orientation = yaw;
 
         msg.twist.twist.linear.x = v_x ;
         msg.twist.twist.linear.y = v_y ;
-        //msg.twist.twist.linear.z = 0;
-	msg.twist.twist.linear.z = 0;
-        msg.twist.twist.angular.x = 0;
-        msg.twist.twist.angular.y = 0;
         msg.twist.twist.angular.z = v_ang;
-        msg.twist.covariance = 
-       { 5e-2,    0,    0,    0,    0,    0,
-            0, 5e-2,    0,    0,    0,    0,
-            0,    0, 5e-2,    0,    0,    0,
-            0,    0,    0, 5e-2,    0,    0,
-            0,    0,    0,    0, 5e-2,    0,
-            0,    0,    0,    0,    0, 5e-2 };
+
+
         //publish the message
         odometry_publisher.publish(msg);
     }
@@ -307,8 +291,8 @@ int main(int argc, char **argv)
     double rate; //rate: how quickly to publish hz.
     ros::param::param<std::string>("~parent_frame", parent_frame, "odom");
     ros::param::param<std::string>("~child_frame", child_frame, "base_footprint");
-    ros::param::param<double>("~wheel_span", wheel_span, 0.65);
-    ros::param::param<double>("~rate", rate, 30.0);
+    ros::param::param<double>("~wheel_span", wheel_span, 0.6096);
+    ros::param::param<double>("~rate", rate, 32.0);
     DrivebaseOdometryPublisher publisher{n, parent_frame, child_frame, wheel_span};
     ros::Rate loop_rate(rate);
     while(ros::ok())
