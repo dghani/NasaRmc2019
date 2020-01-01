@@ -114,9 +114,9 @@ class DrivebaseOdometryPublisher
         rotateQuaternionByYaw(angle, d_angle);
 
         // yaw (z-axis rotation)
-        yaw = quaternionToYaw(angle);
-        double v_x = v_lin*cos(angle);
-        double v_y = v_lin*sin(angle);
+        auto yaw = quaternionToYaw(angle);
+        double v_x = v_lin*cos(yaw);
+        double v_y = v_lin*sin(yaw);
 
         double d_x = v_x * d_t;
         x += d_x;
@@ -137,7 +137,7 @@ class DrivebaseOdometryPublisher
         msg.pose.pose.position.x = x;
         msg.pose.pose.position.y = y;
         msg.pose.pose.position.z = 0.0;
-        msg.pose.pose.orientation = angle;
+        msg.pose.pose.orientation = yaw;
 
         msg.twist.twist.linear.x = v_x ;
         msg.twist.twist.linear.y = v_y ;
