@@ -137,7 +137,7 @@ class DrivebaseOdometryPublisher
         msg.pose.pose.position.x = x;
         msg.pose.pose.position.y = y;
         msg.pose.pose.position.z = 0.0;
-        msg.pose.pose.orientation = yaw;
+        msg.pose.pose.orientation = angle;
 
         msg.twist.twist.linear.x = v_x ;
         msg.twist.twist.linear.y = v_y ;
