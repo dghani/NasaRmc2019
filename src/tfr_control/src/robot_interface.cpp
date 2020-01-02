@@ -592,7 +592,7 @@ namespace tfr_control
     double RobotInterface::encoderDeltaToLinearSpeed(int32_t encoder_delta, ros::Duration time_delta)
     {
         const double wheel_radius_meters = 0.15; 
-        const double wheel_circumference = wheel_radius_meters;
+        const double wheel_circumference = 2* 3.1415927 * wheel_radius_meters;
         
         const double revolutions = brushlessEncoderCountToRevolutions(encoder_delta);
         
