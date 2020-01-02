@@ -115,15 +115,10 @@ class DrivebaseOdometryPublisher
 
         // yaw (z-axis rotation)
         auto yaw = quaternionToYaw(angle);
-        double v_x = v_lin*cos(yaw);
-        double v_y = v_lin*sin(yaw);
-
-        double d_x = v_x * d_t;
+        double d_x = v_lin*cos(yaw)* d_t;
+        double d_y = v_lin*sin(yaw)* d_t;
         x += d_x;
-
-        double d_y = v_y * d_t;
         y += d_y;
-
         t_0 = t_1;
 
 	    
@@ -291,7 +286,7 @@ int main(int argc, char **argv)
     double rate; //rate: how quickly to publish hz.
     ros::param::param<std::string>("~parent_frame", parent_frame, "odom");
     ros::param::param<std::string>("~child_frame", child_frame, "base_footprint");
-    ros::param::param<double>("~wheel_span", wheel_span, 0.508);
+    ros::param::param<double>("~wheel_span", wheel_span, 0.7366);
     ros::param::param<double>("~rate", rate, 10.0);
     DrivebaseOdometryPublisher publisher{n, parent_frame, child_frame, wheel_span};
     ros::Rate loop_rate(rate);
