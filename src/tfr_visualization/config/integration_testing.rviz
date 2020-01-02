@@ -270,8 +270,6 @@ Visualization Manager:
       Unreliable: false
       Use Timestamp: false
       Value: true
-      width: 3 
-      height: 3
     - Alpha: 0.699999988
       Class: rviz/Map
       Color Scheme: map
@@ -282,8 +280,6 @@ Visualization Manager:
       Unreliable: false
       Use Timestamp: false
       Value: false
-      width: 12 
-      height: 12
     - Angle Tolerance: 0.100000001
       Class: rviz/Odometry
       Covariance:
