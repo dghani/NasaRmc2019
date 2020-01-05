@@ -10,7 +10,7 @@
         type="robot_state_publisher" respawn="false" />
 
     <node name="drivebase" pkg="tfr_control" type="drivebase" output="screen">
-        <param name="wheel_span"  value="0.7112"/> 
+        <param name="wheel_span"  value="0.7366"/> 
         <param name="wheel_radius" value="0.15"/> 
     </node>
 
