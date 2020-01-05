@@ -55,12 +55,14 @@ class DrivebaseOdometryPublisher
             x{},
             y{},
             angle{},
-            tf_broadcaster{}
+            tf_broadcaster{},
+	    leftTreadSpeed{},
+            rightTreadSpeed{}
     {
         //get most current sensor infromation
-        boost::function<void(const std_msgs::Float64&)> leftTreadCallback = [this](const std_msgs::Float64& msg) {this->leftTreadSpeed = msg.data; };
-        boost::function<void(const std_msgs::Float64&)> rightTreadCallback = [this](const std_msgs::Float64& msg) {this->rightTreadSpeed = msg.data; };
-        
+        boost::function<void(const std_msgs::Float64&)> leftTreadCallback = [this](const std_msgs::Float64& msg) {this->leftTreadSpeed += msg.data; };
+        boost::function<void(const std_msgs::Float64&)> rightTreadCallback = [this](const std_msgs::Float64& msg) {this->rightTreadSpeed += msg.data; };
+;
 
 	leftTreadCountSub = n.subscribe<std_msgs::Float64>("/left_tread_speed", 15, leftTreadCallback);
         rightTreadCountSub = n.subscribe<std_msgs::Float64>("/right_tread_speed", 15, rightTreadCallback);
@@ -108,7 +110,8 @@ class DrivebaseOdometryPublisher
 	double v_left = leftTreadSpeed/d_t;
 	double v_ang = (v_right - v_left) / wheel_span;
         double v_lin = (v_right + v_left)/2;
-        
+        rightTreadSpeed = 0;
+	leftTreadSpeed= 0;
         //break into xy components and increment
         double d_angle = v_ang * d_t;
         rotateQuaternionByYaw(angle, d_angle);
