@@ -4,18 +4,18 @@
 #include "std_msgs/Int32.h"
 #include "std_msgs/Float64.h"
 
-class TreadSpeed {
+class TreadDistance {
 public:
-    double speed;
+    double distance;
 
-    TreadSpeed(const int ticksPerRevolution, const int maxTicks, const double wheelRadius, const int prevTickCount = 0) :
-        speed{ 0 }, prevTickCount{ prevTickCount }, ticksPerRevolution{ ticksPerRevolution }, maxTicks{ maxTicks }, wheelRadius{ wheelRadius } {}
+    TreadDistance(const int ticksPerRevolution, const int maxTicks, const double wheelRadius, const int prevTickCount = 0) :
+        distance{ 0 }, prevTickCount{ prevTickCount }, ticksPerRevolution{ ticksPerRevolution }, maxTicks{ maxTicks }, wheelRadius{ wheelRadius } {}
 
     void updateFromNewCount(const int newCount) {
         auto ticksMoved = calcTickDiff(newCount);
         double pi = 3.1415926;
         double wheelCircumference= 2 * pi * wheelRadius; 
-        speed = ((wheelCircumference * ticksMoved) / ticksPerRevolution);
+        distance = ((wheelCircumference * ticksMoved) / ticksPerRevolution);
         prevTickCount = newCount;
     }
     
@@ -35,7 +35,7 @@ private:
 };
 
 int main(int argc, char** argv) {
-    ros::init(argc, argv, "tread_speed_publisher");
+    ros::init(argc, argv, "tread_distance_publisher");
     ros::NodeHandle n; //NodeHandle is the main access point to communications with the ROS system.
 
     bool requiredParamsFound = true;
@@ -46,20 +46,20 @@ int main(int argc, char** argv) {
     requiredParamsFound = requiredParamsFound && ros::param::get("~maxTicks", maxTicks);
     //if (!requiredParamsFound) {//throw an error or something...}
     
-    ros::Publisher leftTreadPublisher = n.advertise<std_msgs::Float64>("/left_tread_speed", 15);
-    ros::Publisher rightTreadPublisher = n.advertise<std_msgs::Float64>("/right_tread_speed", 15);
-    TreadSpeed leftTread(ticksPerRevolution, maxTicks, wheelRadius), rightTread(ticksPerRevolution, maxTicks, wheelRadius);
+    ros::Publisher leftTreadPublisher = n.advertise<std_msgs::Float64>("/left_tread_distance", 15);
+    ros::Publisher rightTreadPublisher = n.advertise<std_msgs::Float64>("/right_tread_distance", 15);
+    TreadDistance leftTread(ticksPerRevolution, maxTicks, wheelRadius), rightTread(ticksPerRevolution, maxTicks, wheelRadius);
     boost::function<void(const std_msgs::Int32&)> leftTreadCallback = [&leftTread, &leftTreadPublisher](const std_msgs::Int32& msg) {
         std_msgs::Float64 new_msg;
         leftTread.updateFromNewCount(msg.data);
-        new_msg.data = leftTread.speed;
+        new_msg.data = leftTread.distance;
         leftTreadPublisher.publish(new_msg);
 
     };
     boost::function<void(const std_msgs::Int32&)> rightTreadCallback = [&rightTread, &rightTreadPublisher](const std_msgs::Int32& msg) {
         std_msgs::Float64 new_msg;
         rightTread.updateFromNewCount(msg.data);
-        new_msg.data = rightTread.speed;
+        new_msg.data = rightTread.distance;
         rightTreadPublisher.publish(new_msg);
 
     };
