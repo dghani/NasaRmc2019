@@ -56,16 +56,16 @@ class DrivebaseOdometryPublisher
             y{},
             angle{},
             tf_broadcaster{},
-	    leftTreadSpeed{},
-            rightTreadSpeed{}
+	    leftTreadDistance{},
+            rightTreadDistance{}
     {
         //get most current sensor infromation
-        boost::function<void(const std_msgs::Float64&)> leftTreadCallback = [this](const std_msgs::Float64& msg) {this->leftTreadSpeed += msg.data; };
-        boost::function<void(const std_msgs::Float64&)> rightTreadCallback = [this](const std_msgs::Float64& msg) {this->rightTreadSpeed += msg.data; };
+        boost::function<void(const std_msgs::Float64&)> leftTreadCallback = [this](const std_msgs::Float64& msg) {this->leftTreadDistance += msg.data; };
+        boost::function<void(const std_msgs::Float64&)> rightTreadCallback = [this](const std_msgs::Float64& msg) {this->rightTreadDistance += msg.data; };
 ;
 
-	leftTreadCountSub = n.subscribe<std_msgs::Float64>("/left_tread_speed", 15, leftTreadCallback);
-        rightTreadCountSub = n.subscribe<std_msgs::Float64>("/right_tread_speed", 15, rightTreadCallback);
+	leftTreadCountSub = n.subscribe<std_msgs::Float64>("/left_tread_distance", 15, leftTreadCallback);
+        rightTreadCountSub = n.subscribe<std_msgs::Float64>("/right_tread_distance", 15, rightTreadCallback);
         
         //odometry_publisher: publish to the location of the base_footprint tracked by tread motion.
         odometry_publisher = n.advertise<nav_msgs::Odometry>("/drivebase_odom", 15); 
@@ -106,12 +106,12 @@ class DrivebaseOdometryPublisher
         }
 
         //basic differential kinematics to get combined velocities
-        double v_right = rightTreadSpeed/d_t;
-	double v_left = leftTreadSpeed/d_t;
+        double v_right = rightTreadDistance/d_t;
+	double v_left = leftTreadDistance/d_t;
 	double v_ang = (v_right - v_left) / wheel_span;
         double v_lin = (v_right + v_left)/2;
-        rightTreadSpeed = 0;
-	leftTreadSpeed= 0;
+        rightTreadDistance = 0;
+	leftTreadDistance= 0;
         //break into xy components and increment
         double d_angle = v_ang * d_t;
         rotateQuaternionByYaw(angle, d_angle);
@@ -170,7 +170,7 @@ class DrivebaseOdometryPublisher
         const std::string& parent_frame; //the parent frame of the robot
         const std::string& child_frame; //the child frame of the robot
         const double& wheel_span;
-        double leftTreadSpeed, rightTreadSpeed;
+        double leftTreadDistance, rightTreadDistance;
         double x; //the x coordinate of the robot (meters)
         double y; //the y coordinate of the robot (meters)
         geometry_msgs::Quaternion angle; 
@@ -308,7 +308,7 @@ int main(int argc, char **argv)
     ros::Rate loop_rate(rate);
     while(ros::ok())
     {
-        publisher.processOdometry(); //arduino readings are published across the network
+        publisher.processOdometry(); //readings are published across the network
         ros::spinOnce();
         loop_rate.sleep();
 
