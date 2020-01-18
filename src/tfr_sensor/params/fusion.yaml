@@ -8,9 +8,10 @@ frequency: 32
 odom_frame: odom
 base_link_frame: base_footprint
 world_frame: odom 
-two_d_mode: false
+two_d_mode: true
 sensor_timeout: 0.5
 transform_timeout: 0.4
+debug: false
 
 #push all of this information to the transform node360
 #this is the most reliable position we want to use so we want this to publish
@@ -29,15 +30,19 @@ print_diagnostics: true
 #This is messaging the change in yaw over time.
 imu0: /sensors/imu
 imu0_config: [false, false, false,
-              false,  false,  true,
+              true,  true,  true,
               false, false, false,
-              false,  false,  true,
-              true,  true,  false]
+              true,  true,  true,
+              true,  true,  true]
 imu0_differential: false
+imu0_nodelay: false
 imu0_relative: true
 #outputs at ~50 hz whic is >> than fusion hz (10) so we need a big queue
 imu0_queue_size: 32
 imu0_remove_gravitational_acceleration: true
+imu0_pose_rejection_threshold: 0.8        
+imu0_twist_rejection_threshold: 0.8                
+imu0_linear_acceleration_rejection_threshold: 0.8  
 
 #basic 2d configuration for the fiducial odom publisher we don't use it's
 #velocity, because it is very unreliable, and we get good velocity 
@@ -54,30 +59,30 @@ odom0_config: [false,  false, false,
                false,  false,  false]
 odom0_differential:  false
 odom0_relative: false
-odom0_queue_size: 32
+odom0_queue_size: 2
 
 #This is the drivebase controller. 
 #This is also measuring the change in yaw over time to counteract error. 
 odom1: /drivebase_odom
 odom1_config: [true, true,  false,
-               false, false,  true,
+               false, false,  false,
                false, false, false,
                false,  false,  true,
                false,  false,  false]
 odom1_differential: false 
 odom1_relative: false
-odom1_queue_size: 64
-
+odom1_queue_size: 16
+odom1_nodelay: false
 
     ## Whether or not we use the control input during predicition. Defaults to false.
-    #use_control: true
+    use_control: true
     ## Whether the input (assumed to be cmd_vel) is a geometry_msgs/Twist or geometry_msgs/TwistStamped message. Defaults to
     ## false.
     #stamped_control: false
     ## The last issued control command will be used in prediction for this period. Defaults to 0.2.
     #control_timeout: 0.5
     ## Which velocities are being controlled. Order is vx, vy, vz, vroll, vpitch, vyaw.
-    #control_config: [true, false, false, false, false, true]
+    control_config: [true, false, false, false, false, true]
     ## Places limits on how large the acceleration term will be. Should match your robot's kinematics.
     #acceleration_limits: [0.4, 0.0, 0.0, 0.0, 0.0, 0.9]
     ## Acceleration and deceleration limits are not always the same for robots.
