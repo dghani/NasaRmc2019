@@ -62,7 +62,7 @@ odom0_queue_size: 2
 #This is the drivebase controller. 
 #This is also measuring the change in yaw over time to counteract error. 
 odom1: /drivebase_odom
-odom1_config: [true, true,  false,
+odom1_config: [true, false,  false,
                false, false,  false,
                false, false, false,
                false,  false,  false,
