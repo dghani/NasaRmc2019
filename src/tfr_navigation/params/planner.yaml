@@ -18,6 +18,6 @@ TrajectoryPlannerROS:
 
     yaw_goal_tolerance: 0.2
     latch_xy_goal_tolerance: false
-    xy_goal_tolerance: 0.4
+    xy_goal_tolerance: 0.3
     meter_scoring: true
     heading_scoring: false
