@@ -1,0 +1,18 @@
+<launch>
+    <node name="drivebase_odom_publisher" pkg="tfr_sensor" type="drivebase_odom_publisher">
+        <rosparam>
+            parent_frame: odom
+            child_frame: base_footprint
+            wheel_span: 0.5715 //TODO Define this in one place
+        </rosparam>
+    </node>
+    <node name="tread_distance_publisher" pkg="tfr_sensor" type="tread_distance_publisher">
+        <rosparam>
+            maxTicks: 2147483647 
+            ticksPerRevolution: 10 
+            wheelRadius: 1
+        </rosparam>
+    </node>
+    <test test-name="drivebase_odom_integration" pkg="tfr_sensor" type="test_drivebase_odom_integration" time-limit="10.0">
+    </test>
+</launch>
