@@ -492,7 +492,7 @@ namespace tfr_mission_control {
         std_srvs::SetBool request;
         request.request.data = state;
         while(!ros::service::call("toggle_motors", request));
-        setMotors(state);
+        //setMotors(state);
     }
 
     //self explanitory
