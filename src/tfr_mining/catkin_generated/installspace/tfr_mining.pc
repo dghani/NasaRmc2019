@@ -1,0 +1,8 @@
+prefix=/home/phillipov/NasaRmc2019/install
+
+Name: tfr_mining
+Description: Description of tfr_mining
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 

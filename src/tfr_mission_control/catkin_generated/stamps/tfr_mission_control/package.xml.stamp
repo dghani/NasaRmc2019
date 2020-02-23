@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<package format="2">
+  <name>tfr_mission_control</name>
+  <version>0.3.10</version>
+  <description>tfr_mission_control provides a GUI plugin to control the robot</description>
+
+  <maintainer email="collinsconway@gmail.com">Collin</maintainer>
+  <license>BSD</license>
+  <!-- <url type="website">http://www.bla.com</url> -->
+  <author email="collinsconway@gmail.com">Collin</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <test_depend>gtest</test_depend>
+  <depend>rqt_gui</depend>
+  <depend>rqt_gui_cpp</depend>
+  <depend>tfr_msgs</depend>
+  <depend>tfr_utilities</depend>
+  <depend>roscpp</depend>
+  <depend>actionlib</depend>
+
+
+  <export>
+    <rqt_gui plugin="${prefix}/plugin.xml"/>
+  </export>
+</package>

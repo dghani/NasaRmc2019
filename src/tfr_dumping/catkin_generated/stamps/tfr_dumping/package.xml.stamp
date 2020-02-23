@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>tfr_dumping</name>
+  <version>0.0.0</version>
+  <description>The tfr_dumping package</description>
+
+  <maintainer email="ryan.berge@trickfirerobotics.com">Ryan Berge</maintainer>
+  <license>BSD</license>
+  <url type="website">http://www.trickfirerobotics.com/</url>
+  <author email="ryan.berge@trickfirerobotics.com">Ryan Berge</author>
+  <author email="collinsconway@gmail.com">Collin Conway</author> -->
+  <buildtool_depend>catkin</buildtool_depend>
+  <depend>roscpp</depend>
+  <depend>actionlib</depend>
+  <depend>tfr_msgs</depend>
+  <depend>tfr_utilities</depend>
+  <depend>geometry_msgs</depend>
+  <depend>sensor_msgs</depend>
+  <depend>image_transport</depend>
+</package>

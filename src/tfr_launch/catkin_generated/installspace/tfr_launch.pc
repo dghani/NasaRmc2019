@@ -1,0 +1,8 @@
+prefix=/home/phillipov/NasaRmc2019/install
+
+Name: tfr_launch
+Description: Description of tfr_launch
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 

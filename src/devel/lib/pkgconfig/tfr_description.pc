@@ -1,0 +1,8 @@
+prefix=/home/phillipov/NasaRmc2019/src/devel
+
+Name: tfr_description
+Description: Description of tfr_description
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 

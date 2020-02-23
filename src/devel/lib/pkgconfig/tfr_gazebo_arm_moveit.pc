@@ -1,0 +1,8 @@
+prefix=/home/phillipov/NasaRmc2019/src/devel
+
+Name: tfr_gazebo_arm_moveit
+Description: Description of tfr_gazebo_arm_moveit
+Version: 0.3.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 

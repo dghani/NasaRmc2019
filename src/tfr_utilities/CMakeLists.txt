@@ -77,10 +77,6 @@ add_executable(point_broadcaster src/point_broadcaster.cpp)
 target_link_libraries(point_broadcaster ${catkin_LIBRARIES})
 add_dependencies(point_broadcaster ${catkin_EXPORTED_TARGETS})
 
-add_executable(joy_teleop src/joy_teleop.cpp)
-target_link_libraries(joy_teleop ${catkin_LIBRARIES})
-add_dependencies(joy_teleop ${catkin_EXPORTED_TARGETS})
-
 # This call is sometimes needed and sometimes not and I'm not really clear why
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
 

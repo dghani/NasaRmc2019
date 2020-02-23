@@ -1,0 +1,8 @@
+prefix=/home/phillipov/NasaRmc2019/src/devel
+
+Name: timesync
+Description: Description of timesync
+Version: 1.0.0
+Cflags: -I/home/phillipov/NasaRmc2019/src/devel/include -I/home/phillipov/NasaRmc2019/src/timesync/include
+Libs: -L${prefix}/lib -ltimesync
+Requires: dynamic_reconfigure roscpp message_runtime

@@ -1,0 +1,8 @@
+prefix=/home/phillipov/NasaRmc2019/install
+
+Name: tfr_utilities
+Description: Description of tfr_utilities
+Version: 0.0.0
+Cflags: -I${prefix}/include
+Libs: -L${prefix}/lib -lstatus_code -ltf_manipulator -lstatus_publisher -larm_manipulator
+Requires: roscpp actionlib tf tf2 tf2_ros tf2_geometry_msgs trajectory_msgs tfr_msgs message_runtime sensor_msgs geometry_msgs nav_msgs
