@@ -123,7 +123,6 @@ namespace tfr_mission_control {
             void setControl(bool value);
 
             //sets control system to output commands
-            void setMotors(bool value);
             
             void setArmPID(bool value);
 
