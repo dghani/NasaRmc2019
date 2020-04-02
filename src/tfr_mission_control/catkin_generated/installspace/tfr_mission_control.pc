@@ -1,0 +1,8 @@
+prefix=/home/phillipov/NasaRmc2019/install
+
+Name: tfr_mission_control
+Description: Description of tfr_mission_control
+Version: 0.3.10
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: rqt_gui rqt_gui_cpp tfr_msgs tfr_utilities roscpp

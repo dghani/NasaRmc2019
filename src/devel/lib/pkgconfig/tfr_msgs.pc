@@ -1,0 +1,8 @@
+prefix=/home/phillipov/NasaRmc2019/src/devel
+
+Name: tfr_msgs
+Description: Description of tfr_msgs
+Version: 0.0.0
+Cflags: -I/home/phillipov/NasaRmc2019/src/devel/include
+Libs: -L${prefix}/lib 
+Requires: 

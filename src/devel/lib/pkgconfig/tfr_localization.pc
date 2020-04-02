@@ -1,0 +1,8 @@
+prefix=/home/phillipov/NasaRmc2019/src/devel
+
+Name: tfr_localization
+Description: Description of tfr_localization
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 

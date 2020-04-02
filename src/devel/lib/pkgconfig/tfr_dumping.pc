@@ -1,0 +1,8 @@
+prefix=/home/phillipov/NasaRmc2019/src/devel
+
+Name: tfr_dumping
+Description: Description of tfr_dumping
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 
