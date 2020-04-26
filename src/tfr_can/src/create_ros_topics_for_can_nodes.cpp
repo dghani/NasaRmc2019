@@ -22,7 +22,7 @@ const std::string baudrate = "250K";
 
 const size_t num_devices_required = 3;
 
-const double loop_rate = 10; // [Hz]
+const double loop_rate = 10; // 10 Hz
 const int slow_loop_rate = 1; // 1 Hz
 
 // CANopen node IDs:
