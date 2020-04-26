@@ -14,8 +14,6 @@
 //#include <ros/package.h> // for looking up the location of the current package, in order to find our EDS files.
 //#include <ros>
 
-// Set the name of your CAN bus. "slcan0" is a common bus name
-// for the first SocketCAN device on a Linux system.
 const std::string busname = "can1";
 
 // Set the baudrate of your CAN bus. Most drivers support the values
@@ -33,7 +31,7 @@ const int SERVO_CYLINDER_LOWER_ARM = 23;
 const int SERVO_CYLINDER_SPARE 	= 34;
 const int SERVO_CYLINDER_UPPER_ARM = 45;
 const int SERVO_CYLINDER_SCOOP = 56;
-
+// TODO: Add code for setting up the turntable Epos brushless motor controller.
 
 void setupDevice4Topics(kaco::Device& device, kaco::Bridge& bridge, std::string& eds_files_path){
     // Roboteq SDC3260 in Closed Loop Count Position mode.
@@ -75,19 +73,6 @@ void setupDevice4Topics(kaco::Device& device, kaco::Bridge& bridge, std::string&
 	
 	auto iopub_4_3_4 = std::make_shared<kaco::EntrySubscriber>(device, "cmd_sencntr/counter_3");
 	bridge.add_subscriber(iopub_4_3_4);
-}
-
-
-//todo
-void setupDevice8Topics(kaco::Device& device, kaco::Bridge& bridge, std::string& eds_files_path){
-}
-
-//todo
-void setupDevice12Topics(kaco::Device& device, kaco::Bridge& bridge, std::string& eds_files_path){
-}
-
-//todo
-void setupLpmsImuDevice(kaco::Device& device, kaco::Bridge& bridge, std::string& eds_files_path){
 }
 
 // initialize the topics for any Servo Cylinder actuator (must be 5.75" stroke length)

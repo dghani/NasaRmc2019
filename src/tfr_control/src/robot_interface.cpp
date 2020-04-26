@@ -60,35 +60,14 @@ namespace tfr_control
         left_tread_publisher_pid_debug_state{n.advertise<std_msgs::Float64>("/left_tread_velocity_controller/pid_debug/state", 1)},
         left_tread_publisher_pid_debug_command{n.advertise<std_msgs::Int32>("/left_tread_velocity_controller/pid_debug/command", 1)},
         
-        //pwm_publisher{n.advertise<tfr_msgs::PwmCommand>("/motor_output", 15)},
         use_fake_values{fakes}, lower_limits{lower_lim},
         upper_limits{upper_lim}, drivebase_v0{std::make_pair(0,0)},
         last_update{ros::Time::now()},
         enabled{true}
     {
-        /*
-        // TODO: Enable getting parameters from server instead of hardcoded values in .h file.
-        if (    !n.getParam("bin_joint/min", static_cast<int>(bin_encoder_min))
-             || !n.getParam("bin_joint/max", static_cast<int>(bin_encoder_max))
-             || !n.getParam("turntable_joint/min", static_cast<int>(turntable_encoder_min))
-             || !n.getParam("turntable_joint/max", static_cast<int>(turntable_encoder_max))
-             || !n.getParam("lower_arm_joint/min", static_cast<int>(arm_lower_encoder_min))
-             || !n.getParam("lower_arm_joint/max", static_cast<int>(arm_lower_encoder_max))
-             || !n.getParam("upper_arm_joint/min", static_cast<int>(arm_upper_encoder_min))
-             || !n.getParam("upper_arm_joint/max", static_cast<int>(arm_upper_encoder_max))
-             || !n.getParam("scoop_joint/min", static_cast<int>(arm_end_encoder_min))
-             || !n.getParam("scoop_joint/max", static_cast<int>(arm_end_encoder_max))
-           )
-           {
-               ROS_ERROR("tfr_control failed to find all of the encoder limits. Maybe they weren't uploaded to the parameter server by the launch file?");
-           }
-        */
         
         // Note: the string parameters in these constructors must match the
         // joint names from the URDF, and yaml controller description. 
-
-	// DEBUG: Try to make printing faster
-	std::ios_base::sync_with_stdio(false);
 
         // Connect and register each joint with appropriate interfaces at our
         // layer
@@ -103,7 +82,6 @@ namespace tfr_control
         registerInterface(&joint_state_interface);
         registerInterface(&joint_effort_interface);
         registerInterface(&joint_position_interface);
-        
         
         for (int joint = 0; joint < tfr_utilities::Joint::JOINT_COUNT; joint++)
         {
@@ -143,12 +121,10 @@ namespace tfr_control
                     );
             
             position_values[static_cast<int>(tfr_utilities::Joint::TURNTABLE)] = turntable_position_double;
-                //reading_a.arm_turntable_pos + turntable_offset;
             velocity_values[static_cast<int>(tfr_utilities::Joint::TURNTABLE)] = 0; 
             effort_values[static_cast<int>(tfr_utilities::Joint::TURNTABLE)] = 0;
 
             //LOWER_ARM
-            //position_values[static_cast<int>(tfr_utilities::Joint::LOWER_ARM)] = reading_a.arm_lower_pos;
             double lower_arm_position_double = 
                 linear_interp<double>(
                     static_cast<double>(lower_arm_encoder),
@@ -181,34 +157,14 @@ namespace tfr_control
             effort_values[static_cast<int>(tfr_utilities::Joint::LOWER_ARM)] = 0;
 
             //UPPER_ARM
-            position_values[static_cast<int>(tfr_utilities::Joint::UPPER_ARM)] = upper_arm_position_double; //reading_a.arm_upper_pos;
+            position_values[static_cast<int>(tfr_utilities::Joint::UPPER_ARM)] = upper_arm_position_double;
             velocity_values[static_cast<int>(tfr_utilities::Joint::UPPER_ARM)] = 0;
             effort_values[static_cast<int>(tfr_utilities::Joint::UPPER_ARM)] = 0;
 
             //SCOOP
-            position_values[static_cast<int>(tfr_utilities::Joint::SCOOP)] = scoop_position_double; //reading_a.arm_scoop_pos;
+            position_values[static_cast<int>(tfr_utilities::Joint::SCOOP)] = scoop_position_double; 
             velocity_values[static_cast<int>(tfr_utilities::Joint::SCOOP)] = 0;
             effort_values[static_cast<int>(tfr_utilities::Joint::SCOOP)] = 0;
-
-            /*
-            ROS_INFO_STREAM("turntable_position: read: encoder: " << turntable_encoder << std::endl);
-            ROS_INFO_STREAM("turntable_position: read: " << position_values[static_cast<int>(tfr_utilities::Joint::TURNTABLE)] << std::endl);
-            */
-            
-            /*
-            ROS_INFO_STREAM("arm_lower_position: read: encoder: " << lower_arm_encoder << std::endl);
-            ROS_INFO_STREAM("arm_lower_position: read: " << position_values[static_cast<int>(tfr_utilities::Joint::LOWER_ARM)] << std::endl);
-            */
-            
-            /*
-            ROS_INFO_STREAM("arm_upper_position: read: encoder: " << upper_arm_encoder << std::endl);
-            ROS_INFO_STREAM("arm_upper_position: read: " << position_values[static_cast<int>(tfr_utilities::Joint::UPPER_ARM)] << std::endl);
-            */
-            
-            /*
-            ROS_INFO_STREAM("scoop_position: read: encoder: " << scoop_encoder << std::endl);
-            ROS_INFO_STREAM("scoop_position: read: " << position_values[static_cast<int>(tfr_utilities::Joint::SCOOP)] << std::endl);
-            */
             
         }
  
@@ -223,20 +179,17 @@ namespace tfr_control
      * Writes command values from our controllers to our motors and actuators.
      *
      * Takes in command values from the controllers and these values are scaled
-     * to pwm outputs and written to the right place. There are some edge cases
-     * for twin actuators, which are controlled as if they are one joint. 
-     *
-     * The controller gives a command value to move them as one, then we scale
-     * our pwm outputs to move them back into sync if they get out of wack.
-     * */
+     * and written to the right place.
+     * 
+     */
     void RobotInterface::write() 
     {
-		static double prev_arm_lower_position = std::numeric_limits<double>::quiet_NaN();
-		static double prev_arm_upper_position = std::numeric_limits<double>::quiet_NaN();
-		static double prev_scoop_position = std::numeric_limits<double>::quiet_NaN();
+        static double prev_arm_lower_position = std::numeric_limits<double>::quiet_NaN();
+        static double prev_arm_upper_position = std::numeric_limits<double>::quiet_NaN();
+        static double prev_scoop_position = std::numeric_limits<double>::quiet_NaN();
 
         double signal;
-        if (use_fake_values) //test code  for working with rviz simulator
+        if (use_fake_values) //test code for working with rviz simulator
         {
             adjustFakeJoint(tfr_utilities::Joint::TURNTABLE);
             adjustFakeJoint(tfr_utilities::Joint::LOWER_ARM);
@@ -248,7 +201,6 @@ namespace tfr_control
             bool write_arm_values;
             if (not ros::param::getCached("/write_arm_values", write_arm_values)) {write_arm_values = false;}
             if (write_arm_values){
-                //ROS_INFO("Robot Interface: writing arm values");
                 
                 //TURNTABLE
                 int32_t turntable_position =  std::max(std::min(-command_values[static_cast<int>(tfr_utilities::Joint::TURNTABLE)], 1000.0), -1000.0);
@@ -257,84 +209,51 @@ namespace tfr_control
                 turntable_publisher.publish(turntable_position_msg);
 
 
-				// For the Servo Cylinder actuators, only publish a setpoint to them if the setpoint has actually changed. 
-				// Testing whether this smoothes out the movement of the actuators.
-				
-				//LOWER_ARM
-				//NOTE we reverse these because actuator is mounted backwards
-				double arm_lower_position = linear_interp(command_values[static_cast<int>(tfr_utilities::Joint::LOWER_ARM)], arm_lower_joint_min, arm_lower_encoder_min, arm_lower_joint_max, arm_lower_encoder_max);
-				if (arm_lower_position != prev_arm_lower_position)
-				{
-					sensor_msgs::JointState arm_lower_position_msg;
-					arm_lower_position_msg.position.push_back(arm_lower_position);
-					lower_arm_publisher.publish(arm_lower_position_msg);
-					
-					prev_arm_lower_position = arm_lower_position;
-				}
+                // For the Servo Cylinder actuators, only publish a setpoint to them if the setpoint has actually changed. 
+                // Testing whether this smoothes out the movement of the actuators.
+                
+                //LOWER_ARM
+                //NOTE we reverse these because actuator is mounted backwards
+                double arm_lower_position = linear_interp(command_values[static_cast<int>(tfr_utilities::Joint::LOWER_ARM)], arm_lower_joint_min, arm_lower_encoder_min, arm_lower_joint_max, arm_lower_encoder_max);
+                if (arm_lower_position != prev_arm_lower_position)
+                {
+                    sensor_msgs::JointState arm_lower_position_msg;
+                    arm_lower_position_msg.position.push_back(arm_lower_position);
+                    lower_arm_publisher.publish(arm_lower_position_msg);
+                    
+                    prev_arm_lower_position = arm_lower_position;
+                }
 
-				//UPPER_ARM
-				double arm_upper_position = linear_interp(command_values[static_cast<int>(tfr_utilities::Joint::UPPER_ARM)], arm_upper_joint_min, arm_upper_encoder_max, arm_upper_joint_max, arm_upper_encoder_min);
-				if (arm_upper_position != prev_arm_upper_position)
-				{
-					sensor_msgs::JointState arm_upper_position_msg;
-					arm_upper_position_msg.position.push_back(arm_upper_position);
-					upper_arm_publisher.publish(arm_upper_position_msg);
-					
-					prev_arm_upper_position = arm_upper_position;
-				}
+                //UPPER_ARM
+                double arm_upper_position = linear_interp(command_values[static_cast<int>(tfr_utilities::Joint::UPPER_ARM)], arm_upper_joint_min, arm_upper_encoder_max, arm_upper_joint_max, arm_upper_encoder_min);
+                if (arm_upper_position != prev_arm_upper_position)
+                {
+                    sensor_msgs::JointState arm_upper_position_msg;
+                    arm_upper_position_msg.position.push_back(arm_upper_position);
+                    upper_arm_publisher.publish(arm_upper_position_msg);
+                    
+                    prev_arm_upper_position = arm_upper_position;
+                }
             
-				//SCOOP
-				double scoop_position = linear_interp(command_values[static_cast<int>(tfr_utilities::Joint::SCOOP)], arm_end_joint_min, arm_end_encoder_max, arm_end_joint_max, arm_end_encoder_min);
-				if (scoop_position != prev_scoop_position)
-				{		
-					sensor_msgs::JointState scoop_position_msg;
-					scoop_position_msg.position.push_back(scoop_position);
-					scoop_publisher.publish(scoop_position_msg);
-					
-					prev_scoop_position = scoop_position;
-				}
+                //SCOOP
+                double scoop_position = linear_interp(command_values[static_cast<int>(tfr_utilities::Joint::SCOOP)], arm_end_joint_min, arm_end_encoder_max, arm_end_joint_max, arm_end_encoder_min);
+                if (scoop_position != prev_scoop_position)
+                {        
+                    sensor_msgs::JointState scoop_position_msg;
+                    scoop_position_msg.position.push_back(scoop_position);
+                    scoop_publisher.publish(scoop_position_msg);
+                    
+                    prev_scoop_position = scoop_position;
+                }
             
-            } else {
-                //ROS_INFO("Robot Interface: not writing arm values");
             }
-            
         }
         
         //LEFT_TREAD
         double left_tread_command = command_values[static_cast<int32_t>(tfr_utilities::Joint::LEFT_TREAD)];
         std_msgs::Int32 left_tread_msg;
         left_tread_msg.data = -1 * clamp(static_cast<int32_t>(left_tread_command), -1000, 1000);
-	    brushless_left_tread_vel_publisher.publish(left_tread_msg);
-
-        //ROS_INFO_STREAM("left_tread_velocity_value: " << velocity_values[static_cast<int>(tfr_utilities::Joint::LEFT_TREAD)] << std::endl);
-	    //ROS_INFO_STREAM("left_tread_command: " << left_tread_command << std::endl);
-
-        
-        
-
-	    if (enable_left_tread_pid_debug_output)
-	    {
-	        double left_tread_setpoint = 0;
-            ros::param::get("/left_tread_velocity_controller/setpoint", left_tread_setpoint);
-            
-            /*
-            ROS_INFO_STREAM_NAMED("debugrobotinterface", 
-            "left_tread: " << std::setw(8) << std::setprecision(2) << left_tread_setpoint << ", "
-            << std::setw(8) << std::setprecision(2) << velocity_values[tfr_utilities::Joint::LEFT_TREAD] << ", "
-            << std::setw(8) << left_tread_msg.data);
-	        */
-	        std_msgs::Float64 left_tread_setpoint_msg;
-	        std_msgs::Float64 left_tread_state_msg;
-	        
-	        left_tread_setpoint_msg.data = left_tread_setpoint;
-	        left_tread_state_msg.data = velocity_values[static_cast<int>(tfr_utilities::Joint::LEFT_TREAD)];
-	        
-	        left_tread_publisher_pid_debug_setpoint.publish(left_tread_setpoint_msg);
-	        left_tread_publisher_pid_debug_state.publish(left_tread_state_msg);
-	        left_tread_publisher_pid_debug_command.publish(left_tread_msg);
-	        
-	    }
-
+        brushless_left_tread_vel_publisher.publish(left_tread_msg);
 
         //RIGHT_TREAD
         double right_tread_command = command_values[static_cast<int32_t>(tfr_utilities::Joint::RIGHT_TREAD)];
@@ -419,8 +338,12 @@ namespace tfr_control
     }
 
     /*
-     * Resets the commands to a safe neutral state
-     * Tells the treads to stop moving, and the arm to hold position
+     * Tells the treads to stop moving, and the arm to hold position.
+     * 
+     * The treads use velocity control, so they are set to 0 so that they their speed drops to 0.
+     * 
+     * The arm and bin use position control, so we stop them from moving by 
+     * commanding them to move to the position they are currently at.
      * */
     void RobotInterface::clearCommands()
     {
@@ -431,17 +354,24 @@ namespace tfr_control
         command_values[static_cast<int>(tfr_utilities::Joint::RIGHT_TREAD)] = 0;
 
         //TURNTABLE
-        command_values[static_cast<int>(tfr_utilities::Joint::TURNTABLE)] = 0;
+        command_values[static_cast<int>(tfr_utilities::Joint::TURNTABLE)] = 
+        position_values[static_cast<int>(tfr_utilities::Joint::TURNTABLE)];
 
         //LOWER_ARM
-        command_values[static_cast<int>(tfr_utilities::Joint::LOWER_ARM)] = 0;
+        command_values[static_cast<int>(tfr_utilities::Joint::LOWER_ARM)] = 
+        position_values[static_cast<int>(tfr_utilities::Joint::LOWER_ARM)];
         
         //UPPER_ARM
-        command_values[static_cast<int>(tfr_utilities::Joint::UPPER_ARM)] = 0;
+        command_values[static_cast<int>(tfr_utilities::Joint::UPPER_ARM)] = 
+        position_values[static_cast<int>(tfr_utilities::Joint::UPPER_ARM)];
+
         //SCOOP
-        command_values[static_cast<int>(tfr_utilities::Joint::SCOOP)] = 0;
+        command_values[static_cast<int>(tfr_utilities::Joint::SCOOP)] = 
+        position_values[static_cast<int>(tfr_utilities::Joint::SCOOP)];
+
         //BIN
-        command_values[static_cast<int>(tfr_utilities::Joint::BIN)] = 0;
+        command_values[static_cast<int>(tfr_utilities::Joint::BIN)] = 
+        position_values[static_cast<int>(tfr_utilities::Joint::BIN)];
     }
 
     /*
@@ -482,7 +412,6 @@ namespace tfr_control
         lower_arm_mutex.lock();
         
         lower_arm_encoder = msg.position[0];
-        //ROS_INFO_STREAM("lower_arm_encoder: " << lower_arm_encoder << std::endl);
         
         lower_arm_mutex.unlock();
     }
@@ -491,17 +420,13 @@ namespace tfr_control
     void RobotInterface::readLowerArmAmps(const std_msgs::Float64 &msg)
     {
         lower_arm_amps = msg.data;
-        //position_values[static_cast<int>(tfr_utilities::Joint::LOWER_ARM)] = msg.data;
-        //ROS_INFO_STREAM("lower_arm_ams: " << position_values[static_cast<int>(tfr_utilities::Joint::LOWER_ARM)] << std::endl);
     }
-    
     
     void RobotInterface::readUpperArmEncoder(const sensor_msgs::JointState &msg)
     {
         upper_arm_mutex.lock();
         
         upper_arm_encoder = msg.position[0];
-        //ROS_INFO_STREAM("upper_arm_encoder: " << upper_arm_encoder << std::endl);
         
         upper_arm_mutex.unlock();
     }
@@ -509,17 +434,13 @@ namespace tfr_control
     void RobotInterface::readUpperArmAmps(const std_msgs::Float64 &msg)
     {
         upper_arm_amps = msg.data;
-        //position_values[static_cast<int>(tfr_utilities::Joint::UPPER_ARM)] = msg.data;
-        //ROS_INFO_STREAM("lower_arm_ams: " << position_values[static_cast<int>(tfr_utilities::Joint::UPPER_ARM)] << std::endl);
     }
-    
     
     void RobotInterface::readScoopEncoder(const sensor_msgs::JointState &msg)
     {
         scoop_mutex.lock();
         
         scoop_encoder = msg.position[0];
-        //ROS_INFO_STREAM("scoop_encoder: " << scoop_encoder << std::endl);
         
         scoop_mutex.unlock();
     }
@@ -527,8 +448,6 @@ namespace tfr_control
     void RobotInterface::readScoopAmps(const std_msgs::Float64 &msg)
     {
         scoop_amps = msg.data;
-        //position_values[static_cast<int>(tfr_utilities::Joint::LOWER_ARM)] = msg.data;
-        //ROS_INFO_STREAM("lower_arm_ams: " << position_values[static_cast<int>(tfr_utilities::Joint::LOWER_ARM)] << std::endl);
     }
 
     /*
@@ -546,25 +465,6 @@ namespace tfr_control
         JointHandle handle(state_handle, &command_values[idx]);
         joint_effort_interface.registerHandle(handle);
     }
-
-    /*
-     * Register this joint with each neccessary hardware interface
-     * */
-     /*
-    void RobotInterface::registerBinJoint(std::string name, Joint joint) 
-    {
-        auto idx = static_cast<int>(joint);
-        //give the joint a state
-        JointStateHandle state_handle(name, &position_values[idx],
-            &velocity_values[idx], &effort_values[idx]);
-        joint_state_interface.registerHandle(state_handle);
-
-        //allow the joint to be commanded
-        JointHandle handle(state_handle, &command_values[idx]);
-        joint_position_interface.registerHandle(handle);
-    }
-    */
-
 
     void RobotInterface::setBrushlessLeftEncoder(const std_msgs::Int32 &msg)
     {
@@ -617,7 +517,6 @@ namespace tfr_control
         
         return linear_speed_meters_per_sec;
     }
-
     
     void RobotInterface::accumulateBrushlessRightVel(const std_msgs::Int32 &msg)
     {
@@ -640,8 +539,6 @@ namespace tfr_control
         accumulated_brushless_left_tread_vel_end_time = ros::Time::now();
 
         brushless_left_tread_mutex.unlock();
-        
-        
     }
     
     double RobotInterface::readBrushlessRightVel()
@@ -680,19 +577,9 @@ namespace tfr_control
         return linear_speed_meters_per_sec;
     }
     
-    
     void RobotInterface::zeroTurntable()
     {
-        /*
-        //Grab the neccessary data
-        tfr_msgs::ArduinoAReading reading_a;
-        if (latest_arduino_a != nullptr)
-            reading_a = *latest_arduino_a;
-        else 
-            return;
-
-        turntable_offset = -reading_a.arm_turntable_pos; 
-        */
+        //TODO
     }
     
 
