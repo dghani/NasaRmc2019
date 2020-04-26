@@ -2,8 +2,8 @@
 
 ArmManipulator::ArmManipulator(ros::NodeHandle &n, bool init_joints):
             arm_action_client{n, "move_arm"},
-            trajectory_publisher{n.advertise<trajectory_msgs::JointTrajectory>("/move_arm", 5)},
-            scoop_trajectory_publisher{n.advertise<trajectory_msgs::JointTrajectory>("/arm_end_controller/command", 5)}
+            trajectory_publisher{n.advertise<std_msgs::Float64MultiArray>("/arm_controller/command", 5)},
+            scoop_trajectory_publisher{n.advertise<std_msgs::Float64MultiArray>("/arm_end_controller/command", 5)}
 {
   ROS_INFO("Initializing Arm Manipulator");
 	if (init_joints) initializeJointLimits();
@@ -77,6 +77,27 @@ void ArmManipulator::moveArm(const double& turntable, const double& lower_arm ,c
         ROS_INFO("Arm Manip: arm move failed");
         return;
     }
+}
+
+// Asynchronous call.
+void ArmManipulator::moveArmWithoutPlanningOrLimits(
+            const double& turntable, const double& lower_arm, const double& upper_arm, const double& scoop)
+{
+    ROS_INFO_STREAM("moveArmWithoutPlanningOrLimits() called by: " << ros::this_node::getName() << ". Parameters: " << turntable << ", " << lower_arm << ", " << upper_arm << ", " << scoop << std::endl);
+
+    std_msgs::Float64MultiArray arm_command;
+    std_msgs::Float64MultiArray arm_end_command;
+
+    arm_command.data.push_back(turntable);
+    arm_command.data.push_back(lower_arm);
+    arm_command.data.push_back(upper_arm);
+
+    arm_end_command.data.push_back(scoop);
+    
+    trajectory_publisher.publish(arm_command);
+    scoop_trajectory_publisher.publish(arm_end_command);
+
+    return;
 }
 
 // TODO: Check for NaN input.
