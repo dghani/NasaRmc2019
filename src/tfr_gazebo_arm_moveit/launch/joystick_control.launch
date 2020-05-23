@@ -1,3 +1,10 @@
+<!--
+	joystick control is migrating into tfr_mission_control.
+	delete this file as soon as it is complete and make sure nothing is broken.
+
+	- Phil AKA "phillipov"
+-->
+
 <launch>
   <!-- See moveit_ros/visualization/doc/joystick.rst for documentation -->
 

@@ -1,4 +1,5 @@
 #include "status_code.h"
+#include <sstream>
 
 //Defines the mask to use to identify a Sub System given a StatusCode
 enum { SystemMask = 0b1111111100000000 };
@@ -74,7 +75,12 @@ std::string parseSysCode(StatusCode code, float data)
         }
         default:
         {
-            return "Warning: Unknown status code for System received.";
+	        uint16_t codeInt = static_cast<uint16_t>(code);
+            std::stringstream ss;
+            // decodes the StatusCode into a raw uint to help debugging
+            ss << "Warning: Unknown status code for System received (";
+            ss << codeInt << ").";
+            return ss.str();
         }
     }
 }
