@@ -96,6 +96,14 @@ namespace tfr_mission_control {
         connect(ui.control_enable_button,&QPushButton::clicked, [this] () {toggleControl(true);});
         connect(ui.control_disable_button,&QPushButton::clicked, [this] () {toggleControl(false);});
 
+        /* Joystick
+         * Note, Joystick is not linked to E-stop. setJoystick needs to be replaced with toggleJoystick
+         *
+         * */
+
+        connect(ui.joy_enable_button,&QPushButton::clicked, [this]() {setJoystick(true);});
+        connect(ui.joy_disable_button,&QPushButton::clicked, [this]() {setJoystick(false);});
+
         //PID
         connect(ui.arm_pid_enable_button,&QPushButton::clicked, [this] () {setArmPID(true);});
         connect(ui.arm_pid_disable_button,&QPushButton::clicked, [this] () {setArmPID(false);});
@@ -274,6 +282,12 @@ namespace tfr_mission_control {
     {
         ui.control_enable_button->setEnabled(!value);
         ui.control_disable_button->setEnabled(value);
+    }
+
+    void MissionControl::setJoystick(bool value)
+    {
+        ui.joy_enable_button->setEnabled(!value);
+        ui.joy_disable_button->setEnabled(value);
     }
 
     void MissionControl::setArmPID(bool value){
@@ -485,6 +499,22 @@ namespace tfr_mission_control {
         while(!ros::service::call("toggle_control", request));
         setControl(state);
     }
+
+
+    /*
+
+    This needs to be setup similar to toggleControl and toggleMotors for E-Stop.
+    "toggle_joystick" needs to be created in mission_control.h which also needs to
+    link to tfr_control/src/control.cpp
+
+    void MissionControl::toggleJoystick(bool state)
+    {
+        std_srvs::SetBool request;
+        request.request.data = state;
+        while (!ros::service::call("toggle_joystick", request));        
+        setJoystick(state);
+    }
+    */
 
     //toggles control for estop (on/off)
     void MissionControl::toggleMotors(bool state)

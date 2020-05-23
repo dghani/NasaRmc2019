@@ -602,14 +602,20 @@
      <item>
       <layout class="QGridLayout" name="joystick_control_grid">
        <item row="1" column="0">
-        <widget class="QPushButton" name="joy_enable_button">
+        <widget class="QPushButton" name="joy_disable_button">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
          <property name="text">
           <string>Disable Joysticks</string>
          </property>
         </widget>
        </item>
        <item row="0" column="0">
-        <widget class="QPushButton" name="joy_disable_button">
+        <widget class="QPushButton" name="joy_enable_button">
+         <property name="enabled">
+          <bool>true</bool>
+         </property>
          <property name="text">
           <string>Enable Joysticks</string>
          </property>
