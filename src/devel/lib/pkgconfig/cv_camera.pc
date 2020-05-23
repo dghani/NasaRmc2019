@@ -1,8 +1,0 @@
-prefix=/home/phillipov/NasaRmc2019/src/devel
-
-Name: cv_camera
-Description: Description of cv_camera
-Version: 0.3.0
-Cflags: -I/home/phillipov/NasaRmc2019/src/cv_camera/include -I/usr/local/include -I/usr/local/include/opencv
-Libs: -L${prefix}/lib -lcv_camera /usr/local/lib/libopencv_calib3d.so.3.4.6 /usr/local/lib/libopencv_core.so.3.4.6 /usr/local/lib/libopencv_features2d.so.3.4.6 /usr/local/lib/libopencv_highgui.so.3.4.6 /usr/local/lib/libopencv_imgcodecs.so.3.4.6 /usr/local/lib/libopencv_imgproc.so.3.4.6 /usr/local/lib/libopencv_videoio.so.3.4.6 /usr/local/lib/libopencv_aruco.so.3.4.6
-Requires: image_transport roscpp cv_bridge sensor_msgs nodelet camera_info_manager

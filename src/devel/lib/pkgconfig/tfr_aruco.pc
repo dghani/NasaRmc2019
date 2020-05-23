@@ -1,8 +1,0 @@
-prefix=/home/phillipov/NasaRmc2019/src/devel
-
-Name: tfr_aruco
-Description: Description of tfr_aruco
-Version: 0.0.0
-Cflags: 
-Libs: -L${prefix}/lib 
-Requires: roscpp message_runtime sensor_msgs

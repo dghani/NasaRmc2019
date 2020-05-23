@@ -1,8 +1,0 @@
-prefix=/home/phillipov/NasaRmc2019/src/devel
-
-Name: kacanopen
-Description: Description of kacanopen
-Version: 0.1.0
-Cflags: -I/home/phillipov/NasaRmc2019/src/kacanopen/core/include -I/home/phillipov/NasaRmc2019/src/kacanopen/master/include -I/home/phillipov/NasaRmc2019/src/kacanopen/ros_bridge/include -I/home/phillipov/NasaRmc2019/src/kacanopen/tools/include
-Libs: -L${prefix}/lib -lkacanopen_core -lkacanopen_master -lkacanopen_ros_bridge -lkacanopen_tools
-Requires: message_runtime

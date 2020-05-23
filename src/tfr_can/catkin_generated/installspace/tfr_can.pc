@@ -1,8 +1,0 @@
-prefix=/home/phillipov/NasaRmc2019/install
-
-Name: tfr_can
-Description: Description of tfr_can
-Version: 0.0.0
-Cflags: 
-Libs: -L${prefix}/lib 
-Requires: 

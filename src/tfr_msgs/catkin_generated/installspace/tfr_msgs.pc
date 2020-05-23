@@ -1,8 +1,0 @@
-prefix=/home/phillipov/NasaRmc2019/install
-
-Name: tfr_msgs
-Description: Description of tfr_msgs
-Version: 0.0.0
-Cflags: -I${prefix}/include
-Libs: -L${prefix}/lib 
-Requires: 

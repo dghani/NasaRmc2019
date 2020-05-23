@@ -1,7 +1,0 @@
-#goal msg
-Header header
-uint8 location_code 
----
-#feedback msg
----
-#result msg 

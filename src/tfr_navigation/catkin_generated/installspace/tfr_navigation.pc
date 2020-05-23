@@ -1,8 +1,0 @@
-prefix=/home/phillipov/NasaRmc2019/install
-
-Name: tfr_navigation
-Description: Description of tfr_navigation
-Version: 0.0.0
-Cflags: 
-Libs: -L${prefix}/lib 
-Requires: 

@@ -1,8 +1,0 @@
-prefix=/home/phillipov/NasaRmc2019/src/devel
-
-Name: tfr_sensor
-Description: Description of tfr_sensor
-Version: 0.0.0
-Cflags: -I/home/phillipov/NasaRmc2019/src/tfr_sensor/include -I/home/phillipov/NasaRmc2019/src/tfr_sensor/include/
-Libs: -L${prefix}/lib -ltfr_sensor -ltread_distance_publisher
-Requires: 
