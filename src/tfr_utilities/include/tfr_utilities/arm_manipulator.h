@@ -8,6 +8,7 @@
 #include <joints.h>
 #include <urdf/model.h>
 #include <actionlib/client/simple_action_client.h>
+#include <sensor_msgs/JointState.h>
 
 /**
  * Provides a simple method for moving the arm without MoveIt.
@@ -42,10 +43,17 @@ class ArmManipulator
 
         void moveArmWithoutPlanningOrLimits(
             const double& turntable, const double& lower_arm, const double& upper_arm, const double& scoop);
-        
+
     private:
         ros::Publisher trajectory_publisher;
         ros::Publisher scoop_trajectory_publisher;
+
+        // These publishers do NOT go through ros_control.
+        // They send messages to the topics created bt the can_bus node in tfr_can.
+        ros::Publisher lower_arm_publisher;
+        ros::Publisher upper_arm_publisher;
+        ros::Publisher scoop_publisher;
+
         actionlib::SimpleActionClient<tfr_msgs::ArmMoveAction> arm_action_client;
 
 		void initializeJointLimits();

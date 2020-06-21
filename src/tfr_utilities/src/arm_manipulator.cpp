@@ -3,7 +3,10 @@
 ArmManipulator::ArmManipulator(ros::NodeHandle &n, bool init_joints):
             arm_action_client{n, "move_arm"},
             trajectory_publisher{n.advertise<std_msgs::Float64MultiArray>("/arm_controller/command", 5)},
-            scoop_trajectory_publisher{n.advertise<std_msgs::Float64MultiArray>("/arm_end_controller/command", 5)}
+            scoop_trajectory_publisher{n.advertise<std_msgs::Float64MultiArray>("/arm_end_controller/command", 5)},
+            lower_arm_publisher{n.advertise<sensor_msgs::JointState>("/device23/set_joint_state", 5)},
+            upper_arm_publisher{n.advertise<sensor_msgs::JointState>("/device45/set_joint_state", 5)},
+            scoop_publisher{n.advertise<sensor_msgs::JointState>("/device56/set_joint_state", 5)}
 {
   ROS_INFO("Initializing Arm Manipulator");
 	if (init_joints) initializeJointLimits();
@@ -85,31 +88,24 @@ void ArmManipulator::moveArmWithoutPlanningOrLimits(
 {
     ROS_INFO_STREAM("moveArmWithoutPlanningOrLimits() called by: " << ros::this_node::getName() << ". Parameters: " << turntable << ", " << lower_arm << ", " << upper_arm << ", " << scoop << std::endl);
 
-    // Reference: http://wiki.ros.org/pr2_controllers/Tutorials/Moving%20the%20arm%20using%20the%20Joint%20Trajectory%20Action#Creating_the_node
-    
-    // Doesn't work anymore since controllers.yaml was changed to make the arm just a Position controller, no longer a Trajectory controller.
-    /*
-    trajectory_msgs::JointTrajectory arm_traj = createSinglePointArmTrajectory(turntable, lower_arm, upper_arm);
-    trajectory_msgs::JointTrajectory arm_end_traj = createSinglePointArmEndTrajectory(scoop);    
+    // TODO: No value for the turntable is sent!
 
-    trajectory_publisher.publish(arm_traj);
-    scoop_trajectory_publisher.publish(arm_end_traj);
-    */
+    sensor_msgs::JointState lower_arm_joint_state;
+    sensor_msgs::JointState upper_arm_joint_state;
+    sensor_msgs::JointState scoop_joint_state;
 
-    
+    lower_arm_joint_state.name.push_back("/device23/set_joint_state");
+    lower_arm_joint_state.position.push_back(lower_arm);
 
-    // alternative for the Position (not Trajectory) controllers.
-    std_msgs::Float64MultiArray arm_command;
-    std_msgs::Float64MultiArray arm_end_command;
+    upper_arm_joint_state.name.push_back("/device45/set_joint_state");
+    upper_arm_joint_state.position.push_back(upper_arm);
 
-    arm_command.data.push_back(turntable);
-    arm_command.data.push_back(lower_arm);
-    arm_command.data.push_back(upper_arm);
+    scoop_joint_state.name.push_back("/device56/set_joint_state");
+    scoop_joint_state.position.push_back(scoop);
 
-    arm_end_command.data.push_back(scoop);
-    
-    trajectory_publisher.publish(arm_command);
-    scoop_trajectory_publisher.publish(arm_end_command);
+    lower_arm_publisher.publish(lower_arm_joint_state);
+    upper_arm_publisher.publish(upper_arm_joint_state);
+    scoop_publisher.publish(scoop_joint_state);
 
     return;
 }
