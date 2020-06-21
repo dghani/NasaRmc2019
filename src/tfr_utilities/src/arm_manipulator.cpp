@@ -94,13 +94,13 @@ void ArmManipulator::moveArmWithoutPlanningOrLimits(
     sensor_msgs::JointState upper_arm_joint_state;
     sensor_msgs::JointState scoop_joint_state;
 
-    lower_arm_joint_state.name.push_back("/device23/set_joint_state");
+    //lower_arm_joint_state.name.push_back("/device23/set_joint_state");
     lower_arm_joint_state.position.push_back(lower_arm);
 
-    upper_arm_joint_state.name.push_back("/device45/set_joint_state");
+    //upper_arm_joint_state.name.push_back("/device45/set_joint_state");
     upper_arm_joint_state.position.push_back(upper_arm);
 
-    scoop_joint_state.name.push_back("/device56/set_joint_state");
+    //scoop_joint_state.name.push_back("/device56/set_joint_state");
     scoop_joint_state.position.push_back(scoop);
 
     lower_arm_publisher.publish(lower_arm_joint_state);
