@@ -5,6 +5,7 @@
         <rosparam>
             maxTicks: 2147483647 
             ticksPerRevolution: 5120 
+
 #The encoder is 32 PPR, but the motor controller multiplies by 4. 
 #Gear ratio is 40:1 for output shaft.  128 * 40 = 5120.  
             wheelRadius: .15 #TODO: Define this in one place
