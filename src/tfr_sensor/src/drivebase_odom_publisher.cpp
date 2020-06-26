@@ -55,11 +55,13 @@ class DrivebaseOdometryPublisher
             x{},
             y{},
             angle{},
-            tf_broadcaster{}
+            tf_broadcaster{},
+            leftTreadDistance{},
+            rightTreadDistance{}
     {
         //get most current sensor infromation
-        boost::function<void(const std_msgs::Float64&)> leftTreadCallback = [this](const std_msgs::Float64& msg) {this->leftTreadSpeed = msg.data; };
-        boost::function<void(const std_msgs::Float64&)> rightTreadCallback = [this](const std_msgs::Float64& msg) {this->rightTreadSpeed = msg.data; };
+        boost::function<void(const std_msgs::Float64&)> leftTreadCallback = [this](const std_msgs::Float64& msg) {this->leftTreadDistance += msg.data; };
+        boost::function<void(const std_msgs::Float64&)> rightTreadCallback = [this](const std_msgs::Float64& msg) {this->rightTreadDistance += msg.data; };
         
 
 		leftTreadDistanceSub = n.subscribe<std_msgs::Float64>("/left_tread_distance", 15, leftTreadCallback);
@@ -103,9 +105,16 @@ class DrivebaseOdometryPublisher
             return;
         }
 
+        double v_l = leftTreadDistance/d_t;
+        double v_r = rightTreadDistance/d_t;
+
+        //zero out aggregate distances
+        rightTreadDistance = 0;
+        leftTreadDistance = 0;
+
         //basic differential kinematics to get combined velocities
-        double v_ang = (rightTreadSpeed-leftTreadSpeed)/wheel_span;
-        double v_lin = (rightTreadSpeed+leftTreadSpeed)/2;
+        double v_ang = (v_r-v_l)/wheel_span;
+        double v_lin = (v_r+v_l)/2;
         
         //break into xy components and increment
         double d_angle = v_ang * d_t;
@@ -135,7 +144,8 @@ class DrivebaseOdometryPublisher
         msg.pose.pose.position.y = y;
         msg.pose.pose.position.z = 0;
         msg.pose.pose.orientation = angle;
-        msg.pose.covariance = { 1e-1,    0,    0,    0,    0,    0,
+        msg.pose.covariance = { 
+            1e-1, 0,    0,    0,    0,    0,
             0, 1e-1,    0,    0,    0,    0,
             0,    0, 1e-1,    0,    0,    0,
             0,    0,    0, 1e-1,    0,    0,
@@ -169,7 +179,7 @@ class DrivebaseOdometryPublisher
         const std::string& parent_frame; //the parent frame of the robot
         const std::string& child_frame; //the child frame of the robot
         const double& wheel_span;
-        double leftTreadSpeed, rightTreadSpeed;
+        double leftTreadDistance, rightTreadDistance;
         double x; //the x coordinate of the robot (meters)
         double y; //the y coordinate of the robot (meters)
         geometry_msgs::Quaternion angle; 

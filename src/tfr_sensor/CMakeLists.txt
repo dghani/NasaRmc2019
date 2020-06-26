@@ -27,8 +27,6 @@ find_package(catkin REQUIRED COMPONENTS
     image_transport
 )
 
-find_package(GTest REQUIRED)
-
 catkin_package(
     INCLUDE_DIRS include include/
     LIBRARIES tfr_sensor tread_distance_publisher
@@ -54,7 +52,6 @@ add_executable(sensor_tilt ./src/sensor_tilt.cpp)
 add_dependencies(sensor_tilt ${catkin_EXPORTED_TARGETS})
 target_link_libraries(sensor_tilt ${catkin_LIBRARIES})
 
-
 add_executable(fiducial_odom_publisher src/fiducial_odom_publisher.cpp)
 add_dependencies(fiducial_odom_publisher ${catkin_EXPORTED_TARGETS})
 target_link_libraries(fiducial_odom_publisher tf_manipulator ${catkin_LIBRARIES})
@@ -63,15 +60,27 @@ add_executable(drivebase_odom_publisher src/drivebase_odom_publisher.cpp)
 add_dependencies(drivebase_odom_publisher ${catkin_EXPORTED_TARGETS})
 target_link_libraries(drivebase_odom_publisher tf_manipulator ${catkin_LIBRARIES})
 
-add_library(tread_distance_publisher src/tread_distance_publisher.cpp)
-add_dependencies(tread_distance_publisher ${catkin_EXPORTED_TARGETS})
-target_link_libraries(tread_distance_publisher  ${catkin_LIBRARIES})
+add_library(tread_distance_publisher_lib src/tread_distance_publisher.cpp)
+add_dependencies(tread_distance_publisher_lib ${catkin_EXPORTED_TARGETS})
+target_link_libraries(tread_distance_publisher_lib  ${catkin_LIBRARIES})
+add_executable(tread_distance_publisher src/tread_distance_publisher.cpp)
+target_link_libraries(tread_distance_publisher tread_distance_publisher_lib)
+
 
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
 
-catkin_add_gtest(tread_distance_test test/test_tread_distance_publisher.cpp)
-if(TARGET tread_distance_test)
-  target_link_libraries(tread_distance_test tread_distance_publisher)
+if(CATKIN_ENABLE_TESTING)
+  find_package(GTest REQUIRED)
+  catkin_add_gtest(tread_distance_test test/test_tread_distance_publisher.cpp)
+  if(TARGET tread_distance_test)
+    target_link_libraries(tread_distance_test tread_distance_publisher_lib)
+  endif()
+
+  find_package(rostest REQUIRED)
+  add_rostest_gtest(test_drivebase_odom_integration test/drivebase_odom.test test/test_drivebase_odom_integration.cpp)
+  if(TARGET test_drivebase_odom_integration)
+    target_link_libraries(test_drivebase_odom_integration ${catkin_LIBRARIES})
+  endif()
 endif()
 
 if(TARGET ${PROJECT_NAME}-test)
