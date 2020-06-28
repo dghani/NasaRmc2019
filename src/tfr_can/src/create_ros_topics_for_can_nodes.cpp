@@ -20,7 +20,7 @@ const std::string busname = "can1";
 // "1M", "500K", "125K", "100K", "50K", "20K", "10K" and "5K".
 const std::string baudrate = "250K";
 
-const size_t num_devices_required = 3;
+const size_t num_devices_required = 6;
 
 const double loop_rate = 10; // 10 Hz
 const int slow_loop_rate = 1; // 1 Hz
@@ -31,6 +31,9 @@ const int SERVO_CYLINDER_LOWER_ARM = 23;
 const int SERVO_CYLINDER_SPARE 	= 34;
 const int SERVO_CYLINDER_UPPER_ARM = 45;
 const int SERVO_CYLINDER_SCOOP = 56;
+const int TURNTABLE = 1;
+const int SERVO_CYLINDER_BIN_LEFT = 98; //The node ID's are imaginary at this point.  I lost the cable. 
+const int SERVO_CYLINDER_BIN_RIGHT = 99; //The node ID's are imaginary at this point.  I lost the cable. 
 // TODO: Add code for setting up the turntable Epos brushless motor controller.
 
 void setupDevice4Topics(kaco::Device& device, kaco::Bridge& bridge, std::string& eds_files_path){
@@ -149,6 +152,27 @@ void setupServoCylinderDevice(kaco::Device& device, kaco::Bridge& bridge, std::s
     bridge.add_subscriber(iosub_7);
 }
 
+void setupMaxonDevice(kaco::Device& device, kaco::Bridge& bridge, std::string& eds_files_path)
+{
+    
+    device.load_dictionary_from_library();
+    
+    device.load_dictionary_from_eds(eds_files_path + "tfr_epos4_config.dcf");
+    
+    PRINT("Set position mode");
+    device.set_entry("modes_of_operation", device.get_constant("profile_position_mode"));
+
+    PRINT("Enable operation");
+    device.execute("enable_operation");
+
+
+    // min: 0 -> 0, 
+    // max: 47104 -> 6.28==2pi
+    auto jspub = std::make_shared<kaco::JointStatePublisher>(device, 0, 47104); //Figure this out for Maxon
+    bridge.add_publisher(jspub, loop_rate);
+    
+    auto jssub = std::make_shared<kaco::JointStateSubscriber>(device, 0, 47104); //Figure this out for Maxon
+    bridge.add_subscriber(jssub);
 
 
 // Usage: e.g. intToHexString(10) == "A"
@@ -195,9 +219,14 @@ int main(int argc, char* argv[]) {
 
     resetCanopenNode(busname, SERVO_CYLINDER_SPARE);
     std::this_thread::sleep_for(std::chrono::milliseconds(250));
-
+	
     resetCanopenNode(busname, SERVO_CYLINDER_LOWER_ARM);
-
+    std::this_thread::sleep_for(std::chrono::milliseconds(250));
+	
+    resetCanopenNode(busname, SERVO_CYLINDER_BIN_LEFT);
+    std::this_thread::sleep_for(std::chrono::milliseconds(250));
+	
+    resetCanopenNode(busname, SERVO_CYLINDER_BIN_RIGHT);
     //std::system("cansend " + busname + " 000#8138");
     //std::system("cansend " + busname + " 000#812D");
     //std::system("cansend " + busname + " 000#8122");
@@ -249,7 +278,22 @@ int main(int argc, char* argv[]) {
         {
             setupServoCylinderDevice(device, bridge, eds_files_path);
         }
+		
+		if (deviceId == SERVO_CYLINDER_BIN_LEFT)
+        {
+            setupServoCylinderDevice(device, bridge, eds_files_path);
+        }
 
+		if (deviceId == SERVO_CYLINDER_BIN_RIGHT)
+        {
+            setupServoCylinderDevice(device, bridge, eds_files_path);
+        }
+		
+		if (deviceId == TURNTABLE) //THIS IS WHERE WE LOAD THE EDS LIBRARY
+	{
+	    setupMaxonDevice(device, bridge, eds_files_path);
+	}
+		
 		if (deviceId == 4)
 		{
 			device.load_dictionary_from_eds(eds_files_path + "roboteq_motor_controllers_v60.eds");
