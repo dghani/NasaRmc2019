@@ -32,8 +32,8 @@ const int SERVO_CYLINDER_SPARE 	= 34;
 const int SERVO_CYLINDER_UPPER_ARM = 45;
 const int SERVO_CYLINDER_SCOOP = 56;
 const int TURNTABLE = 1;
-const int SERVO_CYLINDER_BIN_LEFT = 98; //The node ID's are imaginary at this point.  I lost the cable. 
-const int SERVO_CYLINDER_BIN_RIGHT = 99; //The node ID's are imaginary at this point.  I lost the cable. 
+const int SERVO_CYLINDER_BIN_LEFT = 77; 
+const int SERVO_CYLINDER_BIN_RIGHT = 88; 
 // TODO: Add code for setting up the turntable Epos brushless motor controller.
 
 void setupDevice4Topics(kaco::Device& device, kaco::Bridge& bridge, std::string& eds_files_path){
