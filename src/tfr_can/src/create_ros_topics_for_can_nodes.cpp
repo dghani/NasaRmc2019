@@ -167,11 +167,11 @@ void setupMaxonDevice(kaco::Device& device, kaco::Bridge& bridge, std::string& e
 
 
     // min: 0 -> 0, 
-    // max: 1024 encoder clicks * 4.3 Maxon gear * 70 worm gear = 308224 encoder clicks
-    auto jspub = std::make_shared<kaco::JointStatePublisher>(device, 0, 308224); 
+    // max: 1024 encoder clicks * 4.3 Maxon gear * 70 worm gear = 308224 * 2 for an entire circle.  May want to keep it in 180 degree movements because that's what the arm needs 
+    auto jspub = std::make_shared<kaco::JointStatePublisher>(device, 0, 616448); 
     bridge.add_publisher(jspub, loop_rate);
     
-    auto jssub = std::make_shared<kaco::JointStateSubscriber>(device, 0, 308224); 
+    auto jssub = std::make_shared<kaco::JointStateSubscriber>(device, 0, 616448); 
     bridge.add_subscriber(jssub);
 }
 
