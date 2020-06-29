@@ -167,13 +167,13 @@ void setupMaxonDevice(kaco::Device& device, kaco::Bridge& bridge, std::string& e
 
 
     // min: 0 -> 0, 
-    // max: 47104 -> 6.28==2pi
-    auto jspub = std::make_shared<kaco::JointStatePublisher>(device, 0, 47104); //Figure this out for Maxon
+    // max: 1024 encoder clicks * 4.3 Maxon gear * 70 worm gear = 308224 encoder clicks
+    auto jspub = std::make_shared<kaco::JointStatePublisher>(device, 0, 308224); 
     bridge.add_publisher(jspub, loop_rate);
     
-    auto jssub = std::make_shared<kaco::JointStateSubscriber>(device, 0, 47104); //Figure this out for Maxon
+    auto jssub = std::make_shared<kaco::JointStateSubscriber>(device, 0, 308224); 
     bridge.add_subscriber(jssub);
-
+}
 
 // Usage: e.g. intToHexString(10) == "A"
 std::string intToHexString(int n)
