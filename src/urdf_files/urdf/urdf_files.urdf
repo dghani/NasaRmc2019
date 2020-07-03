@@ -139,10 +139,11 @@
   </link>
   <joint
     name="Lower-Arm"
-    type="continuous">
+    type="revolute">
     <origin
       xyz="0 0.18949 0"
       rpy="1.5708 1.0411 1.5708" />
+    <limit effort="1.0" velocity="1.0" lower="1.8" upper="5.1"/>
     <parent
       link="Turntable_Link" />
     <child
@@ -192,10 +193,11 @@
   </link>
   <joint
     name="Upper-Arm"
-    type="continuous">
+    type="revolute">
     <origin
       xyz="0.084492 0.14432 0"
       rpy="0 0 -2.3039" />
+    <limit effort="1.0" velocity="1.0" lower="1.1" upper="4.5"/>
     <parent
       link="Lower-Arm_Link" />
     <child
@@ -245,10 +247,11 @@
   </link>
   <joint
     name="Scoop"
-    type="continuous">
+    type="revolute">
     <origin
       xyz="-0.092545 -0.019096 0"
       rpy="0 0 1.9904" />
+    <limit effort="1.0" velocity="1.0" lower="0.3" upper="2.7"/>
     <parent
       link="Upper-Arm_Link" />
     <child
