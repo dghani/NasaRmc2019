@@ -75,7 +75,7 @@ std::string parseSysCode(StatusCode code, float data)
         }
         default:
         {
-	        uint16_t codeInt = static_cast<uint16_t>(code);
+	    uint16_t codeInt = static_cast<uint16_t>(code);
             std::stringstream ss;
             // decodes the StatusCode into a raw uint to help debugging
             ss << "Warning: Unknown status code for System received (";

@@ -104,13 +104,7 @@ find_package(class_loader)
 class_loader_hide_library_symbols(${PROJECT_NAME})
 ####################END GENERATED######################################################
 
-add_executable(mission_control_subscriber ./src/mission_control_subscriber.cpp)
-add_dependencies(mission_control_subscriber ${catkin_EXPORTED_TARGETS})
-target_link_libraries(mission_control_subscriber ${catkin_LIBRARIES})
 
-add_executable(joy_teleop src/joy_teleop.cpp)
-target_link_libraries(joy_teleop ${catkin_LIBRARIES})
-add_dependencies(joy_teleop ${catkin_EXPORTED_TARGETS})
 
 ####################GENERATED######################################################
 install(FILES plugin.xml

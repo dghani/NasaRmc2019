@@ -19,6 +19,7 @@ namespace tfr_mission_control {
         teleop{"teleop_action_server",true},
         arm_client{"move_arm", true},
         com{nh.subscribe("com", 5, &MissionControl::updateStatus, this)},
+	joySub{nh.subscribe<sensor_msgs::Joy>("joy", 10, &MissionControl::joyCallback, this)},
         teleopEnabled{false}
     {
         setObjectName("MissionControl");
@@ -193,6 +194,7 @@ namespace tfr_mission_control {
     {
         //note because qt plugins are weird we need to manually kill ros entities
         com.shutdown();
+	joySub.shutdown();
         autonomy.cancelAllGoals();
         autonomy.stopTrackingGoal();
         teleop.cancelAllGoals();
@@ -411,6 +413,16 @@ namespace tfr_mission_control {
         //need to wrap in signal safe "Q" object
         QString msg = QString::fromStdString(str);
         emit emitStatus(msg);
+    }
+
+    /*
+     * Callback for incoming joystick messages.
+     * 
+     * Currently for prototyping. It does not do anything useful.
+     * */
+    void MissionControl::joyCallback(const sensor_msgs::Joy::ConstPtr& joy)
+    {
+	ROS_INFO("JOYSTICK GO BRRR");
     }
 
     /* ========================================================================== */

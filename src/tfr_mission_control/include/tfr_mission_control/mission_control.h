@@ -9,6 +9,7 @@
 #include <actionlib/client/terminal_state.h>
 #include <std_srvs/SetBool.h>
 #include <std_srvs/Empty.h>
+#include <sensor_msgs/Joy.h> // for joystick controls
 
 #include <tfr_msgs/SystemStatus.h>
 #include <tfr_msgs/DurationSrv.h>
@@ -105,6 +106,8 @@ namespace tfr_mission_control {
  
             //our message subscriber
             ros::Subscriber com;
+	    // joystick subscriber
+	    ros::Subscriber joySub;
 
             //Whether teleop commands should be accepted
             bool teleopEnabled;
@@ -141,6 +144,9 @@ namespace tfr_mission_control {
             //triggered by incoming status message, and cascades other signals into thread
             //safe gui update
             void updateStatus(const tfr_msgs::SystemStatusConstPtr &status);
+
+            // responds to joystick messages
+            void joyCallback(const sensor_msgs::Joy::ConstPtr& joy);
 
             protected slots:
 
