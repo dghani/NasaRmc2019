@@ -440,8 +440,8 @@ namespace tfr_mission_control {
 	// Echo thumbstick axis values into Mission Control UI
         ui.joy_axis0_display->setText(QString::number(joy->axes[0]));
         ui.joy_axis1_display->setText(QString::number(joy->axes[1]));
-        ui.joy_axis2_display->setText(QString::number(joy->axes[2]));
-        ui.joy_axis3_display->setText(QString::number(joy->axes[3]));
+        ui.joy_axis2_display->setText(QString::number(joy->axes[3]));
+        ui.joy_axis3_display->setText(QString::number(joy->axes[4]));
     }
 
     /* ========================================================================== */
