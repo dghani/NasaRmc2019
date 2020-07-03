@@ -626,44 +626,44 @@
      <item>
       <layout class="QFormLayout" name="joystick_form">
        <item row="0" column="0">
-        <widget class="QLabel" name="joy_axis1_label">
+        <widget class="QLabel" name="joy_axis0_label">
          <property name="text">
-          <string>Axis 1</string>
+          <string>Left Stick: x-axis</string>
          </property>
         </widget>
        </item>
        <item row="1" column="0">
-        <widget class="QLabel" name="joy_axis2_label">
+        <widget class="QLabel" name="joy_axis1_label">
          <property name="text">
-          <string>Axis 2</string>
+          <string>Left Stick: y-axis</string>
          </property>
         </widget>
        </item>
        <item row="2" column="0">
-        <widget class="QLabel" name="joy_axis3_label">
+        <widget class="QLabel" name="joy_axis2_label">
          <property name="text">
-          <string>Axis 3</string>
+          <string>Right Stick: x-axis</string>
          </property>
         </widget>
        </item>
        <item row="3" column="0">
-        <widget class="QLabel" name="joy_axis4_label">
+        <widget class="QLabel" name="joy_axis3_label">
          <property name="text">
-          <string>Axis 4</string>
+          <string>Right Stick: y-axis</string>
          </property>
         </widget>
        </item>
        <item row="0" column="1">
-        <widget class="QLineEdit" name="joy_axis1_display"/>
+        <widget class="QLineEdit" name="joy_axis0_display"/>
        </item>
        <item row="1" column="1">
-        <widget class="QLineEdit" name="joy_axis2_display"/>
+        <widget class="QLineEdit" name="joy_axis1_display"/>
        </item>
        <item row="2" column="1">
-        <widget class="QLineEdit" name="joy_axis3_display"/>
+        <widget class="QLineEdit" name="joy_axis2_display"/>
        </item>
        <item row="3" column="1">
-        <widget class="QLineEdit" name="joy_axis4_display"/>
+        <widget class="QLineEdit" name="joy_axis3_display"/>
        </item>
       </layout>
      </item>

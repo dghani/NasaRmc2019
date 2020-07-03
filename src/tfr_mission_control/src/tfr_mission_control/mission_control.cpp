@@ -437,6 +437,11 @@ namespace tfr_mission_control {
     void MissionControl::joyCallback(const sensor_msgs::Joy::ConstPtr& joy)
     {
 	ROS_INFO("JOYSTICK GO BRRR");
+	// Echo thumbstick axis values into Mission Control UI
+        ui.joy_axis0_display->setText(QString::number(joy->axes[0]));
+        ui.joy_axis1_display->setText(QString::number(joy->axes[1]));
+        ui.joy_axis2_display->setText(QString::number(joy->axes[2]));
+        ui.joy_axis3_display->setText(QString::number(joy->axes[3]));
     }
 
     /* ========================================================================== */
