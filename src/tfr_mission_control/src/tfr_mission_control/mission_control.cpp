@@ -436,12 +436,57 @@ namespace tfr_mission_control {
      * */
     void MissionControl::joyCallback(const sensor_msgs::Joy::ConstPtr& joy)
     {
-	ROS_INFO("JOYSTICK GO BRRR");
-	// Echo thumbstick axis values into Mission Control UI
-        ui.joy_axis0_display->setText(QString::number(joy->axes[0]));
-        ui.joy_axis1_display->setText(QString::number(joy->axes[1]));
-        ui.joy_axis2_display->setText(QString::number(joy->axes[3]));
-        ui.joy_axis3_display->setText(QString::number(joy->axes[4]));
+        /*
+        * Echo thumbstick axis values into Mission Control UI.
+        * Layout for axes and buttons is for Microsoft Wired Controller for Linux.
+        */
+        ui.joy_axis0_display->setText(QString::number(joy->axes[0])); // Left Stick x-axis
+        ui.joy_axis1_display->setText(QString::number(joy->axes[1])); // Left Stick y-axis
+        ui.joy_axis2_display->setText(QString::number(joy->axes[3])); // Right Stick x-axis
+        ui.joy_axis3_display->setText(QString::number(joy->axes[4])); // Right Stick y-axis
+
+        if (teleopEnabled) {
+            for (int i = 0; i < 10; i++) {
+                if (joy->buttons[i] == 1) {
+                    switch (i)
+                    {
+                    case 0:
+                        ROS_INFO("Button A has been pressed!");
+                        break;
+                    case 1:
+                        ROS_INFO("Button B has been pressed!");
+                        break;
+                    case 2:
+                        ROS_INFO("Button X has been pressed!");
+                        break;
+                    case 3:
+                        ROS_INFO("Button Y has been pressed!");
+                        break;
+                    case 4:
+                        ROS_INFO("Button LB has been pressed!");
+                        break;
+                    case 5:
+                        ROS_INFO("Button RB has been pressed!");
+                        break;
+                    case 6:
+                        ROS_INFO("Button Back has been pressed!");
+                        break;
+                    case 7:
+                        ROS_INFO("Button Start has been pressed!");
+                        break;
+                    case 8:
+                        ROS_INFO("Button Power has been pressed!");
+                        break;
+                    case 9:
+                        ROS_INFO("Button Left Stick has been pressed!");
+                        break;
+                    case 10:
+                        ROS_INFO("Button Right Stick has been pressed!");
+                        break;
+                    }
+                }
+            }
+        }
     }
 
     /* ========================================================================== */
