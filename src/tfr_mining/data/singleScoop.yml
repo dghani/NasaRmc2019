@@ -1,0 +1,14 @@
+#3.34
+#40 cm: is 1.1 of lowerArm
+#For Turntable:
+# 0 is facing towards the bin
+# -3.0 is dumping exces spot
+# -5.8 is mining spot
+#[turntable, lowerArm, upperArm, scoop]
+positions: [
+  [[0, 4.8, 1.9, 2.4], # zero position
+  [0, 3.0, 1.1, 0.3], # move over minig spot
+  [0, 2.0, 1.1, 0.3],  # stick into dirt
+  [0, 2.2, 2.5, 1.0], # pull scoop through
+  [0, 4.8, 2.5, 2.4]] # Lift Scoop up
+]
