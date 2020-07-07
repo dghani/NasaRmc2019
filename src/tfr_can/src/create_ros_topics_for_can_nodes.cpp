@@ -167,12 +167,12 @@ void setupMaxonDevice(kaco::Device& device, kaco::Bridge& bridge, std::string& e
 
     // min: 0 -> 0, 
     // max: 1024 encoder clicks * 4.3 Maxon gear * 70 worm gear = 308224 * 2 for an entire circle.   
-   // auto jspub = std::make_shared<kaco::JointStatePublisher>(device, -308224, 308224); 
- //   bridge.add_publisher(jspub, loop_rate);
+    auto jspub = std::make_shared<kaco::JointStatePublisher>(device, -308224, 308224); 
+    bridge.add_publisher(jspub, loop_rate);
     
- //   auto jssub = std::make_shared<kaco::JointStateSubscriber>(device, -308224, 308224); 
- //   bridge.add_subscriber(jssub);
-//}
+    auto jssub = std::make_shared<kaco::JointStateSubscriber>(device, -308224, 308224); 
+    bridge.add_subscriber(jssub);
+}
 
 // Usage: e.g. intToHexString(10) == "A"
 std::string intToHexString(int n)
