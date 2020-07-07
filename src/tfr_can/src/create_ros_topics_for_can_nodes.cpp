@@ -32,9 +32,8 @@ const int SERVO_CYLINDER_SPARE 	= 34;
 const int SERVO_CYLINDER_UPPER_ARM = 45;
 const int SERVO_CYLINDER_SCOOP = 56;
 const int TURNTABLE = 1;
-const int SERVO_CYLINDER_BIN_LEFT = 77; 
-const int SERVO_CYLINDER_BIN_RIGHT = 88; 
-// TODO: Add code for setting up the turntable Epos brushless motor controller.
+//const int SERVO_CYLINDER_BIN_LEFT = 77; 
+//const int SERVO_CYLINDER_BIN_RIGHT = 88; 
 
 void setupDevice4Topics(kaco::Device& device, kaco::Bridge& bridge, std::string& eds_files_path){
     // Roboteq SDC3260 in Closed Loop Count Position mode.
@@ -223,10 +222,10 @@ int main(int argc, char* argv[]) {
     resetCanopenNode(busname, SERVO_CYLINDER_LOWER_ARM);
     std::this_thread::sleep_for(std::chrono::milliseconds(250));
 	
-    resetCanopenNode(busname, SERVO_CYLINDER_BIN_LEFT);
-    std::this_thread::sleep_for(std::chrono::milliseconds(250));
+   // resetCanopenNode(busname, SERVO_CYLINDER_BIN_LEFT);
+   // std::this_thread::sleep_for(std::chrono::milliseconds(250));
 	
-    resetCanopenNode(busname, SERVO_CYLINDER_BIN_RIGHT);
+  //  resetCanopenNode(busname, SERVO_CYLINDER_BIN_RIGHT);
     //std::system("cansend " + busname + " 000#8138");
     //std::system("cansend " + busname + " 000#812D");
     //std::system("cansend " + busname + " 000#8122");
@@ -279,15 +278,15 @@ int main(int argc, char* argv[]) {
             setupServoCylinderDevice(device, bridge, eds_files_path);
         }
 		
-		if (deviceId == SERVO_CYLINDER_BIN_LEFT)
-        {
+	//	if (deviceId == SERVO_CYLINDER_BIN_LEFT)
+      //  {
             setupServoCylinderDevice(device, bridge, eds_files_path);
-        }
+     //   }
 
-		if (deviceId == SERVO_CYLINDER_BIN_RIGHT)
-        {
-            setupServoCylinderDevice(device, bridge, eds_files_path);
-        }
+	//	if (deviceId == SERVO_CYLINDER_BIN_RIGHT)
+      //  {
+     //       setupServoCylinderDevice(device, bridge, eds_files_path);
+      //  }
 		
 		if (deviceId == TURNTABLE) //THIS IS WHERE WE LOAD THE EDS LIBRARY
 	{
