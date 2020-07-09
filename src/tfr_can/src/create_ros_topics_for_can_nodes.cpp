@@ -211,6 +211,12 @@ void resetCanopenNode(std::string busname, int node_id)
 
     std::string node_id_hex = intToHexString(node_id);
 
+    // cansend expects the node ID to be 1 byte, e.g. "1" would be sent as "01".
+    // Pad the node_id to be 2 characters.
+    if (node_id_hex.length() == 1) {
+        node_id_hex = "0" + node_id_hex;
+    }
+
     std::system(("cansend " + busname + " 000#" + nmt_command_reset_node + node_id_hex).c_str());
     
     return;
