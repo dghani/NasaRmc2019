@@ -48,7 +48,6 @@ add_executable(control
 )
 add_dependencies(control  tfr_msgs_gencpp)
 target_link_libraries(control 
-  ${catkin_LIBRARIES}
 )
 
 if("$ENV{ARCH}" STREQUAL "armv7l" )
