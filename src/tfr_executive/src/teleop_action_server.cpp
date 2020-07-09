@@ -192,11 +192,6 @@ class TeleopExecutive
                             tfr_msgs::TeleopResult result;
                             server.setPreempted(result);
                             ROS_WARN("Moving arm to final position, exiting.");
-                            arm_manipulator.moveArm(0.0, 0.1, 1.07, -1.0);
-                            ros::Duration(8.0).sleep();
-                            arm_manipulator.moveArm(0.0, 0.1, 1.07, 1.6);
-                            ros::Duration(3.0).sleep();
-                            arm_manipulator.moveArm(0, 0.50, 1.07, 1.6);
                             return;
                         }
 
