@@ -164,12 +164,32 @@ void setupMaxonDevice(kaco::Device& device, kaco::Bridge& bridge, std::string& e
 
 
     // min: 0 -> 0, 
-    // max: 1024 encoder clicks * 4.3 Maxon gear * 70 worm gear = 308224 * 2 for an entire circle.   
-    auto jspub = std::make_shared<kaco::JointStatePublisher>(device, -308224, 308224); 
+    // max: 1024 encoder clicks * 4.3 Maxon gear * 70 worm gear = 308224   
+    auto jspub = std::make_shared<kaco::JointStatePublisher>(device, 0, 308224); 
     bridge.add_publisher(jspub, loop_rate);
     
-    auto jssub = std::make_shared<kaco::JointStateSubscriber>(device, -308224, 308224); 
+    auto jssub = std::make_shared<kaco::JointStateSubscriber>(device, 0, 308224); 
     bridge.add_subscriber(jssub);
+	    
+	// read/write the current position
+    auto iopub_8 = std::make_shared<kaco::EntryPublisher>(device, "Target position");
+    bridge.add_publisher(iopub_8, loop_rate);
+    
+    auto iosub_8 = std::make_shared<kaco::EntrySubscriber>(device, "Target position");
+    bridge.add_subscriber(iosub_8);
+	//Read error code						   
+    auto iopub_9 = std::make_shared<kaco::EntryPublisher>(device, "Error code");
+    bridge.add_publisher(iopub_9, loop_rate);
+    
+    auto iosub_9 = std::make_shared<kaco::EntrySubscriber>(device, "Error code");
+    bridge.add_subscriber(iosub_9);
+	// read/write CAN bit rate
+    auto iopub_10 = std::make_shared<kaco::EntryPublisher>(device, "CAN bit rate");
+    bridge.add_publisher(iopub_10, loop_rate);
+    
+    auto iosub_10 = std::make_shared<kaco::EntrySubscriber>(device, "CAN bit rate");
+    bridge.add_subscriber(iosub_10);
+	
 }
 
 // Usage: e.g. intToHexString(10) == "A"
@@ -195,6 +215,7 @@ void resetCanopenNode(std::string busname, int node_id)
     
     return;
 }
+
 
 int main(int argc, char* argv[]) {
 
