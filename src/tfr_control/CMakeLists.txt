@@ -47,7 +47,8 @@ add_executable(control
   src/robot_interface.cpp
 )
 add_dependencies(control  tfr_msgs_gencpp)
-target_link_libraries(control 
+target_link_libraries(control
+  ${catkin_LIBRARIES}
 )
 
 if("$ENV{ARCH}" STREQUAL "armv7l" )
@@ -72,6 +73,9 @@ add_executable(drivebase
 )
 target_link_libraries(drivebase ${catkin_LIBRARIES})
 add_dependencies(drivebase tfr_msgs_gencpp)
+add_executable(arm_action_server src/arm_action_server.cpp)	
+add_dependencies(arm_action_server tfr_msgs_gencpp)	
+target_link_libraries(arm_action_server
   ${catkin_LIBRARIES}
 )
 
