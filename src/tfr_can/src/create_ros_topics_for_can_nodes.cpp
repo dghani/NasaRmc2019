@@ -213,9 +213,6 @@ int main(int argc, char* argv[]) {
 
     resetCanopenNode(busname, SERVO_CYLINDER_UPPER_ARM);
     std::this_thread::sleep_for(std::chrono::milliseconds(250));
-
-    resetCanopenNode(busname, SERVO_CYLINDER_SPARE);
-    std::this_thread::sleep_for(std::chrono::milliseconds(250));
 	
     resetCanopenNode(busname, SERVO_CYLINDER_LOWER_ARM);
     std::this_thread::sleep_for(std::chrono::milliseconds(250));
@@ -224,10 +221,9 @@ int main(int argc, char* argv[]) {
    std::this_thread::sleep_for(std::chrono::milliseconds(250));
 	
     resetCanopenNode(busname, SERVO_CYLINDER_BIN_RIGHT);
-    //std::system("cansend " + busname + " 000#8138");
-    //std::system("cansend " + busname + " 000#812D");
-    //std::system("cansend " + busname + " 000#8122");
-    //std::system("cansend " + busname + " 000#8117");
+    std::this_thread::sleep_for(std::chrono::milliseconds(250));
+	
+    resetCanopenNode(busname, TURNTABLE);
 
 	while (master.num_devices()<num_devices_required) {
 		ERROR("Number of devices found: " << master.num_devices() << ". Waiting for " << num_devices_required << ".");
@@ -257,11 +253,6 @@ int main(int argc, char* argv[]) {
 		int deviceId = device.get_node_id();
 
         if (deviceId == SERVO_CYLINDER_LOWER_ARM)
-        {
-            setupServoCylinderDevice(device, bridge, eds_files_path);
-        }
-		
-		if (deviceId == SERVO_CYLINDER_SPARE)
         {
             setupServoCylinderDevice(device, bridge, eds_files_path);
         }
