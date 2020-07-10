@@ -20,7 +20,7 @@ const std::string busname = "can1";
 // "1M", "500K", "125K", "100K", "50K", "20K", "10K" and "5K".
 const std::string baudrate = "250K";
 
-const size_t num_devices_required = 5;
+const size_t num_devices_required = 6;
 
 const double loop_rate = 10; // 10 Hz
 const int slow_loop_rate = 1; // 1 Hz
@@ -29,7 +29,7 @@ const int slow_loop_rate = 1; // 1 Hz
 const int SERVO_CYLINDER_LOWER_ARM = 23;
 const int SERVO_CYLINDER_UPPER_ARM = 45;
 const int SERVO_CYLINDER_SCOOP = 56;
-const int TURNTABLE = 1;
+const int TURNTABLE = 10;
 const int SERVO_CYLINDER_BIN_LEFT = 77; 
 const int SERVO_CYLINDER_BIN_RIGHT = 88; 
 
@@ -210,12 +210,6 @@ void resetCanopenNode(std::string busname, int node_id)
     const std::string nmt_command_reset_communication = "82";
 
     std::string node_id_hex = intToHexString(node_id);
-
-    // cansend expects the node ID to be 1 byte, e.g. "1" would be sent as "01".
-    // Pad the node_id to be 2 characters.
-    if (node_id_hex.length() == 1) {
-        node_id_hex = "0" + node_id_hex;
-    }
 
     std::system(("cansend " + busname + " 000#" + nmt_command_reset_node + node_id_hex).c_str());
     
