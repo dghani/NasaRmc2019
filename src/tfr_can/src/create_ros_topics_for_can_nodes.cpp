@@ -29,7 +29,7 @@ const int slow_loop_rate = 1; // 1 Hz
 const int SERVO_CYLINDER_LOWER_ARM = 23;
 const int SERVO_CYLINDER_UPPER_ARM = 45;
 const int SERVO_CYLINDER_SCOOP = 56;
-const int TURNTABLE = 10;
+const int TURNTABLE = 1;
 const int SERVO_CYLINDER_BIN_LEFT = 77; 
 const int SERVO_CYLINDER_BIN_RIGHT = 88; 
 
@@ -242,9 +242,6 @@ int main(int argc, char* argv[]) {
    std::this_thread::sleep_for(std::chrono::milliseconds(250));
 	
     resetCanopenNode(busname, SERVO_CYLINDER_BIN_RIGHT);
-    std::this_thread::sleep_for(std::chrono::milliseconds(250));
-	
-    resetCanopenNode(busname, TURNTABLE);
 
 	while (master.num_devices()<num_devices_required) {
 		ERROR("Number of devices found: " << master.num_devices() << ". Waiting for " << num_devices_required << ".");
