@@ -9,26 +9,29 @@
 #include <thread>
 #include <chrono>
 #include <memory>
+#include <iomanip>
 
 //#include <ros/package.h> // for looking up the location of the current package, in order to find our EDS files.
 //#include <ros>
 
-// Set the name of your CAN bus. "slcan0" is a common bus name
-// for the first SocketCAN device on a Linux system.
 const std::string busname = "can1";
 
 // Set the baudrate of your CAN bus. Most drivers support the values
 // "1M", "500K", "125K", "100K", "50K", "20K", "10K" and "5K".
 const std::string baudrate = "250K";
 
-const size_t num_devices_required = 1;
+const size_t num_devices_required = 3;
 
- // Hz of pulling data for CAN. For drivetrain, Circumfrence/refresh rate = the resolution we can react to. Encoder is 32 ppr, so best to be division of 32. 
-// If 64 hz: ~1.4cm, 32 hz: 2.8 cm etc. *lower values improve performance*
+const double loop_rate = 10; // 10 Hz
+const int slow_loop_rate = 1; // 1 Hz
 
-const double loop_rate = 64;
-
+// CANopen node IDs:
 const int IMU_NODE_ID = 120;
+const int SERVO_CYLINDER_LOWER_ARM = 23;
+const int SERVO_CYLINDER_SPARE 	= 34;
+const int SERVO_CYLINDER_UPPER_ARM = 45;
+const int SERVO_CYLINDER_SCOOP = 56;
+// TODO: Add code for setting up the turntable Epos brushless motor controller.
 
 void setupDevice4Topics(kaco::Device& device, kaco::Bridge& bridge, std::string& eds_files_path){
     // Roboteq SDC3260 in Closed Loop Count Position mode.
@@ -72,6 +75,106 @@ void setupDevice4Topics(kaco::Device& device, kaco::Bridge& bridge, std::string&
 	bridge.add_subscriber(iopub_4_3_4);
 }
 
+// initialize the topics for any Servo Cylinder actuator (must be 5.75" stroke length)
+void setupServoCylinderDevice(kaco::Device& device, kaco::Bridge& bridge, std::string& eds_files_path)
+{
+    
+    device.load_dictionary_from_library();
+    
+    device.load_dictionary_from_eds(eds_files_path + "SC_MC630R11_v_0_7_OD.eds");
+    
+    PRINT("Set position mode");
+    device.set_entry("modes_of_operation", device.get_constant("profile_position_mode"));
+
+    PRINT("Enable operation");
+    device.execute("enable_operation");
+
+
+	// min: 0 -> 0, 
+	// max: 47104 -> 6.28==2pi
+    auto jspub = std::make_shared<kaco::JointStatePublisher>(device, 0, 47104); 
+    bridge.add_publisher(jspub, loop_rate);
+    
+    auto jssub = std::make_shared<kaco::JointStateSubscriber>(device, 0, 47104);
+    bridge.add_subscriber(jssub);
+    
+    // read the current torque value
+    auto iopub_1 = std::make_shared<kaco::EntryPublisher>(device, "torque_actual_value");
+    bridge.add_publisher(iopub_1, loop_rate);
+    
+    auto iosub_1 = std::make_shared<kaco::EntrySubscriber>(device, "torque_actual_value");
+    bridge.add_subscriber(iosub_1);
+    
+    // read/write the max allowed torque value
+    auto iopub_2 = std::make_shared<kaco::EntryPublisher>(device, "max_torque");
+    bridge.add_publisher(iopub_2, slow_loop_rate);
+    
+    auto iosub_2 = std::make_shared<kaco::EntrySubscriber>(device, "max_torque");
+    bridge.add_subscriber(iosub_2);
+    
+    
+    // read the current velocity value
+    auto iopub_3 = std::make_shared<kaco::EntryPublisher>(device, "velocity_actual_value");
+    bridge.add_publisher(iopub_3, loop_rate);
+    
+    // read/write max speed
+    auto iopub_4 = std::make_shared<kaco::EntryPublisher>(device, "profile_velocity");
+    bridge.add_publisher(iopub_4, slow_loop_rate);
+    
+    auto iosub_4 = std::make_shared<kaco::EntrySubscriber>(device, "profile_velocity");
+    bridge.add_subscriber(iosub_4);
+    
+
+    // read/write heartbeat time interval in milliseconds
+    auto iopub_5 = std::make_shared<kaco::EntryPublisher>(device, "producer_heartbeat_time");
+    bridge.add_publisher(iopub_5, slow_loop_rate);
+    
+    auto iosub_5 = std::make_shared<kaco::EntrySubscriber>(device, "producer_heartbeat_time");
+    bridge.add_subscriber(iosub_5);
+    
+    
+    // profile_acceleration
+    auto iopub_6 = std::make_shared<kaco::EntryPublisher>(device, "profile_acceleration");
+    bridge.add_publisher(iopub_6, slow_loop_rate);
+    
+    auto iosub_6 = std::make_shared<kaco::EntrySubscriber>(device, "profile_acceleration");
+    bridge.add_subscriber(iosub_6);
+    
+    
+    // profile_deceleration
+    auto iopub_7 = std::make_shared<kaco::EntryPublisher>(device, "profile_deceleration");
+    bridge.add_publisher(iopub_7, slow_loop_rate);
+    
+    auto iosub_7 = std::make_shared<kaco::EntrySubscriber>(device, "profile_deceleration");
+    bridge.add_subscriber(iosub_7);
+}
+
+
+
+// Usage: e.g. intToHexString(10) == "A"
+std::string intToHexString(int n)
+{
+    std::stringstream stream;
+    stream << std::hex << n;
+    std::string result( stream.str() );
+
+    return result;
+}
+
+void resetCanopenNode(std::string busname, int node_id)
+{ 
+    // For reference on the "reset node" message, see: 
+    //  https://en.wikipedia.org/wiki/CANopen#Network_management_(NMT)_protocols
+    const std::string nmt_command_reset_node = "81";
+    const std::string nmt_command_reset_communication = "82";
+
+    std::string node_id_hex = intToHexString(node_id);
+
+    std::system(("cansend " + busname + " 000#" + nmt_command_reset_node + node_id_hex).c_str());
+    
+    return;
+}
+
 int main(int argc, char* argv[]) {
 
 	
@@ -81,8 +184,25 @@ int main(int argc, char* argv[]) {
 		return EXIT_FAILURE;
 	}
 
-	std::this_thread::sleep_for(std::chrono::seconds(1));
+    std::this_thread::sleep_for(std::chrono::seconds(1));
 	
+    // send the CANopen "reset node" message to each of the servo cylinder actuators. This is done because the actuators send out one heartbeart message when they are powered on or reset. We send the messages here so that Kacanopen will see the heartbeat from  each actuators and realize that they are there.
+    resetCanopenNode(busname, SERVO_CYLINDER_SCOOP);
+    std::this_thread::sleep_for(std::chrono::milliseconds(250));
+
+    resetCanopenNode(busname, SERVO_CYLINDER_UPPER_ARM);
+    std::this_thread::sleep_for(std::chrono::milliseconds(250));
+
+    resetCanopenNode(busname, SERVO_CYLINDER_SPARE);
+    std::this_thread::sleep_for(std::chrono::milliseconds(250));
+
+    resetCanopenNode(busname, SERVO_CYLINDER_LOWER_ARM);
+
+    //std::system("cansend " + busname + " 000#8138");
+    //std::system("cansend " + busname + " 000#812D");
+    //std::system("cansend " + busname + " 000#8122");
+    //std::system("cansend " + busname + " 000#8117");
+
 	while (master.num_devices()<num_devices_required) {
 		ERROR("Number of devices found: " << master.num_devices() << ". Waiting for " << num_devices_required << ".");
 		//PRINT("Trying to discover more nodes via NMT Node Guarding...");
@@ -109,6 +229,26 @@ int main(int argc, char* argv[]) {
 		}
 		
 		int deviceId = device.get_node_id();
+
+        if (deviceId == SERVO_CYLINDER_LOWER_ARM)
+        {
+            setupServoCylinderDevice(device, bridge, eds_files_path);
+        }
+		
+		if (deviceId == SERVO_CYLINDER_SPARE)
+        {
+            setupServoCylinderDevice(device, bridge, eds_files_path);
+        }
+		
+		if (deviceId == SERVO_CYLINDER_UPPER_ARM)
+        {
+            setupServoCylinderDevice(device, bridge, eds_files_path);
+        }
+		
+		if (deviceId == SERVO_CYLINDER_SCOOP)
+        {
+            setupServoCylinderDevice(device, bridge, eds_files_path);
+        }
 
 		if (deviceId == 4)
 		{
