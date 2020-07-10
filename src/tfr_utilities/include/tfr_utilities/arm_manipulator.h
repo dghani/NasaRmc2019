@@ -50,6 +50,7 @@ class ArmManipulator
 
         // These publishers do NOT go through ros_control.
         // They send messages to the topics created bt the can_bus node in tfr_can.
+        ros::Publisher turntable_publisher;
         ros::Publisher lower_arm_publisher;
         ros::Publisher upper_arm_publisher;
         ros::Publisher scoop_publisher;

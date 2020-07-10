@@ -4,6 +4,7 @@ ArmManipulator::ArmManipulator(ros::NodeHandle &n, bool init_joints):
             arm_action_client{n, "move_arm"},
             trajectory_publisher{n.advertise<std_msgs::Float64MultiArray>("/arm_controller/command", 5)},
             scoop_trajectory_publisher{n.advertise<std_msgs::Float64MultiArray>("/arm_end_controller/command", 5)},
+            turntable_publisher{n.advertise<sensor_msgs::JointState>("/device1/set_joint_state", 5)},
             lower_arm_publisher{n.advertise<sensor_msgs::JointState>("/device23/set_joint_state", 5)},
             upper_arm_publisher{n.advertise<sensor_msgs::JointState>("/device45/set_joint_state", 5)},
             scoop_publisher{n.advertise<sensor_msgs::JointState>("/device56/set_joint_state", 5)}
@@ -88,26 +89,26 @@ void ArmManipulator::moveArmWithoutPlanningOrLimits(
 {
     ROS_INFO_STREAM("moveArmWithoutPlanningOrLimits() called by: " << ros::this_node::getName() << ". Parameters: " << turntable << ", " << lower_arm << ", " << upper_arm << ", " << scoop << std::endl);
 
-    // TODO: No value for the turntable is sent!
-
+    sensor_msgs::JointState turntable_joint_state;
     sensor_msgs::JointState lower_arm_joint_state;
     sensor_msgs::JointState upper_arm_joint_state;
     sensor_msgs::JointState scoop_joint_state;
 
     auto current_time = ros::Time::now();
 
-    //lower_arm_joint_state.name.push_back("/device23/set_joint_state");
+    turntable_joint_state.header.stamp = current_time;
+    turntable_joint_state.position.push_back(turntable);
+
     lower_arm_joint_state.header.stamp = current_time;
     lower_arm_joint_state.position.push_back(lower_arm);
 
-    //upper_arm_joint_state.name.push_back("/device45/set_joint_state");
     upper_arm_joint_state.header.stamp = current_time;
     upper_arm_joint_state.position.push_back(upper_arm);
 
-    //scoop_joint_state.name.push_back("/device56/set_joint_state");
     scoop_joint_state.header.stamp = current_time;
     scoop_joint_state.position.push_back(scoop);
 
+    turntable_publisher.publish(turntable_joint_state);
     lower_arm_publisher.publish(lower_arm_joint_state);
     upper_arm_publisher.publish(upper_arm_joint_state);
     scoop_publisher.publish(scoop_joint_state);
