@@ -1,14 +1,5 @@
-#This file represents the parameters for sensor fusion, it has not been tuned
-#yet or optinmized in any way, and is designed to be bare bones
-#go here for more detailed documentation - https://github.com/cra-ros-pkg/robot_localization/blob/kinetic-devel/params/ekf_template.yaml
-
-#We also have not delved into covariances at all, and this is still //TODO
-#We are getting information from fiducial_odom_publisher on covariances but we are not using it here.
-#IMU and drivebase_odom_publisher is also providing covariance information. 
-
-#This is the frequency in Hz, this outputs a position estimate. Every 1/5 of a second 
-#outputting at pretty low frequency
-frequency: 5 
+#This is the frequency in Hz, this outputs a position estimate. 
+frequency: 32
 
 #These are all map variable definations for the kalman filter.
 #stock settings for robots without gps and no big hills
@@ -18,19 +9,15 @@ world_frame: odom
 two_d_mode: true
 sensor_timeout: 0.5
 transform_timeout: 0.4
+debug: false
 
-#push all of this information to the transform node
+#push all of this information to the transform node360
 #this is the most reliable position we want to use so we want this to publish
 #tf, and no one else for the odom->base_footprint transform
 publish_tf: true
 
 #outputs debugging information on /diagnostics topic
 print_diagnostics: true
-
-
-#NOTE: the imus have to be set to differential because they put out rotation
-#data (and odom does as well). You can only have one absolute rotation for 
-#stable output
 
 #NOTE: I also don't do any outlier removal or thresholding, it doesn't play
 #well with fiducial odometry
@@ -41,15 +28,19 @@ print_diagnostics: true
 #This is messaging the change in yaw over time.
 imu0: /sensors/imu
 imu0_config: [false, false, false,
-              false,  false,  true,
+              false,  false,  false,
               false, false, false,
               false,  false,  true,
               false,  false,  false]
-imu0_differential: true
-imu0_relative: false
+imu0_differential: false
+imu0_nodelay: false
+imu0_relative: true
 #outputs at ~50 hz whic is >> than fusion hz (10) so we need a big queue
-imu0_queue_size: 80  
+imu0_queue_size: 32
 imu0_remove_gravitational_acceleration: true
+imu0_pose_rejection_threshold: 0.8        
+imu0_twist_rejection_threshold: 0.8                
+imu0_linear_acceleration_rejection_threshold: 0.8  
 
 #basic 2d configuration for the fiducial odom publisher we don't use it's
 #velocity, because it is very unreliable, and we get good velocity 
@@ -59,37 +50,36 @@ imu0_remove_gravitational_acceleration: true
 #It records x and y position because it can do that using geometry.
 #It records yaw because based off the position of the navigational marker, it has to know how it is facing. 
 odom0: /fiducial_odom
-odom0_config: [true,  true, false,
-               false, false,  true,
+odom0_config: [false,  false, false,
+               false, false,  false,
                false, false, false,
                false,  false,  false,
                false,  false,  false]
 odom0_differential:  false
 odom0_relative: false
-odom0_queue_size: 10
+odom0_queue_size: 2
 
 #This is the drivebase controller. 
-#This is also mesuring the change in yaw over time to counteract error. 
+#This is also measuring the change in yaw over time to counteract error. 
 odom1: /drivebase_odom
 odom1_config: [true, true,  false,
                false, false,  true,
-               true, true, false,
-               false,  false,  true,
+               false, false, false,
+               false,  false,  false,
                false,  false,  false]
 odom1_differential: false 
 odom1_relative: false
-odom1_queue_size: 10
-
-
+odom1_queue_size: 16
+odom1_nodelay: false
+use_control: true
+control_config: [true, false, false, false, false, true]
     ## Whether or not we use the control input during predicition. Defaults to false.
-    #use_control: true
     ## Whether the input (assumed to be cmd_vel) is a geometry_msgs/Twist or geometry_msgs/TwistStamped message. Defaults to
     ## false.
     #stamped_control: false
     ## The last issued control command will be used in prediction for this period. Defaults to 0.2.
     #control_timeout: 0.5
     ## Which velocities are being controlled. Order is vx, vy, vz, vroll, vpitch, vyaw.
-    #control_config: [true, false, false, false, false, true]
     ## Places limits on how large the acceleration term will be. Should match your robot's kinematics.
     #acceleration_limits: [0.4, 0.0, 0.0, 0.0, 0.0, 0.9]
     ## Acceleration and deceleration limits are not always the same for robots.
@@ -101,3 +91,50 @@ odom1_queue_size: 10
     ## If your robot cannot instantaneously reach its deceleration limit, the permitted change can be controlled with these
     ## gains
     #deceleration_gains: [1.0, 0.0, 0.0, 0.0, 0.0, 1.0]
+    
+    # [ADVANCED] The process noise covariance matrix can be difficult to tune, and can vary for each application, so it is
+    # exposed as a configuration parameter. This matrix represents the noise we add to the total error after each
+    # prediction step. The better the omnidirectional motion model matches your system, the smaller these values can be.
+    # However, if users find that a given variable is slow to converge, one approach is to increase the
+    # process_noise_covariance diagonal value for the variable in question, which will cause the filter's predicted error
+    # to be larger, which will cause the filter to trust the incoming measurement more during correction. The values are
+    # ordered as x, y, z, roll, pitch, yaw, vx, vy, vz, vroll, vpitch, vyaw, ax, ay, az. Defaults to the matrix below if
+    # unspecified. (this is not the default anymore, Brad changed it).
+
+process_noise_covariance: [0.05, 0,    0,    0,    0,    0,    0,     0,     0,    0,    0,    0,    0,    0,    0,  #x
+                           0,    0.05, 0,    0,    0,    0,    0,     0,     0,    0,    0,    0,    0,    0,    0,  #y
+                           0,    0,    0,    0,    0,    0,    0,     0,     0,    0,    0,    0,    0,    0,    0,  #z
+                           0,    0,    0,    0,    0,    0,    0,     0,     0,    0,    0,    0,    0,    0,    0,  #roll
+                           0,    0,    0,    0,    0,    0,    0,     0,     0,    0,    0,    0,    0,    0,    0,  #pitch
+                           0,    0,    0,    0,    0,    0.01, 0,     0,     0,    0,    0,    0,    0,    0,    0,  #yaw
+                           0,    0,    0,    0,    0,    0,    0,     0,     0,    0,    0,    0,    0,    0,    0,  #vx
+                           0,    0,    0,    0,    0,    0,    0,     0,     0,    0,    0,    0,    0,    0,    0,  #vy
+                           0,    0,    0,    0,    0,    0,    0,     0,     0,    0,    0,    0,    0,    0,    0,  #vz
+                           0,    0,    0,    0,    0,    0,    0,     0,     0,    0,    0,    0,    0,    0,    0,  #vroll
+                           0,    0,    0,    0,    0,    0,    0,     0,     0,    0,    0,    0,    0,    0,    0,  #vpitch
+                           0,    0,    0,    0,    0,    0,    0,     0,     0,    0,    0,    0.03, 0,    0,    0,  #vyaw
+                           0,    0,    0,    0,    0,    0,    0,     0,     0,    0,    0,    0,    0,    0,    0,  #ax
+                           0,    0,    0,    0,    0,    0,    0,     0,     0,    0,    0,    0,    0,    0,    0,  #ay
+                           0,    0,    0,    0,    0,    0,    0,     0,     0,    0,    0,    0,    0,    0,    0]  #az
+
+    # [ADVANCED] This represents the initial value for the state estimate error covariance matrix. Setting a diagonal
+    # value (variance) to a large value will result in rapid convergence for initial measurements of the variable in
+    # question. Users should take care not to use large values for variables that will not be measured directly. The values
+    # are ordered as x, y, z, roll, pitch, yaw, vx, vy, vz, vroll, vpitch, vyaw, ax, ay, az. Defaults to the matrix below
+    # if unspecified.
+
+initial_estimate_covariance: [1e-9, 0,    0,    0,    0,    0,    0,    0,    0,    0,     0,     0,     0,    0,    0,
+                              0,    1e-9, 0,    0,    0,    0,    0,    0,    0,    0,     0,     0,     0,    0,    0,
+                              0,    0,    1e-9, 0,    0,    0,    0,    0,    0,    0,     0,     0,     0,    0,    0,
+                              0,    0,    0,    1e-9, 0,    0,    0,    0,    0,    0,     0,     0,     0,    0,    0,
+                              0,    0,    0,    0,    1e-9, 0,    0,    0,    0,    0,     0,     0,     0,    0,    0,
+                              0,    0,    0,    0,    0,    1e-9, 0,    0,    0,    0,     0,     0,     0,    0,    0,
+                              0,    0,    0,    0,    0,    0,    1e-9, 0,    0,    0,     0,     0,     0,    0,    0,
+                              0,    0,    0,    0,    0,    0,    0,    1e-9, 0,    0,     0,     0,     0,    0,    0,
+                              0,    0,    0,    0,    0,    0,    0,    0,    1e-9, 0,     0,     0,     0,    0,    0,
+                              0,    0,    0,    0,    0,    0,    0,    0,    0,    1e-9,  0,     0,     0,    0,    0,
+                              0,    0,    0,    0,    0,    0,    0,    0,    0,    0,     1e-9,  0,     0,    0,    0,
+                              0,    0,    0,    0,    0,    0,    0,    0,    0,    0,     0,     1e-9,  0,    0,    0,
+                              0,    0,    0,    0,    0,    0,    0,    0,    0,    0,     0,     0,     1e-9, 0,    0,
+                              0,    0,    0,    0,    0,    0,    0,    0,    0,    0,     0,     0,     0,    1e-9, 0,
+                              0,    0,    0,    0,    0,    0,    0,    0,    0,    0,     0,     0,     0,    0,    1e-9]
