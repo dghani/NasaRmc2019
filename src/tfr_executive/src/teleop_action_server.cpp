@@ -247,26 +247,14 @@ class TeleopExecutive
                 case (tfr_utilities::TeleopCode::CLOCKWISE):
                     {
                         ROS_INFO("Teleop Action Server: Command Recieved, CLOCKWISE");
-                        stop_arm_movement();
-                        int effort = 1;
-                        if (not ros::param::getCached("~turntable_effort", effort)) {effort = 1;}
-						ROS_INFO("Writing effort: %d", effort);
-                        std_msgs::Int32 msg;
-                        msg.data = -effort;
-                        turntable_pub.publish(msg);
+                        arm_manipulator.moveTurntablePosition(3.93); // 225 degrees
                         break;
                     }
 
                 case (tfr_utilities::TeleopCode::COUNTERCLOCKWISE):
                     {
                         ROS_INFO("Teleop Action Server: Command Recieved, COUNTERCLOCKWISE");
-                        stop_arm_movement();
-                        int effort = 1;
-                        if (not ros::param::getCached("~turntable_effort", effort)) {effort = 1;}
-						ROS_INFO("Writing effort: %d", effort);
-                        std_msgs::Int32 msg;
-                        msg.data = effort;
-                        turntable_pub.publish(msg);
+                        arm_manipulator.moveTurntablePosition(3.14); // 180 degrees
                         break;
                     }
                     
