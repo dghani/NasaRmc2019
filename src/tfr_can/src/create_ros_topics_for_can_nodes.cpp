@@ -182,31 +182,7 @@ void setupMaxonDevice(kaco::Device& device, kaco::Bridge& bridge, std::string& e
     bridge.add_publisher(jspub, loop_rate);
     
     auto jssub = std::make_shared<kaco::JointStateSubscriber>(device, -308224, 308224); 
-    bridge.add_subscriber(jssub);
-	    
-	// read/write the current position
-    auto iopub_10 = std::make_shared<kaco::EntryPublisher>(device, "Target position");
-    bridge.add_publisher(iopub_10, loop_rate);
-    
-    auto iosub_10 = std::make_shared<kaco::EntrySubscriber>(device, "Target position");
-    bridge.add_subscriber(iosub_10);
-	//Read error code						   
-    auto iopub_11 = std::make_shared<kaco::EntryPublisher>(device, "Error code");
-    bridge.add_publisher(iopub_11, loop_rate);
-	
-	// read/write CAN bit rate
-    auto iopub_12 = std::make_shared<kaco::EntryPublisher>(device, "CAN bit rate");
-    bridge.add_publisher(iopub_12, loop_rate);
-    
-    auto iosub_12 = std::make_shared<kaco::EntrySubscriber>(device, "CAN bit rate");
-    bridge.add_subscriber(iosub_12);
-	
-	//Might be able to clear error state with this		  
-    auto iopub_13 = std::make_shared<kaco::EntryPublisher>(device, "Internal error control");
-    bridge.add_publisher(iopub_13, loop_rate);
-    
-    auto iosub_13 = std::make_shared<kaco::EntrySubscriber>(device, "Internal error control");
-    bridge.add_subscriber(iosub_13);			 
+    bridge.add_subscriber(jssub);		 
 	
 }
 
