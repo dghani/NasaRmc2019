@@ -123,7 +123,6 @@ void setupServoCylinderDevice(kaco::Device& device, kaco::Bridge& bridge, std::s
     
     auto iosub_4 = std::make_shared<kaco::EntrySubscriber>(device, "profile_velocity");
     bridge.add_subscriber(iosub_4);
-    
 
     // read/write heartbeat time interval in milliseconds
     auto iopub_5 = std::make_shared<kaco::EntryPublisher>(device, "producer_heartbeat_time");
@@ -131,7 +130,6 @@ void setupServoCylinderDevice(kaco::Device& device, kaco::Bridge& bridge, std::s
     
     auto iosub_5 = std::make_shared<kaco::EntrySubscriber>(device, "producer_heartbeat_time");
     bridge.add_subscriber(iosub_5);
-    
     
     // profile_acceleration
     auto iopub_6 = std::make_shared<kaco::EntryPublisher>(device, "profile_acceleration");
@@ -147,6 +145,21 @@ void setupServoCylinderDevice(kaco::Device& device, kaco::Bridge& bridge, std::s
     
     auto iosub_7 = std::make_shared<kaco::EntrySubscriber>(device, "profile_deceleration");
     bridge.add_subscriber(iosub_7);
+	
+  //Set minimum stroke
+    auto iopub_8 = std::make_shared<kaco::EntryPublisher>(device, "minimum_position_limit");
+    bridge.add_publisher(iopub_8, slow_loop_rate);
+	
+    auto iosub_8 = std::make_shared<kaco::EntrySubscriber>(device, "minimum_position_limit");
+    bridge.add_subscriber(iosub_8);
+	
+	//Set maximum stroke
+    auto iopub_9 = std::make_shared<kaco::EntryPublisher>(device, "maximum_position_limit");
+    bridge.add_publisher(iopub_9, slow_loop_rate);
+	
+auto iosub_9 = std::make_shared<kaco::EntrySubscriber>(device, "maximum_position_limit");
+    bridge.add_subscriber(iosub_9);
+	
 }
 
 void setupMaxonDevice(kaco::Device& device, kaco::Bridge& bridge, std::string& eds_files_path)
@@ -172,23 +185,27 @@ void setupMaxonDevice(kaco::Device& device, kaco::Bridge& bridge, std::string& e
     bridge.add_subscriber(jssub);
 	    
 	// read/write the current position
-    auto iopub_8 = std::make_shared<kaco::EntryPublisher>(device, "Target position");
-    bridge.add_publisher(iopub_8, loop_rate);
-    
-    auto iosub_8 = std::make_shared<kaco::EntrySubscriber>(device, "Target position");
-    bridge.add_subscriber(iosub_8);
-	//Read error code						   
-    auto iopub_9 = std::make_shared<kaco::EntryPublisher>(device, "Error code");
-    bridge.add_publisher(iopub_9, loop_rate);
-    
-    auto iosub_9 = std::make_shared<kaco::EntrySubscriber>(device, "Error code");
-    bridge.add_subscriber(iosub_9);
-	// read/write CAN bit rate
-    auto iopub_10 = std::make_shared<kaco::EntryPublisher>(device, "CAN bit rate");
+    auto iopub_10 = std::make_shared<kaco::EntryPublisher>(device, "Target position");
     bridge.add_publisher(iopub_10, loop_rate);
     
-    auto iosub_10 = std::make_shared<kaco::EntrySubscriber>(device, "CAN bit rate");
+    auto iosub_10 = std::make_shared<kaco::EntrySubscriber>(device, "Target position");
     bridge.add_subscriber(iosub_10);
+	//Read error code						   
+    auto iopub_11 = std::make_shared<kaco::EntryPublisher>(device, "Error code");
+    bridge.add_publisher(iopub_11, loop_rate);
+
+	// read/write CAN bit rate
+    auto iopub_12 = std::make_shared<kaco::EntryPublisher>(device, "CAN bit rate");
+    bridge.add_publisher(iopub_12, loop_rate);
+    
+    auto iosub_12 std::make_shared<kaco::EntrySubscriber>(device, "CAN bit rate");
+    bridge.add_subscriber(iosub_12);
+	//Might be able to clear error state with this		  
+    auto iopub_13 = std::make_shared<kaco::EntryPublisher>(device, "Internal error control");
+    bridge.add_publisher(iopub_13, loop_rate);
+    
+    auto iosub_13 std::make_shared<kaco::EntrySubscriber>(device, "Internal error control");
+    bridge.add_subscriber(iosub_13);			 
 	
 }
 
