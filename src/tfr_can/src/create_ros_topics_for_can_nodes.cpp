@@ -193,18 +193,19 @@ void setupMaxonDevice(kaco::Device& device, kaco::Bridge& bridge, std::string& e
 	//Read error code						   
     auto iopub_11 = std::make_shared<kaco::EntryPublisher>(device, "Error code");
     bridge.add_publisher(iopub_11, loop_rate);
-
+	
 	// read/write CAN bit rate
     auto iopub_12 = std::make_shared<kaco::EntryPublisher>(device, "CAN bit rate");
     bridge.add_publisher(iopub_12, loop_rate);
     
-    auto iosub_12 std::make_shared<kaco::EntrySubscriber>(device, "CAN bit rate");
+    auto iosub_12 = std::make_shared<kaco::EntrySubscriber>(device, "CAN bit rate");
     bridge.add_subscriber(iosub_12);
+	
 	//Might be able to clear error state with this		  
     auto iopub_13 = std::make_shared<kaco::EntryPublisher>(device, "Internal error control");
     bridge.add_publisher(iopub_13, loop_rate);
     
-    auto iosub_13 std::make_shared<kaco::EntrySubscriber>(device, "Internal error control");
+    auto iosub_13 = std::make_shared<kaco::EntrySubscriber>(device, "Internal error control");
     bridge.add_subscriber(iosub_13);			 
 	
 }
