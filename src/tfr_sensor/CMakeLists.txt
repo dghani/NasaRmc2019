@@ -7,7 +7,7 @@ project(tfr_sensor)
 
 add_compile_options(-std=c++14)
 
-find_package(OpenCV 3 REQUIRED)
+find_package(OpenCV 3.4.6 REQUIRED)
 
 find_package(catkin REQUIRED COMPONENTS
     cv_bridge
