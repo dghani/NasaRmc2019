@@ -154,54 +154,7 @@ class TeleopExecutive
             auto code = static_cast<tfr_utilities::TeleopCode>(goal->code);
             switch(code)
             {
-				case (tfr_utilities::TeleopCode::RESET_ENCODER_COUNTS_TO_START):
-				{	
-				    ROS_INFO("Teleop Action Server: Command Recieved, RESET ENCODERS");
-					std_msgs::Int32 turntable_encoder_msg;
-					std_msgs::Int32 lower_arm_encoder_msg;
-					std_msgs::Int32 upper_arm_encoder_msg;
-					std_msgs::Int32 scoop_encoder_msg;
-					
-					const int32_t turntable_encoder_starting_count = 0;
-					const int32_t lower_arm_encoder_starting_count = 887;
-					const int32_t upper_arm_encoder_starting_count = 836;
-					const int32_t scoop_encoder_starting_count = 1721;
-					
-					turntable_encoder_msg.data = turntable_encoder_starting_count;
-					lower_arm_encoder_msg.data = lower_arm_encoder_starting_count;
-					upper_arm_encoder_msg.data = upper_arm_encoder_starting_count;
-					scoop_encoder_msg.data = scoop_encoder_starting_count;
-					
-					turntable_encoder_publisher.publish(turntable_encoder_msg);
-		            lower_arm_encoder_publisher.publish(lower_arm_encoder_msg);
-		            upper_arm_encoder_publisher.publish(upper_arm_encoder_msg);
-		            scoop_encoder_publisher.publish(scoop_encoder_msg);
-		           
-		            tfr_msgs::ArmMoveGoal goal;
-		            goal.pose = std::vector<double> {3.14, 0.11, 1.08, -1.17, 0};
-		            
-		            arm_client.sendGoal(goal);
-                    ros::Rate rate(10.0);
-
-                    while (!arm_client.getState().isDone() && ros::ok())
-                    {
-                        if (server.isPreemptRequested() || !ros::ok())
-                        {
-                            ROS_INFO("Preempting digging action server");
-                            arm_client.cancelAllGoals();
-                            tfr_msgs::TeleopResult result;
-                            server.setPreempted(result);
-                            ROS_WARN("Moving arm to final position, exiting.");
-                            return;
-                        }
-
-
-                        rate.sleep();
-                    }
-					
-					break;
-					
-				}
+				
                 case (tfr_utilities::TeleopCode::STOP_DRIVEBASE):
                     {
                         ROS_INFO("Teleop Action Server: Command Recieved, STOP_DRIVEBASE");
@@ -247,27 +200,21 @@ class TeleopExecutive
                 case (tfr_utilities::TeleopCode::CLOCKWISE):
                     {
                         ROS_INFO("Teleop Action Server: Command Recieved, CLOCKWISE");
-                        arm_manipulator.moveTurntablePosition(3.93); // 225 degrees
+                        arm_manipulator.moveTurntablePosition(0.01); // Move arm from back to front
                         break;
                     }
 
                 case (tfr_utilities::TeleopCode::COUNTERCLOCKWISE):
                     {
                         ROS_INFO("Teleop Action Server: Command Recieved, COUNTERCLOCKWISE");
-                        arm_manipulator.moveTurntablePosition(3.14); // 180 degrees
+                        arm_manipulator.moveTurntablePosition(3.14); // Move arm from front to back
                         break;
                     }
                     
                 case (tfr_utilities::TeleopCode::LOWER_ARM_EXTEND):
                     {
                         ROS_INFO("Teleop Action Server: Command Recieved, LOWER_ARM_EXTEND");
-                        stop_bin_movement();
-						int effort = 1;
-                        if (not ros::param::getCached("~arm_lower_effort", effort)) {effort = 1;}
-						ROS_INFO("Writing effort: %d", effort);
-                        std_msgs::Int32 msg;
-                        msg.data = effort;
-                        lower_arm_pub.publish(msg);
+			arm_manipulator.moveLowerArmPosition(1.6); // Move lower arm to a low position
                         break;
                     }
                     
@@ -275,61 +222,36 @@ class TeleopExecutive
                 case (tfr_utilities::TeleopCode::LOWER_ARM_RETRACT):
                     {
                         ROS_INFO("Teleop Action Server: Command Recieved, LOWER_ARM_RETRACT");
-                        stop_bin_movement();
-						int effort = 1;
-						if (not ros::param::getCached("~arm_lower_effort", effort)) {effort = 1;}
-						std_msgs::Int32 msg;
-                        msg.data = -effort;
-                        lower_arm_pub.publish(msg);
+			arm_manipulator.moveLowerArmPosition(4.8); // Move lower arm to a high position
                         break;
                     }
                     
                 case (tfr_utilities::TeleopCode::UPPER_ARM_EXTEND):
                     {
-                        ROS_INFO("Teleop Action Server: Command Recieved, UPPER_ARM_EXTEND");
-                        stop_arm_movement();
-						int effort = 1;
-                        if (not ros::param::getCached("~arm_upper_effort", effort)) {effort = 1;}
-						std_msgs::Int32 msg;
-                        msg.data = -effort;
-                        upper_arm_pub.publish(msg);
+			ROS_INFO("Teleop Action Server: Command Recieved, UPPER_ARM_EXTEND");
+			arm_manipulator.moveUpperArmPosition(1.1); // Extend upper arm
                         break;
                     }
                     
                 case (tfr_utilities::TeleopCode::UPPER_ARM_RETRACT):
                     {
-                        ROS_INFO("Teleop Action Server: Command Recieved, UPPER_ARM_RETRACT");
-                        stop_arm_movement();
-						int effort = 1;
-                        if (not ros::param::getCached("~arm_upper_effort", effort)) {effort = 1;}
-						std_msgs::Int32 msg;
-                        msg.data = effort;
-                        upper_arm_pub.publish(msg);
-                        break;
+ 			ROS_INFO("Teleop Action Server: Command Recieved, UPPER_ARM_RETRACT");
+			arm_manipulator.moveUpperArmPosition(4.5); // Retract upper arm
+			break;
                     }
                     
                 case (tfr_utilities::TeleopCode::SCOOP_EXTEND):
                     {
                         ROS_INFO("Teleop Action Server: Command Recieved, SCOOP_EXTEND");
-                        stop_arm_movement();
-                        int effort = 1;
-                        if (not ros::param::getCached("~arm_scoop_effort", effort)) {effort = 1;}
-						std_msgs::Int32 msg;
-                        msg.data = -effort;
-                        scoop_pub.publish(msg);
-                        break;
+			arm_manipulator.moveScoopPosition(0.3); // Extend scoop
+			break;
                     }
                     
                 case (tfr_utilities::TeleopCode::SCOOP_RETRACT):
                     {
                         ROS_INFO("Teleop Action Server: Command Recieved, SCOOP_RETRACT");
-                        stop_arm_movement();
-                        int effort = 1;
-                        if (not ros::param::getCached("~arm_scoop_effort", effort)) {effort = 1;}
-						std_msgs::Int32 msg;
-                        msg.data = effort;
-                        scoop_pub.publish(msg);
-                        break;
+			arm_manipulator.moveScoopPosition(3.0); // Retract scoop
+			break;
                     }
 
                 case (tfr_utilities::TeleopCode::DIG):
