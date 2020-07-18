@@ -607,4 +607,25 @@ namespace tfr_mission_control {
     void MissionControl::renderClock()
     {
         tfr_msgs::DurationSrv remaining_time;
-   
+        ros::service::call("time_remaining", remaining_time);
+        ui.time_display->display(remaining_time.response.duration.toSec());
+    }
+
+    //scrolls the status window
+    void MissionControl::renderStatus()
+    {
+        ui.status_log->verticalScrollBar()->setValue(ui.status_log->verticalScrollBar()->maximum());
+    }
+
+
+
+
+    /* ========================================================================== */
+    /* Signals                                                                    */
+    /* ========================================================================== */
+
+
+} // namespace
+
+PLUGINLIB_EXPORT_CLASS(tfr_mission_control::MissionControl,
+        rqt_gui_cpp::Plugin)
