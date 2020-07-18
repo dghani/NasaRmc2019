@@ -446,8 +446,10 @@ namespace tfr_mission_control {
         ui.joy_axis3_display->setText(QString::number(joy->axes[4])); // Right Stick y-axis
 
         if (teleopEnabled) {
-            for (int i = 0; i < 10; i++) {
+            bool noInput = true;
+            for (int i = 0; i < 14; i++) {
                 if (joy->buttons[i] == 1) {
+                    noInput = false;
                     switch (i)
                     {
                     case 0:
@@ -483,8 +485,23 @@ namespace tfr_mission_control {
                     case 10:
                         ROS_INFO("Button Right Stick has been pressed!");
                         break;
+                    case 11:
+                        ROS_INFO("Button Cross-key Left has been pressed!");
+                        break;
+                    case 12:
+                        ROS_INFO("Button Cross-key Right has been pressed!");
+                        break;
+                    case 13:
+                        ROS_INFO("Button Cross-key up has been pressed!");
+                        break;
+                    case 14:
+                        ROS_INFO("Button Cross-key down has been pressed!");
+                        break;
                     }
                 }
+            }
+            if (noInput) {
+                ROS_INFO("No buttons are pressed");
             }
         }
     }
@@ -590,25 +607,4 @@ namespace tfr_mission_control {
     void MissionControl::renderClock()
     {
         tfr_msgs::DurationSrv remaining_time;
-        ros::service::call("time_remaining", remaining_time);
-        ui.time_display->display(remaining_time.response.duration.toSec());
-    }
-
-    //scrolls the status window
-    void MissionControl::renderStatus()
-    {
-        ui.status_log->verticalScrollBar()->setValue(ui.status_log->verticalScrollBar()->maximum());
-    }
-
-
-
-
-    /* ========================================================================== */
-    /* Signals                                                                    */
-    /* ========================================================================== */
-
-
-} // namespace
-
-PLUGINLIB_EXPORT_CLASS(tfr_mission_control::MissionControl,
-        rqt_gui_cpp::Plugin)
+   
