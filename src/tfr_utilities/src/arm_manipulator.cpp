@@ -4,7 +4,8 @@ ArmManipulator::ArmManipulator(ros::NodeHandle &n, bool init_joints):
             turntable_publisher{n.advertise<sensor_msgs::JointState>("/device1/set_joint_state", 5)},
             lower_arm_publisher{n.advertise<sensor_msgs::JointState>("/device23/set_joint_state", 5)},
             upper_arm_publisher{n.advertise<sensor_msgs::JointState>("/device45/set_joint_state", 5)},
-            scoop_publisher{n.advertise<sensor_msgs::JointState>("/device56/set_joint_state", 5)}
+            scoop_publisher{n.advertise<sensor_msgs::JointState>("/device56/set_joint_state", 5)},
+            turntable_statusword_subscriber{n.subscribe("/device1/statusword", 5, &ArmManipulator::updateTurntableTargetPosition, this)}
 {
   ROS_INFO("Initializing Arm Manipulator");
 }
@@ -79,4 +80,27 @@ void ArmManipulator::moveArmWithoutPlanningOrLimits(
     moveScoopPosition(scoop);
 
     return;
+}
+
+// return true if all the arm actuators have reached the positions they were asked to move to.
+bool ArmManipulator::isArmTargetPositionReached() 
+{
+    // TODO add lower arm, upper arm, and scoop.
+    return turntable_target_position_reached;
+}
+
+void ArmManipulator::updateTurntableTargetPosition(const std_msgs::UInt16 &value)
+{
+    const uint16_t BIT10 = (1 << 10); // 0b0000010000000000
+
+    uint16_t target_position_reached_bit = (value.data & BIT10); // mask out just bit #10 of the statusword. This bit tells is 1 if the turntable has reached the last target position. (The turntable may still be moving, but it is near the target position.)
+
+    if (target_position_reached_bit != 0)
+    {
+        turntable_target_position_reached = true;
+    }
+    else
+    {
+        turntable_target_position_reached = false;
+    }
 }

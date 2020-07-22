@@ -3,6 +3,7 @@
 #include <ros/ros.h>
 #include <tfr_msgs/ArmMoveAction.h>
 #include <std_msgs/Float64MultiArray.h>
+#include <std_msgs/UInt16.h>
 #include <actionlib/server/simple_action_server.h>
 #include <trajectory_msgs/JointTrajectory.h>
 #include <joints.h>
@@ -34,11 +35,18 @@ class ArmManipulator
         void moveUpperArmPosition(double upper_arm);
         void moveScoopPosition(double scoop);
 
+        bool isArmTargetPositionReached(); // TODO
+
+        bool turntable_target_position_reached = false;
+
     private:
         ros::Publisher turntable_publisher;
         ros::Publisher lower_arm_publisher;
         ros::Publisher upper_arm_publisher;
         ros::Publisher scoop_publisher;
+
+        ros::Subscriber turntable_statusword_subscriber;
+        void updateTurntableTargetPosition(const std_msgs::UInt16 &value);
  };
 
 #endif
