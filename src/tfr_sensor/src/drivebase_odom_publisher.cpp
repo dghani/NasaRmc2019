@@ -11,8 +11,8 @@
  *   default)
  *   - ~rate: how quickly to publish hz. (double, default 10)
  * Subscribed topics:
- *   - /arduino :(tfr_msgs/ArduinoReading) The most current information coming
- *   in from the sensors.
+ *   - /left_tread_count & /right_tread_count :(tfr_sensor/src/tread_distance_publisher) The most current information coming
+ *   in from the treads.
  * Published topics: 
  *   - /drivebase_odom : (nav_msgs/Odometry) the location of the
  *   base_footprint tracked by tread motion.
@@ -88,8 +88,8 @@ class DrivebaseOdometryPublisher
     /*****************************************************************************************
     * processOdometry: Main business logic for the node, takes in readings from the arduino,
     *       and publishes them across the network.
-    * Preconditions: is subscribed to recieve information from the sensors (tfr_msgs/ArduinoReading)
-    * Postconditions: Readings from the arduino are published across the network
+    * Preconditions: is subscribed to recieve information from the treads (tfr_sensor/src/tread_distance_publisher)
+    * Postconditions: Velocities from the treads are published across the network
     *****************************************************************************************/
     void processOdometry()
     {
@@ -243,7 +243,7 @@ class DrivebaseOdometryPublisher
     
     /***************************************************************************
     * tf2::Quaternion getTfQuaternion: create a quaternion based on orientation
-    * Preconditions: can determin orientiation
+    * Preconditions: can determine orientiation
     * Postconditions: a quaternion value is returned
     ****************************************************************************/
     tf2::Quaternion getTfQuaternion(geometry_msgs::Quaternion& q)
@@ -311,12 +311,12 @@ int main(int argc, char **argv)
     ros::param::param<std::string>("~parent_frame", parent_frame, "odom");
     ros::param::param<std::string>("~child_frame", child_frame, "base_footprint");
     ros::param::param<double>("~wheel_span", wheel_span, 0.645);
-    ros::param::param<double>("~rate", rate, 10.0);
+    ros::param::param<double>("~rate", rate, 16.0);
     DrivebaseOdometryPublisher publisher{n, parent_frame, child_frame, wheel_span};
     ros::Rate loop_rate(rate);
     while(ros::ok())
     {
-        publisher.processOdometry(); //arduino readings are published across the network
+        publisher.processOdometry(); //readings are published across the network
         ros::spinOnce();
         loop_rate.sleep();
 
