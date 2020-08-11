@@ -462,6 +462,9 @@ namespace tfr_mission_control {
             {
                 joyAxes[i] = joy->axes[i];
             }
+            if (noInput) {
+                ROS_INFO("No buttons are pressed");
+            }
         }
 
         const std::lock_guard<std::mutex> joyButtonsLock(joyButtonsMutex);
