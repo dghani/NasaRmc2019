@@ -183,14 +183,19 @@ namespace tfr_mission_control {
         connect(ui.right_button,&QPushButton::released,
                 [this] () {performTeleop(tfr_utilities::TeleopCode::STOP_DRIVEBASE);});
 
-
-        //set upp our action servers
+        // Set up the action servers.
         ROS_INFO("Mission Control: connecting autonomy");
         autonomy.waitForServer();
         ROS_INFO("Mission Control: connected autonomy");
         ROS_INFO("Mission Control: connecting teleop");
         teleop.waitForServer();
         ROS_INFO("Mission Control: connected teleop");
+
+        ros::Timer keyReadTimer = nh.createTimer(
+            ros::Duration(0.1), &MissionControl::keyReadTimerCallback, this);
+
+        ros::Timer joyReadTimer = nh.createTimer(
+            ros::Duration(0.1), &MissionControl::joyReadTimerCallback, this);
     }
 
     /*
@@ -202,7 +207,7 @@ namespace tfr_mission_control {
     {
         //note because qt plugins are weird we need to manually kill ros entities
         com.shutdown();
-	joySub.shutdown();
+        joySub.shutdown();
         autonomy.cancelAllGoals();
         autonomy.stopTrackingGoal();
         teleop.cancelAllGoals();
@@ -241,7 +246,9 @@ namespace tfr_mission_control {
         std_srvs::Empty::Request req;
         std_srvs::Empty::Response res;
         while(!ros::service::call("/zero_turntable", req, res))
+        {
             ros::Duration{0.1}.sleep();
+        }
 
 	    performTeleop(tfr_utilities::TeleopCode::DRIVING_POSITION);
         toggleMotors(true);
@@ -410,6 +417,18 @@ namespace tfr_mission_control {
         }
     }
 
+    void MissionControl::keyPressEvent(QKeyEvent* event)
+    {
+        const std::lock_guard<std::mutex> keyMapLock(keyMapMutex);
+        keyMap[static_cast<Qt::Key>(event->key())] = true;
+    }
+
+    void MissionControl::keyReleaseEvent(QKeyEvent* event)
+    {
+        const std::lock_guard<std::mutex> keyMapLock(keyMapMutex);
+        keyMap[static_cast<Qt::Key>(event->key())] = false;
+    }
+
     /* ========================================================================== */
     /* Callbacks                                                                  */
     /* ========================================================================== */
@@ -431,62 +450,82 @@ namespace tfr_mission_control {
 
     /*
      * Callback for incoming joystick messages.
-     * 
-     * Currently for prototyping. It does not do anything useful.
+     * Use only with the Microsoft Xbox 360 Wired Controller for Linux.
      * */
     void MissionControl::joyCallback(const sensor_msgs::Joy::ConstPtr& joy)
     {
-        /*
-        * Echo thumbstick axis values into Mission Control UI.
-        * Layout for axes and buttons is for Microsoft Wired Controller for Linux.
-        */
-        ui.joy_axis0_display->setText(QString::number(joy->axes[0])); // Left Stick x-axis
-        ui.joy_axis1_display->setText(QString::number(joy->axes[1])); // Left Stick y-axis
-        ui.joy_axis2_display->setText(QString::number(joy->axes[3])); // Right Stick x-axis
-        ui.joy_axis3_display->setText(QString::number(joy->axes[4])); // Right Stick y-axis
-
-        if (teleopEnabled) {
-            for (int i = 0; i < 10; i++) {
-                if (joy->buttons[i] == 1) {
-                    switch (i)
-                    {
-                    case 0:
-                        ROS_INFO("Button A has been pressed!");
-                        break;
-                    case 1:
-                        ROS_INFO("Button B has been pressed!");
-                        break;
-                    case 2:
-                        ROS_INFO("Button X has been pressed!");
-                        break;
-                    case 3:
-                        ROS_INFO("Button Y has been pressed!");
-                        break;
-                    case 4:
-                        ROS_INFO("Button LB has been pressed!");
-                        break;
-                    case 5:
-                        ROS_INFO("Button RB has been pressed!");
-                        break;
-                    case 6:
-                        ROS_INFO("Button Back has been pressed!");
-                        break;
-                    case 7:
-                        ROS_INFO("Button Start has been pressed!");
-                        break;
-                    case 8:
-                        ROS_INFO("Button Power has been pressed!");
-                        break;
-                    case 9:
-                        ROS_INFO("Button Left Stick has been pressed!");
-                        break;
-                    case 10:
-                        ROS_INFO("Button Right Stick has been pressed!");
-                        break;
-                    }
-                }
+        // This scope restricts the lifetime of the first lock so it is not
+        // locked while the second loop runs.
+        {
+            const std::lock_guard<std::mutex> joyAxesLock(joyAxesMutex);
+            for(int i = 0; i < 8; i++)
+            {
+                joyAxes[i] = joy->axes[i];
             }
         }
+
+        const std::lock_guard<std::mutex> joyButtonsLock(joyButtonsMutex);
+        for(int i = 0; i < 11; i++)
+        {
+            joyButtons[i] = joy->buttons[i];
+        }
+    }
+
+    /*
+     * This callback periodically reads the keyboard map and sends the
+     * respective control commands over teleop.
+     * */
+    void MissionControl::keyReadTimerCallback(const ros::TimerEvent& event)
+    {
+        if(!teleopEnabled) {return;}
+
+        // By reading all the required keys at the start, the key map's
+        // mutex is not locked any longer than necessary.
+        std::unique_lock<std::mutex> keyMapLock(keyMapMutex);
+        bool driveForward       = keyMap[Qt::Key_W]; // driving
+        bool driveBackward      = keyMap[Qt::Key_S];
+        bool driveLeft          = keyMap[Qt::Key_A];
+        bool driveRight         = keyMap[Qt::Key_D];
+        bool driveStop          = keyMap[Qt::Key_Shift];
+        bool lowerArmExtend     = keyMap[Qt::Key_U]; // lower arm
+        bool lowerArmRetract    = keyMap[Qt::Key_J];
+        bool upperArmExtend     = keyMap[Qt::Key_I]; // upper arm
+        bool upperArmRetract    = keyMap[Qt::Key_K];
+        bool scoopExtend        = keyMap[Qt::Key_O]; // scoop
+        bool scoopRetract       = keyMap[Qt::Key_L];
+        bool clockwise          = keyMap[Qt::Key_P]; // turntable
+        bool ctrclockwise       = keyMap[Qt::Key_Semicolon];
+        bool dump               = keyMap[Qt::Key_Y]; // dumping
+        bool resetDumping       = keyMap[Qt::Key_H];
+        keyMapLock.unlock();
+
+        tfr_utilities::TeleopCode driveCode
+            = tfr_utilities::TeleopCode::STOP_DRIVEBASE;
+
+        // Left/right driving take precedence over forward/backward.
+        // Left XOR right, so only either left/right can be pressed.
+        if(driveLeft != driveRight)
+        {
+            // Ternary operators are sometimes cleaner than if/else blocks.
+            driveCode = driveLeft ? tfr_utilities::TeleopCode::LEFT
+                : tfr_utilities::TeleopCode::RIGHT;
+        }
+        else if(driveForward != driveBackward)
+        {
+            driveCode = driveForward ? tfr_utilities::TeleopCode::FORWARD
+                : tfr_utilities::TeleopCode::BACKWARD;
+        }
+
+    } // keyReadTimerCallback()
+
+    /*
+     * This callback periodically reads the joystick arrays and sends the
+     * respective control commands over teleop.
+     * Use only with the Microsoft Xbox 360 Wired Controller for Linux.
+     * */
+    void MissionControl::joyReadTimerCallback(const ros::TimerEvent& event)
+    {
+
     }
 
     /* ========================================================================== */
@@ -573,7 +612,7 @@ namespace tfr_mission_control {
     {
         std_srvs::SetBool request;
         request.request.data = state;
-        while (!ros::service::call("toggle_joystick", request));        
+        while (!ros::service::call("toggle_joystick", request));
         setJoystick(state);
     }
     */

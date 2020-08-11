@@ -21,8 +21,10 @@
 #include <tfr_utilities/teleop_code.h>
 #include <tfr_utilities/status_code.h>
 
-
+#include <cstddef>
 #include <cstdint>
+#include <map>
+#include <mutex>
 
 #include <QWidget>
 #include <QObject>
@@ -98,19 +100,37 @@ namespace tfr_mission_control {
             //The watchdog for the motors
             QTimer* motorKill;
 
+            // Timer for reading the key map to run keyboard controls.
+            ros::Timer keyReadTimer;
+            // Timer for reading the joystick arrays to run joystick controls.
+            ros::Timer joyReadTimer;
+
             ros::NodeHandle nh;
             //The action servers
             actionlib::SimpleActionClient<tfr_msgs::EmptyAction> autonomy;
             actionlib::SimpleActionClient<tfr_msgs::TeleopAction> teleop;
             actionlib::SimpleActionClient<tfr_msgs::ArmMoveAction> arm_client;
- 
+
             //our message subscriber
             ros::Subscriber com;
-	    // joystick subscriber
-	    ros::Subscriber joySub;
+      	    // joystick subscriber
+      	    ros::Subscriber joySub;
 
             //Whether teleop commands should be accepted
             bool teleopEnabled;
+
+            //const std::size_t JOY_AXES_SIZE = 8;
+            float joyAxes[8];
+            std::mutex joyAxesMutex;
+
+            //const std::size_t JOY_BUTTONS_SIZE = 11;
+            uint32_t joyButtons[11];
+            std::mutex joyButtonsMutex;
+
+            // In a map, bool values are default-initialized to false.
+            // By default, no key will start off as "pressed" in this map.
+            std::map<Qt::Key, bool> keyMap;
+            std::mutex keyMapMutex;
 
             /* ======================================================================== */
             /* Methods                                                                  */
@@ -130,7 +150,7 @@ namespace tfr_mission_control {
 
 
             //sets control system to output commands
-            
+
             void setArmPID(bool value);
 
             void resetTurntable();
@@ -141,6 +161,8 @@ namespace tfr_mission_control {
             //debounces and processes keyboard
             bool eventFilter(QObject *obj, QEvent *event);
 
+            void keyPressEvent(QKeyEvent* event);
+            void keyReleaseEvent(QKeyEvent* event);
 
             /* ======================================================================== */
             /* Callbacks                                                                */
@@ -152,6 +174,12 @@ namespace tfr_mission_control {
             // responds to joystick messages
             void joyCallback(const sensor_msgs::Joy::ConstPtr& joy);
 
+            // Periodically processes keyboard controls.
+            void keyReadTimerCallback(const ros::TimerEvent& event);
+
+            // Periodically processes joystick controls.
+            void joyReadTimerCallback(const ros::TimerEvent& event);
+
             protected slots:
 
                 /* ======================================================================== */
@@ -162,7 +190,7 @@ namespace tfr_mission_control {
                 virtual void startMission();    //starts clock and autonomy
                 virtual void startManual();     //starts clock and teleop
                 virtual void startTimeService();
-                
+
                 //MODE STATE CHANGES
                 virtual void goAutonomousMode();
                 virtual void goTeleopMode();
@@ -170,22 +198,22 @@ namespace tfr_mission_control {
                 //GUI
                 virtual void renderClock();
                 virtual void renderStatus();
-    
+
                 //MISC
                 virtual void performTeleop(tfr_utilities::TeleopCode code);
                 virtual void toggleControl(bool state);    //e-stop and start
-                
+
 
                 // virtual void toggleJoystick(bool state);
 
 
                 virtual void toggleMotors(bool state);    //e-stop and start
-    
+
             signals:
                 /* ======================================================================== */
                 /* Signals                                                                  */
                 /* ======================================================================== */
-    
+
                 //used to make cascade work for status update
                 void emitStatus(QString status);
     };
