@@ -2,6 +2,7 @@
 
 #include <rqt_gui_cpp/plugin.h>
 #include <tfr_mission_control/ui_mission_control.h>
+#include "tfr_mission_control/joy_indices.h"
 
 #include <ros/ros.h>
 #include <ros/console.h>
@@ -22,8 +23,6 @@
 #include <tfr_utilities/status_code.h>
 
 #include <cstddef>
-#include <cstdint>
-#include <mutex>
 
 #include <QWidget>
 #include <QObject>
@@ -97,10 +96,10 @@ namespace tfr_mission_control {
             //the mission timer
             QTimer* countdownClock;
 
-            // Timer for reading the key map to run keyboard controls.
-            ros::Timer keyReadTimer;
-            // Timer for reading the joystick arrays to run joystick controls.
-            ros::Timer joyReadTimer;
+            // Timer for reading the keyboard/joystick state variables
+            // to run teleop commands.
+            ros::Timer inputReadTimer;
+            const double INPUT_READ_RATE = 0.1;
 
             ros::NodeHandle nh;
 
@@ -109,21 +108,14 @@ namespace tfr_mission_control {
             actionlib::SimpleActionClient<tfr_msgs::TeleopAction> teleop;
             actionlib::SimpleActionClient<tfr_msgs::ArmMoveAction> arm_client;
 
-            //our message subscriber
+            // Subscribes to our custom status messages.
             ros::Subscriber com;
-      	    // joystick subscriber
+      	    // For subscribing to joy messages for joystick input.
+            // Constants for joy array indices are defined in joy_indices.h.
       	    ros::Subscriber joySub;
 
-            //Whether teleop commands should be accepted
+            // Flag for accepting teleop commands.
             bool teleopEnabled;
-
-            //const std::size_t JOY_AXES_SIZE = 8;
-            float joyAxes[8];
-            std::mutex joyAxesMutex;
-
-            //const std::size_t JOY_BUTTONS_SIZE = 11;
-            uint32_t joyButtons[11];
-            std::mutex joyButtonsMutex;
 
             // Atomic variables are thread-safe by nature. They do not need
             // a mutex and you can safely read/write between threads.
@@ -187,11 +179,8 @@ namespace tfr_mission_control {
             // Responds to joystick messages.
             void joyCallback(const sensor_msgs::Joy::ConstPtr& joy);
 
-            // Periodically processes keyboard controls for teleop.
-            void keyReadTimerCallback(const ros::TimerEvent& event);
-
-            // Periodically processes joystick controls for teleop.
-            void joyReadTimerCallback(const ros::TimerEvent& event);
+            // Periodically processes input control variables for teleop.
+            void inputReadTimerCallback(const ros::TimerEvent& event);
 
             protected slots:
 

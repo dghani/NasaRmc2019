@@ -21,8 +21,11 @@ namespace tfr_mission_control {
         com{nh.subscribe("com", 5, &MissionControl::updateStatus, this)},
         joySub{nh.subscribe<sensor_msgs::Joy>("joy", 10, &MissionControl::joyCallback, this)},
         teleopEnabled{false},
-        keyReadTimer{nh.createTimer(ros::Duration(0.1), &MissionControl::keyReadTimerCallback, this)},
-        joyReadTimer{nh.createTimer(ros::Duration(0.1), &MissionControl::joyReadTimerCallback, this)}
+        inputReadTimer
+        {
+            nh.createTimer(ros::Duration(0.1),
+                &MissionControl::inputReadTimerCallback, this)
+        }
     {
         setObjectName("MissionControl");
     }
@@ -237,7 +240,7 @@ namespace tfr_mission_control {
         std_srvs::Empty::Response res;
         while(!ros::service::call("/zero_turntable", req, res))
         {
-            ros::Duration{0.1}.sleep();
+            ros::Duration{INPUT_READ_RATE}.sleep();
         }
 
 	    performTeleop(tfr_utilities::TeleopCode::DRIVING_POSITION);
@@ -399,7 +402,7 @@ namespace tfr_mission_control {
             // something else.
             return QObject::eventFilter(obj, event);
         }
-    }
+    } // MissionControl::eventFilter()
 
     /* ========================================================================== */
     /* Callbacks                                                                  */
@@ -426,28 +429,14 @@ namespace tfr_mission_control {
      * */
     void MissionControl::joyCallback(const sensor_msgs::Joy::ConstPtr& joy)
     {
-        // This scope restricts the lifetime of the first lock so it is not
-        // locked while the second loop runs.
-        {
-            const std::lock_guard<std::mutex> joyAxesLock(joyAxesMutex);
-            for(int i = 0; i < 8; i++)
-            {
-                joyAxes[i] = joy->axes[i];
-            }
-        }
-
-        const std::lock_guard<std::mutex> joyButtonsLock(joyButtonsMutex);
-        for(int i = 0; i < 11; i++)
-        {
-            joyButtons[i] = joy->buttons[i];
-        }
+        
     }
 
     /*
-     * This callback periodically reads the keyboard map and sends the
-     * respective control commands over teleop.
+     * This callback periodically reads the input control variables
+     * and sends the respective control commands over teleop.
      * */
-    void MissionControl::keyReadTimerCallback(const ros::TimerEvent& event)
+    void MissionControl::inputReadTimerCallback(const ros::TimerEvent& event)
     {
         if(!teleopEnabled)
         {
@@ -482,17 +471,7 @@ namespace tfr_mission_control {
         {
             performTeleop(driveCode);
         }
-    } // keyReadTimerCallback()
-
-    /*
-     * This callback periodically reads the joystick arrays and sends the
-     * respective control commands over teleop.
-     * Use only with the Microsoft Xbox 360 Wired Controller for Linux.
-     * */
-    void MissionControl::joyReadTimerCallback(const ros::TimerEvent& event)
-    {
-
-    }
+    } // inputReadTimerCallback()
 
     /* ========================================================================== */
     /* Slots                                                                      */
