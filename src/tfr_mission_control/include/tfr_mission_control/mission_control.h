@@ -96,8 +96,6 @@ namespace tfr_mission_control {
             QWidget* widget;
             //the mission timer
             QTimer* countdownClock;
-            //The watchdog for the motors
-            QTimer* motorKill;
 
             // Timer for reading the key map to run keyboard controls.
             ros::Timer keyReadTimer;
@@ -105,6 +103,7 @@ namespace tfr_mission_control {
             ros::Timer joyReadTimer;
 
             ros::NodeHandle nh;
+
             //The action servers
             actionlib::SimpleActionClient<tfr_msgs::EmptyAction> autonomy;
             actionlib::SimpleActionClient<tfr_msgs::TeleopAction> teleop;
@@ -173,26 +172,25 @@ namespace tfr_mission_control {
             /* ======================================================================== */
             /* Events                                                                   */
             /* ======================================================================== */
-            //debounces and processes keyboard
-            bool eventFilter(QObject *obj, QEvent *event);
 
-            void keyPressEvent(QKeyEvent* event);
-            void keyReleaseEvent(QKeyEvent* event);
+            // Updates keyboard state variables every time a key event occurs.
+            bool eventFilter(QObject *obj, QEvent *event);
 
             /* ======================================================================== */
             /* Callbacks                                                                */
             /* ======================================================================== */
+
             //triggered by incoming status message, and cascades other signals into thread
             //safe gui update
             void updateStatus(const tfr_msgs::SystemStatusConstPtr &status);
 
-            // responds to joystick messages
+            // Responds to joystick messages.
             void joyCallback(const sensor_msgs::Joy::ConstPtr& joy);
 
-            // Periodically processes keyboard controls.
+            // Periodically processes keyboard controls for teleop.
             void keyReadTimerCallback(const ros::TimerEvent& event);
 
-            // Periodically processes joystick controls.
+            // Periodically processes joystick controls for teleop.
             void joyReadTimerCallback(const ros::TimerEvent& event);
 
             protected slots:
@@ -215,7 +213,7 @@ namespace tfr_mission_control {
                 virtual void renderStatus();
 
                 //MISC
-                virtual void performTeleop(tfr_utilities::TeleopCode code);
+                virtual void performTeleop(const tfr_utilities::TeleopCode& code);
                 virtual void toggleControl(bool state);    //e-stop and start
 
 
