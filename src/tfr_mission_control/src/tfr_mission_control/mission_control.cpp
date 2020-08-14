@@ -419,14 +419,122 @@ namespace tfr_mission_control {
 
     void MissionControl::keyPressEvent(QKeyEvent* event)
     {
-        const std::lock_guard<std::mutex> keyMapLock(keyMapMutex);
-        keyMap[static_cast<Qt::Key>(event->key())] = true;
+        const Qt::Key key = static_cast<Qt::Key>(event->key());
+
+        // It might look tedious, but a switch statement for this few keys
+        // is more efficient than using an STL data structure to track keys.
+        switch(key)
+        {
+            case (Qt::Key_W):
+                controlDriveForward = true;
+                break;
+            case (Qt::Key_S):
+                controlDriveBackward = true;
+                break;
+            case (Qt::Key_A):
+                controlDriveLeft = true;
+                break;
+            case (Qt::Key_D):
+                controlDriveRight = true;
+                break;
+            case (Qt::Key_Shift):
+                controlDriveStop = true;
+                break;
+
+            case (Qt::Key_U):
+                controlLowerArmExtend = true;
+                break;
+            case (Qt::Key_J):
+                controlLowerArmRetract = true;
+                break;
+
+            case (Qt::Key_I):
+                controlUpperArmExtend = true;
+                break;
+            case (Qt::Key_K):
+                controlUpperArmRetract = true;
+                break;
+
+            case (Qt::Key_O):
+                controlScoopExtend = true;
+                break;
+            case (Qt::Key_L):
+                controlScoopRetract = true;
+                break;
+
+            case (Qt::Key_P):
+                controlClockwise = true;
+                break;
+            case (Qt::Key_Semicolon):
+                controlCtrclockwise = true;
+                break;
+
+            case (Qt::Key_Y):
+                controlDump = true;
+                break;
+            case (Qt::Key_H):
+                controlResetDumping = true;
+                break;
+        }
     }
 
     void MissionControl::keyReleaseEvent(QKeyEvent* event)
     {
-        const std::lock_guard<std::mutex> keyMapLock(keyMapMutex);
-        keyMap[static_cast<Qt::Key>(event->key())] = false;
+        const Qt::Key key = static_cast<Qt::Key>(event->key());
+
+        switch(key)
+        {
+            case (Qt::Key_W):
+                controlDriveForward = false;
+                break;
+            case (Qt::Key_S):
+                controlDriveBackward = false;
+                break;
+            case (Qt::Key_A):
+                controlDriveLeft = false;
+                break;
+            case (Qt::Key_D):
+                controlDriveRight = false;
+                break;
+            case (Qt::Key_Shift):
+                controlDriveStop = false;
+                break;
+
+            case (Qt::Key_U):
+                controlLowerArmExtend = false;
+                break;
+            case (Qt::Key_J):
+                controlLowerArmRetract = false;
+                break;
+
+            case (Qt::Key_I):
+                controlUpperArmExtend = false;
+                break;
+            case (Qt::Key_K):
+                controlUpperArmRetract = false;
+                break;
+
+            case (Qt::Key_O):
+                controlScoopExtend = false;
+                break;
+            case (Qt::Key_L):
+                controlScoopRetract = false;
+                break;
+
+            case (Qt::Key_P):
+                controlClockwise = false;
+                break;
+            case (Qt::Key_Semicolon):
+                controlCtrclockwise = false;
+                break;
+
+            case (Qt::Key_Y):
+                controlDump = false;
+                break;
+            case (Qt::Key_H):
+                controlResetDumping = false;
+                break;
+        }
     }
 
     /* ========================================================================== */
@@ -462,9 +570,6 @@ namespace tfr_mission_control {
             {
                 joyAxes[i] = joy->axes[i];
             }
-            if (noInput) {
-                ROS_INFO("No buttons are pressed");
-            }
         }
 
         const std::lock_guard<std::mutex> joyButtonsLock(joyButtonsMutex);
@@ -482,40 +587,20 @@ namespace tfr_mission_control {
     {
         if(!teleopEnabled) {return;}
 
-        // By reading all the required keys at the start, the key map's
-        // mutex is not locked any longer than necessary.
-        std::unique_lock<std::mutex> keyMapLock(keyMapMutex);
-        bool driveForward       = keyMap[Qt::Key_W]; // driving
-        bool driveBackward      = keyMap[Qt::Key_S];
-        bool driveLeft          = keyMap[Qt::Key_A];
-        bool driveRight         = keyMap[Qt::Key_D];
-        bool driveStop          = keyMap[Qt::Key_Shift];
-        bool lowerArmExtend     = keyMap[Qt::Key_U]; // lower arm
-        bool lowerArmRetract    = keyMap[Qt::Key_J];
-        bool upperArmExtend     = keyMap[Qt::Key_I]; // upper arm
-        bool upperArmRetract    = keyMap[Qt::Key_K];
-        bool scoopExtend        = keyMap[Qt::Key_O]; // scoop
-        bool scoopRetract       = keyMap[Qt::Key_L];
-        bool clockwise          = keyMap[Qt::Key_P]; // turntable
-        bool ctrclockwise       = keyMap[Qt::Key_Semicolon];
-        bool dump               = keyMap[Qt::Key_Y]; // dumping
-        bool resetDumping       = keyMap[Qt::Key_H];
-        keyMapLock.unlock();
-
         tfr_utilities::TeleopCode driveCode
             = tfr_utilities::TeleopCode::STOP_DRIVEBASE;
 
         // Left/right driving take precedence over forward/backward.
         // Left XOR right, so only either left/right can be pressed.
-        if(driveLeft != driveRight)
+        if(controlDriveLeft != controlDriveRight)
         {
             // Ternary operators are sometimes cleaner than if/else blocks.
-            driveCode = driveLeft ? tfr_utilities::TeleopCode::LEFT
+            driveCode = controlDriveLeft ? tfr_utilities::TeleopCode::LEFT
                 : tfr_utilities::TeleopCode::RIGHT;
         }
-        else if(driveForward != driveBackward)
+        else if(controlDriveForward != controlDriveBackward)
         {
-            driveCode = driveForward ? tfr_utilities::TeleopCode::FORWARD
+            driveCode = controlDriveForward ? tfr_utilities::TeleopCode::FORWARD
                 : tfr_utilities::TeleopCode::BACKWARD;
         }
 

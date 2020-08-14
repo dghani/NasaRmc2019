@@ -23,7 +23,6 @@
 
 #include <cstddef>
 #include <cstdint>
-#include <map>
 #include <mutex>
 
 #include <QWidget>
@@ -127,10 +126,26 @@ namespace tfr_mission_control {
             uint32_t joyButtons[11];
             std::mutex joyButtonsMutex;
 
-            // In a map, bool values are default-initialized to false.
-            // By default, no key will start off as "pressed" in this map.
-            std::map<Qt::Key, bool> keyMap;
-            std::mutex keyMapMutex;
+            // Atomic variables are thread-safe by nature. They do not need
+            // a mutex and you can safely read/write between threads.
+            // However, you cannot copy-initialize an atomic variable.
+            // In this case, we are list-initializing them all to false.
+            std::atomic<bool>   controlDriveForward,        // driving
+                                controlDriveBackward,
+                                controlDriveLeft,
+                                controlDriveRight,
+                                controlDriveStop,
+                                controlLowerArmExtend,      // lower arm
+                                controlLowerArmRetract,
+                                controlUpperArmExtend,      // upper arm
+                                controlUpperArmRetract,
+                                controlScoopExtend,         // scoop
+                                controlScoopRetract,
+                                controlClockwise,           // turntable
+                                controlCtrclockwise,
+                                controlDump,                // dumping
+                                controlResetDumping
+                                = {false};
 
             /* ======================================================================== */
             /* Methods                                                                  */
