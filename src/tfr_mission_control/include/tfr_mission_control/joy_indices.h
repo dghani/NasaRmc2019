@@ -20,6 +20,6 @@ namespace JoyIndices
     static const std::size_t JOY_AXIS_RIGHT_X = 3;
     static const std::size_t JOY_AXIS_RIGHT_Y = 4;
     static const std::size_t JOY_AXIS_RT = 5;
-    static const std::size_t JOY_AXIS_CROSS_X = 6;
-    static const std::size_t JOY_AXIS_CROSS_Y = 7;
+    static const std::size_t JOY_AXIS_DPAD_X = 6;
+    static const std::size_t JOY_AXIS_DPAD_Y = 7;
 }

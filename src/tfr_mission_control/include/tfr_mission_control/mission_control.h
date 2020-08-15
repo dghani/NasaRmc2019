@@ -10,7 +10,7 @@
 #include <actionlib/client/terminal_state.h>
 #include <std_srvs/SetBool.h>
 #include <std_srvs/Empty.h>
-#include <sensor_msgs/Joy.h> // for joystick controls
+#include <sensor_msgs/Joy.h>
 
 #include <tfr_msgs/SystemStatus.h>
 #include <tfr_msgs/DurationSrv.h>
@@ -101,8 +101,6 @@ namespace tfr_mission_control {
             ros::Timer inputReadTimer;
             const double INPUT_READ_RATE = 0.1;
 
-            ros::NodeHandle nh;
-
             //The action servers
             actionlib::SimpleActionClient<tfr_msgs::EmptyAction> autonomy;
             actionlib::SimpleActionClient<tfr_msgs::TeleopAction> teleop;
@@ -115,7 +113,7 @@ namespace tfr_mission_control {
       	    ros::Subscriber joySub;
 
             // Flag for accepting teleop commands.
-            bool teleopEnabled;
+            std::atomic<bool> teleopEnabled;
 
             // Atomic variables are thread-safe by nature. They do not need
             // a mutex and you can safely read/write between threads.
@@ -151,7 +149,6 @@ namespace tfr_mission_control {
             //sets control system to output commands
             void setControl(bool value);
 
-
             void setJoystick(bool value);
 
 
@@ -167,6 +164,7 @@ namespace tfr_mission_control {
 
             // Updates keyboard state variables every time a key event occurs.
             bool eventFilter(QObject *obj, QEvent *event);
+            bool processKey(const Qt::Key key, const bool keyPress);
 
             /* ======================================================================== */
             /* Callbacks                                                                */

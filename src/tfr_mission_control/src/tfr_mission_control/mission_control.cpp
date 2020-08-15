@@ -18,14 +18,7 @@ namespace tfr_mission_control {
         autonomy{"autonomous_action_server",true},
         teleop{"teleop_action_server",true},
         arm_client{"move_arm", true},
-        com{nh.subscribe("com", 5, &MissionControl::updateStatus, this)},
-        joySub{nh.subscribe<sensor_msgs::Joy>("joy", 10, &MissionControl::joyCallback, this)},
-        teleopEnabled{false},
-        inputReadTimer
-        {
-            nh.createTimer(ros::Duration(0.1),
-                &MissionControl::inputReadTimerCallback, this)
-        }
+        teleopEnabled{false}
     {
         setObjectName("MissionControl");
     }
@@ -71,6 +64,19 @@ namespace tfr_mission_control {
 
         countdownClock = new QTimer(this); //mission clock, runs repeatedly
 
+        // Since rqt creates a Nodelet for the ROS side of things, we can
+        // use getNodeHandle() and similar functions instead of creating
+        // a NodeHandle member.
+        // getMTNodeHandle() gives us a multithreaded NodeHandle.
+        com = getMTNodeHandle().subscribe("com", 5,
+            &MissionControl::updateStatus, this);
+
+        joySub = getMTNodeHandle().subscribe<sensor_msgs::Joy>("joy", 20,
+            &MissionControl::joyCallback, this);
+
+        inputReadTimer = getMTNodeHandle().createTimer(ros::Duration(0.1),
+            &MissionControl::inputReadTimerCallback, this);
+
         /* Sets up all the signal/slot connections.
          *
          * For those unfamilair with qt this is the backbone of event driven
@@ -112,7 +118,8 @@ namespace tfr_mission_control {
         connect(ui.arm_pid_disable_button,&QPushButton::clicked, [this] () {setArmPID(false);});
 
         connect(countdownClock, &QTimer::timeout, this,  &MissionControl::renderClock);
-        connect(this, &MissionControl::emitStatus, ui.status_log, &QPlainTextEdit::appendPlainText);
+        connect(this, &MissionControl::emitStatus, ui.status_log,
+            &QPlainTextEdit::appendPlainText, Qt::QueuedConnection);
         connect(ui.status_log, &QPlainTextEdit::textChanged, this,  &MissionControl::renderStatus);
 
         /* NOTE Remember how I said parameters of signals/slots need to match
@@ -332,69 +339,7 @@ namespace tfr_mission_control {
             const Qt::Key key = static_cast<Qt::Key>(
                 static_cast<QKeyEvent*>(event)->key());
 
-            // It might look tedious, but a switch statement for this few keys
-            // is more efficient than using an STL data structure to track keys.
-            switch (key)
-            {
-                // driving controls
-                case (Qt::Key_W):
-                    controlDriveForward = keyPress;
-                    break;
-                case (Qt::Key_S):
-                    controlDriveBackward = keyPress;
-                    break;
-                case (Qt::Key_A):
-                    controlDriveLeft = keyPress;
-                    break;
-                case (Qt::Key_D):
-                    controlDriveRight = keyPress;
-                    break;
-                case (Qt::Key_Shift):
-                    controlDriveStop = keyPress;
-                    break;
-
-                // lower arm controls
-                case (Qt::Key_U):
-                    controlLowerArmExtend = keyPress;
-                    break;
-                case (Qt::Key_J):
-                    controlLowerArmRetract = keyPress;
-                    break;
-
-                // upper arm controls
-                case (Qt::Key_I):
-                    controlUpperArmExtend = keyPress;
-                    break;
-                case (Qt::Key_K):
-                    controlUpperArmRetract = keyPress;
-                    break;
-
-                // scoop controls
-                case (Qt::Key_O):
-                    controlScoopExtend = keyPress;
-                    break;
-                case (Qt::Key_L):
-                    controlScoopRetract = keyPress;
-                    break;
-
-                // turntable controls
-                case (Qt::Key_P):
-                    controlClockwise = keyPress;
-                    break;
-                case (Qt::Key_Semicolon):
-                    controlCtrclockwise = keyPress;
-                    break;
-
-                // dumping controls
-                case (Qt::Key_Y):
-                    controlDump = keyPress;
-                    break;
-                case (Qt::Key_H):
-                    controlResetDumping = keyPress;
-                    break;
-            }
-            // Consume the key event, so nothing else can use it.
-            return true;
+            return processKey(key, keyPress);
         }
         else
         {
@@ -402,7 +347,75 @@ namespace tfr_mission_control {
             // something else.
             return QObject::eventFilter(obj, event);
         }
-    } // MissionControl::eventFilter()
+    }
+
+    // This function returns a bool so its use inside of eventFilter() will
+    // allow the filter to consume or pass on a key event.
+    bool MissionControl::processKey(const Qt::Key key, const bool keyPress)
+    {
+        // It might look tedious, but a switch statement for this few keys
+        // is more efficient than using an STL data structure to track keys.
+        switch (key)
+        {
+            // driving controls
+            case (Qt::Key_W):
+                controlDriveForward = keyPress;
+                break;
+            case (Qt::Key_S):
+                controlDriveBackward = keyPress;
+                break;
+            case (Qt::Key_A):
+                controlDriveLeft = keyPress;
+                break;
+            case (Qt::Key_D):
+                controlDriveRight = keyPress;
+                break;
+            case (Qt::Key_Shift):
+                controlDriveStop = keyPress;
+                break;
+            // lower arm controls
+            case (Qt::Key_U):
+                controlLowerArmExtend = keyPress;
+                break;
+            case (Qt::Key_J):
+                controlLowerArmRetract = keyPress;
+                break;
+            // upper arm controls
+            case (Qt::Key_I):
+                controlUpperArmExtend = keyPress;
+                break;
+            case (Qt::Key_K):
+                controlUpperArmRetract = keyPress;
+                break;
+            // scoop controls
+            case (Qt::Key_O):
+                controlScoopExtend = keyPress;
+                break;
+            case (Qt::Key_L):
+                controlScoopRetract = keyPress;
+                break;
+            // turntable controls
+            case (Qt::Key_P):
+                controlClockwise = keyPress;
+                break;
+            case (Qt::Key_Semicolon):
+                controlCtrclockwise = keyPress;
+                break;
+            // dumping controls
+            case (Qt::Key_Y):
+                controlDump = keyPress;
+                break;
+            case (Qt::Key_H):
+                controlResetDumping = keyPress;
+                break;
+
+            default:
+                // If we aren't using a key, don't consume its event.
+                return false;
+        }
+        // Consume the key event, so nothing else can use it.
+        return true;
+    } // MissionControl::processKey()
 
     /* ========================================================================== */
     /* Callbacks                                                                  */
@@ -417,10 +430,11 @@ namespace tfr_mission_control {
      * */
     void MissionControl::updateStatus(const tfr_msgs::SystemStatusConstPtr &status)
     {
-        auto str = getStatusMessage(static_cast<StatusCode>(status->status_code), status->data);
-        //need to wrap in signal safe "Q" object
-        QString msg = QString::fromStdString(str);
-        emit emitStatus(msg);
+        const std::string statusStr = getStatusMessage(
+            static_cast<StatusCode>(status->status_code), status->data);
+        // The status message must be wrapped in a signal-safe "Q" object.
+        QString statusMsg = QString::fromStdString(statusStr);
+        emit emitStatus(statusMsg);
     }
 
     /*
@@ -429,7 +443,17 @@ namespace tfr_mission_control {
      * */
     void MissionControl::joyCallback(const sensor_msgs::Joy::ConstPtr& joy)
     {
-        
+        using namespace JoyIndices;
+        if(!teleopEnabled)
+        {
+            return;
+        }
+
+        controlDriveForward = joy->axes[JOY_AXIS_DPAD_Y] < -0.1;
+        controlDriveBackward = joy->axes[JOY_AXIS_DPAD_Y] > 0.1;
+        controlDriveLeft = joy->axes[JOY_AXIS_DPAD_X] < -0.1;
+        controlDriveRight = joy->axes[JOY_AXIS_DPAD_X] > 0.1;
+        controlDriveStop = joy->buttons[JOY_BUTTON_LB];
     }
 
     /*
