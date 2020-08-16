@@ -1,6 +1,6 @@
 <launch>
     <node name="front_cam_tf_broadcaster" pkg="tf2_ros" type="static_transform_publisher"
-        args="0.48 0.076 0.127 0 0 0 1 base_link front_cam_link"/>
+        args="0.48 0.076 0.127 0 0 0 base_link front_cam_link"/>
     <node name="front_cam" pkg="cv_camera" type="cv_camera_node" output="screen">
         <rosparam>
             file: "nvarguscamerasrc sensor-id=2 ! video/x-raw(memory:NVMM), width=4056, height=3040, format=NV12, framerate=(fraction)30/1 ! nvvidconv flip-method=0 ! video/x-raw, format=(string)BGRx ! videoconvert ! appsink"
@@ -16,7 +16,7 @@
         </rosparam>
     </node>
     <node name="rear_cam_tf_broadcaster" pkg="tf2_ros" type="static_transform_publisher"
-        args="-0.48 -0.048 0.254 0 0 3.14 1 base_link rear_cam_link"/>
+        args="-0.48 -0.048 0.254 0 0 3.14 base_link rear_cam_link"/>
     <node name="rear_cam" pkg="cv_camera" type="cv_camera_node" output="screen">
         <rosparam>
             file: "nvarguscamerasrc sensor-id=0 ! video/x-raw(memory:NVMM), width=4056, height=3040, format=NV12, framerate=(fraction)30/1 ! nvvidconv flip-method=0 ! video/x-raw, format=(string)BGRx ! videoconvert ! appsink"
