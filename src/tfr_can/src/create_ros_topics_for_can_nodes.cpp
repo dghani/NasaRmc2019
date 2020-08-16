@@ -399,5 +399,4 @@ int main(int argc, char* argv[]) {
     master.stop();
     
 	return EXIT_SUCCESS;
-}IT_SUCCESS;
 }
