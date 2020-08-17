@@ -68,10 +68,10 @@ namespace tfr_mission_control {
         // use getNodeHandle() and similar functions instead of creating
         // a NodeHandle member.
         // getMTNodeHandle() gives us a multithreaded NodeHandle.
-        com = getMTNodeHandle().subscribe("com", 5,
+        com = getMTNodeHandle().subscribe("/com", 5,
             &MissionControl::updateStatus, this);
 
-        joySub = getMTNodeHandle().subscribe<sensor_msgs::Joy>("joy", 20,
+        joySub = getMTNodeHandle().subscribe<sensor_msgs::Joy>("/joy", 5,
             &MissionControl::joyCallback, this);
 
         inputReadTimer = getMTNodeHandle().createTimer(ros::Duration(0.1),
@@ -449,10 +449,10 @@ namespace tfr_mission_control {
             return;
         }
 
-        controlDriveForward = joy->axes[JOY_AXIS_DPAD_Y] < -0.1;
-        controlDriveBackward = joy->axes[JOY_AXIS_DPAD_Y] > 0.1;
-        controlDriveLeft = joy->axes[JOY_AXIS_DPAD_X] < -0.1;
-        controlDriveRight = joy->axes[JOY_AXIS_DPAD_X] > 0.1;
+        controlDriveForward = joy->axes[JOY_AXIS_DPAD_Y] > -0.1;
+        controlDriveBackward = joy->axes[JOY_AXIS_DPAD_Y] < 0.1;
+        controlDriveLeft = joy->axes[JOY_AXIS_DPAD_X] > -0.1;
+        controlDriveRight = joy->axes[JOY_AXIS_DPAD_X] < 0.1;
         controlDriveStop = joy->buttons[JOY_BUTTON_LB];
     }
 
