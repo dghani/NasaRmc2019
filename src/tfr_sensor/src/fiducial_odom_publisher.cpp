@@ -201,7 +201,7 @@ int main(int argc, char** argv)
     ros::param::param<std::string>("~footprint_frame", footprint_frame, "footprint");
     ros::param::param<std::string>("~bin_frame", bin_frame, "bin_footprint");
     ros::param::param<std::string>("~odometry_frame", odometry_frame, "odom");
-    ros::param::param<double>("~rate",rate, 5);
+    ros::param::param<double>("~rate",rate, 10);
 
     FiducialOdom fiducial_odom{n, footprint_frame, bin_frame,
         odometry_frame};
