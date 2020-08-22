@@ -23,6 +23,7 @@
 #include <tfr_utilities/status_code.h>
 
 #include <cstddef>
+#include <mutex>
 
 #include <QWidget>
 #include <QObject>
@@ -115,26 +116,31 @@ namespace tfr_mission_control {
             // Flag for accepting teleop commands.
             std::atomic<bool> teleopEnabled;
 
-            // Atomic variables are thread-safe by nature. They do not need
-            // a mutex and you can safely read/write between threads.
-            // However, you cannot copy-initialize an atomic variable.
-            // In this case, we are list-initializing them all to false.
-            std::atomic<bool>   controlDriveForward,        // driving
-                                controlDriveBackward,
-                                controlDriveLeft,
-                                controlDriveRight,
-                                controlDriveStop,
-                                controlLowerArmExtend,      // lower arm
-                                controlLowerArmRetract,
-                                controlUpperArmExtend,      // upper arm
-                                controlUpperArmRetract,
-                                controlScoopExtend,         // scoop
-                                controlScoopRetract,
-                                controlClockwise,           // turntable
-                                controlCtrclockwise,
-                                controlDump,                // dumping
-                                controlResetDumping
-                                = {false};
+
+            // These could be atomic, but if a value is checked twice, there
+            // is a risk of the atomic bool flipping in the middle of it.
+            // Instead, we can use normal bools and keep a mutex for locks.
+            bool    controlDriveForward,        // driving
+                    controlDriveBackward,
+                    controlDriveLeft,
+                    controlDriveRight,
+                    controlDriveStop,
+                    controlLowerArmExtend,      // lower arm
+                    controlLowerArmRetract,
+                    controlUpperArmExtend,      // upper arm
+                    controlUpperArmRetract,
+                    controlScoopExtend,         // scoop
+                    controlScoopRetract,
+                    controlClockwise,           // turntable
+                    controlCtrclockwise,
+                    controlDump,                // dumping
+                    controlResetDumping
+                    = false;
+
+            // Functions can lock this to temporarily "claim" the control
+            // bools. Make sure every function using these bools locks
+            // the mutex!
+            std::mutex controlMutex;
 
             /* ======================================================================== */
             /* Methods                                                                  */

@@ -353,6 +353,8 @@ namespace tfr_mission_control {
     // allow the filter to consume or pass on a key event.
     bool MissionControl::processKey(const Qt::Key key, const bool keyPress)
     {
+        // Lock the mutex to "claim" the control bools.
+        std::lock_guard<std::mutex> controlLock(controlMutex);
         // It might look tedious, but a switch statement for this few keys
         // is more efficient than using an STL data structure to track keys.
         switch (key)
@@ -448,7 +450,8 @@ namespace tfr_mission_control {
         {
             return;
         }
-
+        // Lock the mutex to "claim" the control bools.
+        std::lock_guard<std::mutex> controlLock(controlMutex);
         controlDriveForward = joy->axes[JOY_AXIS_DPAD_Y] > -0.1;
         controlDriveBackward = joy->axes[JOY_AXIS_DPAD_Y] < 0.1;
         controlDriveLeft = joy->axes[JOY_AXIS_DPAD_X] > -0.1;
@@ -469,6 +472,11 @@ namespace tfr_mission_control {
 
         bool driveCodeRun = false;
         tfr_utilities::TeleopCode driveCode;
+
+        // We are using unique_lock instead of lock_guard because we want
+        // to unlock the mutex manually. lock_guard can only be unlocked
+        // upon its destruction, like when the function ends.
+        std::unique_lock<std::mutex> controlLock(controlMutex);
 
         // Left/right driving take precedence over forward/backward.
         // Left XOR right, so only either left/right can be pressed.
@@ -491,6 +499,7 @@ namespace tfr_mission_control {
             driveCodeRun = true;
         }
 
+        controlLock.unlock();
         if(driveCodeRun)
         {
             performTeleop(driveCode);
