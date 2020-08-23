@@ -184,9 +184,6 @@ namespace tfr_control
      */
     void RobotInterface::write() 
     {
-        static double prev_arm_lower_position = std::numeric_limits<double>::quiet_NaN();
-        static double prev_arm_upper_position = std::numeric_limits<double>::quiet_NaN();
-        static double prev_scoop_position = std::numeric_limits<double>::quiet_NaN();
 
         double signal;
         if (use_fake_values) //test code for working with rviz simulator
@@ -195,58 +192,6 @@ namespace tfr_control
             adjustFakeJoint(tfr_utilities::Joint::LOWER_ARM);
             adjustFakeJoint(tfr_utilities::Joint::UPPER_ARM);
             adjustFakeJoint(tfr_utilities::Joint::SCOOP);
-        }
-        else  // we are working with the real arm
-        {
-            bool write_arm_values;
-            if (not ros::param::getCached("/write_arm_values", write_arm_values)) {write_arm_values = false;}
-            if (write_arm_values){
-                
-                //TURNTABLE
-                int32_t turntable_position =  std::max(std::min(-command_values[static_cast<int>(tfr_utilities::Joint::TURNTABLE)], 1000.0), -1000.0);
-                std_msgs::Int32 turntable_position_msg;
-                turntable_position_msg.data = turntable_position;
-                turntable_publisher.publish(turntable_position_msg);
-
-
-                // For the Servo Cylinder actuators, only publish a setpoint to them if the setpoint has actually changed. 
-                // Testing whether this smoothes out the movement of the actuators.
-                
-                //LOWER_ARM
-                //NOTE we reverse these because actuator is mounted backwards
-                double arm_lower_position = linear_interp(command_values[static_cast<int>(tfr_utilities::Joint::LOWER_ARM)], arm_lower_joint_min, arm_lower_encoder_min, arm_lower_joint_max, arm_lower_encoder_max);
-                if (arm_lower_position != prev_arm_lower_position)
-                {
-                    sensor_msgs::JointState arm_lower_position_msg;
-                    arm_lower_position_msg.position.push_back(arm_lower_position);
-                    lower_arm_publisher.publish(arm_lower_position_msg);
-                    
-                    prev_arm_lower_position = arm_lower_position;
-                }
-
-                //UPPER_ARM
-                double arm_upper_position = linear_interp(command_values[static_cast<int>(tfr_utilities::Joint::UPPER_ARM)], arm_upper_joint_min, arm_upper_encoder_max, arm_upper_joint_max, arm_upper_encoder_min);
-                if (arm_upper_position != prev_arm_upper_position)
-                {
-                    sensor_msgs::JointState arm_upper_position_msg;
-                    arm_upper_position_msg.position.push_back(arm_upper_position);
-                    upper_arm_publisher.publish(arm_upper_position_msg);
-                    
-                    prev_arm_upper_position = arm_upper_position;
-                }
-            
-                //SCOOP
-                double scoop_position = linear_interp(command_values[static_cast<int>(tfr_utilities::Joint::SCOOP)], arm_end_joint_min, arm_end_encoder_max, arm_end_joint_max, arm_end_encoder_min);
-                if (scoop_position != prev_scoop_position)
-                {        
-                    sensor_msgs::JointState scoop_position_msg;
-                    scoop_position_msg.position.push_back(scoop_position);
-                    scoop_publisher.publish(scoop_position_msg);
-                    
-                    prev_scoop_position = scoop_position;
-                }
-            
-            }
         }
         
         //LEFT_TREAD
