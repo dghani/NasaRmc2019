@@ -34,6 +34,8 @@ class ArmManipulator
         void moveLowerArmPosition(double lower_arm);
         void moveUpperArmPosition(double upper_arm);
         void moveScoopPosition(double scoop);
+        void moveRightBinPosition(double rightBin);
+        void moveLeftBinPosition(double leftBin);
 
         bool isArmTargetPositionReached(); // TODO
 
@@ -44,7 +46,8 @@ class ArmManipulator
         ros::Publisher lower_arm_publisher;
         ros::Publisher upper_arm_publisher;
         ros::Publisher scoop_publisher;
-
+        ros::Publisher left_bin_publisher;
+        ros::Publisher right_bin_publisher;
         ros::Subscriber turntable_statusword_subscriber;
         void updateTurntableTargetPosition(const std_msgs::UInt16 &value);
  };
