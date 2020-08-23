@@ -286,39 +286,9 @@ class TeleopExecutive
                     {
                         
                         
-                        //drivebase_publisher.publish(move_cmd);
-                        ROS_INFO("Teleop Action Server: Command Recieved, DUMP");
-                        stop_bin_movement();
-                        int effort = 1;
-                        if (not ros::param::getCached("~dump_effort", effort)) {effort = 1;}
-						std_msgs::Int32 msg;
-                        msg.data = effort;
-                        right_bin_pub.publish(msg);
-                        left_bin_pub.publish(msg);
-                        /*//all zeros by default
-                        //arm_manipulator.moveArm(0.0, 0.1, 1.07, 1.5);
-                        ros::Duration(3.0).sleep();
-                        //arm_manipulator.moveArm(0.87, 0.1, 1.07, 1.5);
-                        ros::Duration(3.0).sleep();
-                        std_msgs::Float64 bin_cmd;
-                        bin_cmd.data = tfr_utilities::JointAngle::BIN_MAX;
-                        tfr_msgs::BinStateSrv query;
-                        while (!server.isPreemptRequested() && ros::ok())
-                        {
-                            ros::service::call("bin_state", query);
-                            using namespace tfr_utilities;
-                            if (JointAngle::BIN_MAX -  query.response.state <
-                                    0.01)
-                                break;
-                            bin_publisher.publish(bin_cmd);
-                            frequency.sleep();
-                        }
-                        if (server.isPreemptRequested())
-                        {
-                            ROS_INFO("Teleop Action Server: DUMP preempted");
-                            server.setPreempted();
-                            return;
-                        }*/
+                        ROS_INFO("Teleop Action Server: Command Recieved, UPPER_ARM_EXTEND");
+			arm_manipulator.moveLeftBinPosition(5.0); // Extend left bin actuator
+			arm_manipulator.moveRightBinPosition(5.0); // Extend right bin actuator
                         ROS_INFO("Teleop Action Server: DUMP finished");
                         break;
                     }
@@ -434,6 +404,8 @@ class TeleopExecutive
         ros::Publisher lower_arm_pub;
         ros::Publisher upper_arm_pub;
         ros::Publisher scoop_pub;
+	ros::Publisher left_bin_publisher;
+	ros::Publisher right_bin_publisher;
         ros::Publisher turntable_encoder_publisher;
 		ros::Publisher lower_arm_encoder_publisher;
 		ros::Publisher upper_arm_encoder_publisher;
