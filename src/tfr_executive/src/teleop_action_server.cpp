@@ -286,9 +286,12 @@ class TeleopExecutive
                     {
                         
                         
-                        ROS_INFO("Teleop Action Server: Command Recieved, UPPER_ARM_EXTEND");
+                        ROS_INFO("Teleop Action Server: Command Recieved, GET READY TO DUMPPPPPPP");
 			arm_manipulator.moveLeftBinPosition(5.0); // Extend left bin actuator
 			arm_manipulator.moveRightBinPosition(5.0); // Extend right bin actuator
+			ros::Duration(20.0).sleep();
+			arm_manipulator.moveLeftBinPosition(1.25); // Retract left bin actuator
+			arm_manipulator.moveRightBinPosition(1.25); // Retract right bin actuato
                         ROS_INFO("Teleop Action Server: DUMP finished");
                         break;
                     }
