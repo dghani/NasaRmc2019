@@ -5,6 +5,8 @@ ArmManipulator::ArmManipulator(ros::NodeHandle &n, bool init_joints):
             lower_arm_publisher{n.advertise<sensor_msgs::JointState>("/device23/set_joint_state", 5)},
             upper_arm_publisher{n.advertise<sensor_msgs::JointState>("/device45/set_joint_state", 5)},
             scoop_publisher{n.advertise<sensor_msgs::JointState>("/device56/set_joint_state", 5)},
+            left_bin_publisher{n.advertise<sensor_msgs::JointState>("/device77/set_joint_state", 5)},
+            right_bin_publisher{n.advertise<sensor_msgs::JointState>("/device88/set_joint_state", 5)},
             turntable_statusword_subscriber{n.subscribe("/device1/statusword", 5, &ArmManipulator::updateTurntableTargetPosition, this)}
 {
   ROS_INFO("Initializing Arm Manipulator");
@@ -58,6 +60,25 @@ void ArmManipulator::moveScoopPosition(double scoop)
     scoop_joint_state.position.push_back(scoop);
 
     scoop_publisher.publish(scoop_joint_state);
+}
+void ArmManipulator::moveLeftBinPosition(double leftBin)
+{
+    sensor_msgs::JointState left_bin_joint_state;
+
+    left_bin_joint_state.header.stamp = ros::Time::now();
+    left_bin_joint_state.position.push_back(leftBin);
+    
+    left_bin_publisher.publish(left_bin_joint_state);
+}
+
+void ArmManipulator::moveRightBinPosition(double rightBin)
+{
+    sensor_msgs::JointState right_bin_joint_state;
+
+    right_bin_joint_state.header.stamp = ros::Time::now();
+    right_bin_joint_state.position.push_back(rightBin);
+    
+    right_bin_publisher.publish(right_bin_joint_state);
 }
 
 /*
