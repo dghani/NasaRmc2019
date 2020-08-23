@@ -92,7 +92,13 @@ private:
                 // Use arm_manipulator, and NOT MoveIt, to send commands to the arm. The actuators will just move to each of the points in the digging queue, there is no trajectory or other points being generated. There is also no collision checking, so be careful.
                 ROS_INFO("Moving arm to position: %.2f %.2f %.2f %.2f", state[0], state[1], state[2], state[3]);
                 arm_manipulator.moveArmWithoutPlanningOrLimits(state[0], state[1], state[2], state[3]);
-                ros::Duration(1.0).sleep();
+                
+                // Now that we have given the arm a new position to move to, wait until all joints have moved to their commanded positions before sending the next positions from the digging queue.
+                // Note: Currently isArmTargetPositionReached() is only implemented for the turntable, so for now we only wait until the turntable has reached position.
+                while (!arm_manipulator.isArmTargetPositionReached())
+                {
+                    ros::Duration(0.1).sleep();
+                }
 
                 ros::Rate rate(10.0);
 
