@@ -182,16 +182,16 @@ void setupMaxonDevice(kaco::Device& device, kaco::Bridge& bridge, std::string& e
     bridge.add_publisher(iopub_1, loop_rate);
 
     auto iopub_2 = std::make_shared<kaco::EntryPublisher>(device, "Number of errors"); //read errors
-    bridge.add_publisher(iopub_2, loop_rate); 
+    bridge.add_publisher(iopub_2, slow_loop_rate); 
     
     auto iosub_2 = std::make_shared<kaco::EntrySubscriber>(device, "Number of errors"); //Add the ability to set number of errors to zero
-    bridge.add_subscriber(iosub_2, loop_rate); 
+    bridge.add_subscriber(iosub_2); 
 	
     auto iopub_3 = std::make_shared<kaco::EntryPublisher>(device, "Internal error control"); //read errors
-    bridge.add_publisher(iopub_3, loop_rate); 
+    bridge.add_publisher(iopub_3, slow_loop_rate); 
     
     auto iosub_3 = std::make_shared<kaco::EntrySubscriber>(device, "Internal error control"); //Add the ability to set number of errors to zero
-    bridge.add_subscriber(iosub_3, loop_rate); 
+    bridge.add_subscriber(iosub_3); 
 		
 }
 
