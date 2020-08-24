@@ -181,16 +181,16 @@ void setupMaxonDevice(kaco::Device& device, kaco::Bridge& bridge, std::string& e
     auto iopub_1 = std::make_shared<kaco::EntryPublisher>(device, "statusword");
     bridge.add_publisher(iopub_1, loop_rate);
 
-    auto iopub_2 = std::make_shared<kaco::EntryPublisher>(device, "number of errors"); //read errors
+    auto iopub_2 = std::make_shared<kaco::EntryPublisher>(device, "number_of_errors"); //read errors
     bridge.add_publisher(iopub_2, slow_loop_rate); 
     
-    auto iosub_2 = std::make_shared<kaco::EntrySubscriber>(device, "number of errors"); //Add the ability to set number of errors to zero
+    auto iosub_2 = std::make_shared<kaco::EntrySubscriber>(device, "number_of_errors"); //Add the ability to set number of errors to zero
     bridge.add_subscriber(iosub_2); 
 	
-    auto iopub_3 = std::make_shared<kaco::EntryPublisher>(device, "internal error control"); //read errors
+    auto iopub_3 = std::make_shared<kaco::EntryPublisher>(device, "internal_error_control"); //read errors
     bridge.add_publisher(iopub_3, slow_loop_rate); 
     
-    auto iosub_3 = std::make_shared<kaco::EntrySubscriber>(device, "internal error control"); //Add the ability to set number of errors to zero
+    auto iosub_3 = std::make_shared<kaco::EntrySubscriber>(device, "internal_error_control"); //Add the ability to set number of errors to zero
     bridge.add_subscriber(iosub_3); 
 		
 }
