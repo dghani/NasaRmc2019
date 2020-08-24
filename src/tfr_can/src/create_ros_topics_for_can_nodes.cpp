@@ -179,8 +179,20 @@ void setupMaxonDevice(kaco::Device& device, kaco::Bridge& bridge, std::string& e
     // The reason for reading the statusword is to check when the motor reaches the target position.
     // This way, the digging queue can wait until the arm is in the expected position before moving to the next one.
     auto iopub_1 = std::make_shared<kaco::EntryPublisher>(device, "statusword");
-    bridge.add_publisher(iopub_1, loop_rate); 
+    bridge.add_publisher(iopub_1, loop_rate);
+
+    auto iopub_2 = std::make_shared<kaco::EntryPublisher>(device, "Number of errors"); //read errors
+    bridge.add_publisher(iopub_2, loop_rate); 
+    
+    auto iosub_2 = std::make_shared<kaco::EntrySubscriber>(device, "Number of errors"); //Add the ability to set number of errors to zero
+    bridge.add_subscriber(iosub_2, loop_rate); 
 	
+    auto iopub_3 = std::make_shared<kaco::EntryPublisher>(device, "Internal error control"); //read errors
+    bridge.add_publisher(iopub_3, loop_rate); 
+    
+    auto iosub_3 = std::make_shared<kaco::EntrySubscriber>(device, "Internal error control"); //Add the ability to set number of errors to zero
+    bridge.add_subscriber(iosub_3, loop_rate); 
+		
 }
 
 // Usage: e.g. intToHexString(10) == "A"
