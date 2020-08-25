@@ -16,7 +16,7 @@
       <geometry>
         <box size="${base_length} ${tube_width} ${drivebase_total_height}"/>
       </geometry>
-      <origin xyz="0 ${drivebase_beam_width / 2 + tube_width / 2} 0" />
+      <origin xyz="0 ${drivebase_beam_width / 2 + tube_width / 2} 0.1143" />
     </visual>
 
     <visual>
