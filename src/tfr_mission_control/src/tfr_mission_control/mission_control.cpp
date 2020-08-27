@@ -120,7 +120,7 @@ namespace tfr_mission_control {
         connect(countdownClock, &QTimer::timeout, this,  &MissionControl::renderClock);
         connect(this, &MissionControl::emitStatus, ui.status_log,
             &QPlainTextEdit::appendPlainText, Qt::QueuedConnection);
-        connect(ui.status_log, &QPlainTextEdit::textChanged, this,  &MissionControl::renderStatus);
+        connect(ui.status_log, &QPlainTextEdit::textChanged, this, &MissionControl::renderStatus);
 
         /* NOTE Remember how I said parameters of signals/slots need to match
          * up. I want to be able to process teleop commands by passing the code
@@ -205,31 +205,14 @@ namespace tfr_mission_control {
      * */
     void MissionControl::shutdownPlugin()
     {
-        //note because qt plugins are weird we need to manually kill ros entities
+        // Using a Qt plugin means we must manually kill ROS entities.
+        inputReadTimer.stop();
         com.shutdown();
         joySub.shutdown();
         autonomy.cancelAllGoals();
         autonomy.stopTrackingGoal();
         teleop.cancelAllGoals();
         teleop.stopTrackingGoal();
-    }
-
-    /* ========================================================================== */
-    /* Settings                                                                   */
-    /* ========================================================================== */
-
-    /* we inherit this, but I don't think we need it*/
-    void MissionControl::saveSettings(
-            qt_gui_cpp::Settings& plugin_settings,
-            qt_gui_cpp::Settings& instance_settings) const
-    {
-    }
-
-    /* we inherit this, but I don't think we need it*/
-    void MissionControl::restoreSettings(
-            const qt_gui_cpp::Settings& plugin_settings,
-            const qt_gui_cpp::Settings& instance_settings)
-    {
     }
 
     /* ========================================================================== */
@@ -470,40 +453,74 @@ namespace tfr_mission_control {
             return;
         }
 
-        bool driveCodeRun = false;
-        tfr_utilities::TeleopCode driveCode;
-
-        // We are using unique_lock instead of lock_guard because we want
-        // to unlock the mutex manually. lock_guard can only be unlocked
-        // upon its destruction, like when the function ends.
+        tfr_utilities::TeleopCode code;
+        // Using unique_lock instead of lock_guard so we can control when
+        // to unlock, because we want to unlock the booleans before
+        // performing teleop.
         std::unique_lock<std::mutex> controlLock(controlMutex);
 
-        // Left/right driving take precedence over forward/backward.
-        // Left XOR right, so only either left/right can be pressed.
+
+        // Using the inequality operator != is like doing A XOR B, so that
+        // only one can be active at a time. If you try to go forward
+        // and backward at the same time, this results in no action.
+
+        // These if blocks are organized by highest to lowest priority.
         if(controlDriveStop)
         {
-            tfr_utilities::TeleopCode::STOP_DRIVEBASE;
-            driveCodeRun = true;
+            code = tfr_utilities::TeleopCode::STOP_DRIVEBASE;
+        }
+        else if(controlLowerArmExtend != controlLowerArmRetract)
+        {
+            // Ternary operators are sometimes cleaner than if/else blocks.
+            code = controlLowerArmExtend
+                ? tfr_utilities::TeleopCode::LOWER_ARM_EXTEND
+                : tfr_utilities::TeleopCode::LOWER_ARM_RETRACT;
+        }
+        else if(controlUpperArmExtend != controlUpperArmRetract)
+        {
+            code = controlUpperArmExtend
+                ? tfr_utilities::TeleopCode::UPPER_ARM_EXTEND
+                : tfr_utilities::TeleopCode::UPPER_ARM_RETRACT;
+        }
+        else if(controlScoopExtend != controlScoopRetract)
+        {
+            code = controlScoopExtend
+                ? tfr_utilities::TeleopCode::SCOOP_EXTEND
+                : tfr_utilities::TeleopCode::SCOOP_RETRACT;
+        }
+        else if(controlClockwise != controlCtrclockwise)
+        {
+            code = controlClockwise
+                ? tfr_utilities::TeleopCode::CLOCKWISE
+                : tfr_utilities::TeleopCode::COUNTERCLOCKWISE;
+        }
+        else if(controlDump != controlResetDumping)
+        {
+            code = controlDump
+                ? tfr_utilities::TeleopCode::DUMP
+                : tfr_utilities::TeleopCode::RESET_DUMPING;
         }
         else if(controlDriveLeft != controlDriveRight)
         {
-            // Ternary operators are sometimes cleaner than if/else blocks.
-            driveCode = controlDriveLeft ? tfr_utilities::TeleopCode::LEFT
+            code = controlDriveLeft
+                ? tfr_utilities::TeleopCode::LEFT
                 : tfr_utilities::TeleopCode::RIGHT;
-            driveCodeRun = true;
         }
         else if(controlDriveForward != controlDriveBackward)
         {
-            driveCode = controlDriveForward ? tfr_utilities::TeleopCode::FORWARD
+            code = controlDriveForward
+                ? tfr_utilities::TeleopCode::FORWARD
                 : tfr_utilities::TeleopCode::BACKWARD;
-            driveCodeRun = true;
+        }
+        else
+        {
+            // If there is no action, leave early. The unique_lock
+            // is unlocked when it gets destroyed (upon function return).
+            return;
         }
 
         controlLock.unlock();
-        if(driveCodeRun)
-        {
-            performTeleop(driveCode);
-        }
+        performTeleop(code);
     } // inputReadTimerCallback()
 
     /* ========================================================================== */
@@ -579,22 +596,6 @@ namespace tfr_mission_control {
         setControl(state);
     }
 
-
-    /*
-
-    This needs to be setup similar to toggleControl and toggleMotors for E-Stop.
-    "toggle_joystick" needs to be created in mission_control.h which also needs to
-    link to tfr_control/src/control.cpp
-
-    void MissionControl::toggleJoystick(bool state)
-    {
-        std_srvs::SetBool request;
-        request.request.data = state;
-        while (!ros::service::call("toggle_joystick", request));
-        setJoystick(state);
-    }
-    */
-
     //toggles control for estop (on/off)
     void MissionControl::toggleMotors(bool state)
     {
@@ -616,15 +617,6 @@ namespace tfr_mission_control {
     {
         ui.status_log->verticalScrollBar()->setValue(ui.status_log->verticalScrollBar()->maximum());
     }
-
-
-
-
-    /* ========================================================================== */
-    /* Signals                                                                    */
-    /* ========================================================================== */
-
-
 } // namespace
 
 PLUGINLIB_EXPORT_CLASS(tfr_mission_control::MissionControl,

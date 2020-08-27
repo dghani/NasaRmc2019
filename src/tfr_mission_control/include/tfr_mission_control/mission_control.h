@@ -38,10 +38,6 @@ namespace tfr_mission_control {
     /* Main entry point for the qt application, contains all of state, business
      * logic, and only has one screen. Uses the associated .ui file for layout
      * and design.
-     *
-     * Much of the code having to do with settings here has been generated from
-     * the "catkin_create_rqt" package. We don't have any settings to implement,
-     * but I am scared to delete it.
      * */
     class MissionControl : public rqt_gui_cpp::Plugin{
 
@@ -63,16 +59,6 @@ namespace tfr_mission_control {
             void initPlugin(qt_gui_cpp::PluginContext& context) override;
 
             void shutdownPlugin() override;
-
-            /* ======================================================================== */
-            /* Settings                                                                 */
-            /* ======================================================================== */
-
-            void saveSettings(qt_gui_cpp::Settings& plugin_settings,
-                    qt_gui_cpp::Settings& instance_settings) const override;
-
-            void restoreSettings(const qt_gui_cpp::Settings& plugin_settings,
-                    const qt_gui_cpp::Settings& instance_settings) override;
 
         private:
 
