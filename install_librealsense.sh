@@ -1,5 +1,5 @@
 #!/bin/bash
-version="v2.36.0"
+version="v2.24.0"
 rm -rf librealsense
 git clone https://github.com/IntelRealSense/librealsense.git
 cd librealsense

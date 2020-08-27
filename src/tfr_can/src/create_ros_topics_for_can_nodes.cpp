@@ -20,7 +20,7 @@ const std::string busname = "can1";
 // "1M", "500K", "125K", "100K", "50K", "20K", "10K" and "5K".
 const std::string baudrate = "250K";
 
-const size_t num_devices_required = 4;
+const size_t num_devices_required = 5;
 
 const double loop_rate = 10; // 10 Hz
 const int slow_loop_rate = 1; // 1 Hz
@@ -323,7 +323,7 @@ int main(int argc, char* argv[]) {
 			//auto iopub_8_1_4 = std::make_shared<kaco::EntryPublisher>(device, "qry_blrspeed/channel_1");
     		//bridge.add_publisher(iopub_8_1_4, loop_rate);
     		
-    		auto iopub_8_1_5 = std::make_shared<kaco::EntryPublisher>(device, "qry_blcntr/channel_1");
+    		auto iopub_8_1_5 = std::make_shared<kaco::EntryPublisher>(device, "qry_blcntr/qry_blcntr_1");
     		bridge.add_publisher(iopub_8_1_5, loop_rate);
 			
 			
@@ -339,7 +339,7 @@ int main(int argc, char* argv[]) {
 			//auto iopub_8_2_4 = std::make_shared<kaco::EntryPublisher>(device, "qry_blrspeed/channel_2");
     		//bridge.add_publisher(iopub_8_2_4, loop_rate);
     		
-    		auto iopub_8_2_5 = std::make_shared<kaco::EntryPublisher>(device, "qry_blcntr/channel_2");
+    		auto iopub_8_2_5 = std::make_shared<kaco::EntryPublisher>(device, "qry_blcntr/qry_blcntr_2");
     		bridge.add_publisher(iopub_8_2_5, loop_rate);
 			
 		}
