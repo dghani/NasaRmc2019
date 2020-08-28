@@ -2,7 +2,7 @@
 
 #include <rqt_gui_cpp/plugin.h>
 #include <tfr_mission_control/ui_mission_control.h>
-#include "tfr_mission_control/joy_indices.h"
+#include "tfr_mission_control/joy_constants.h"
 
 #include <ros/ros.h>
 #include <ros/console.h>
@@ -117,8 +117,8 @@ namespace tfr_mission_control {
                     controlUpperArmRetract = false,
                     controlScoopExtend = false,         // scoop
                     controlScoopRetract = false,
-                    controlClockwise = false,           // turntable
-                    controlCtrclockwise = false,
+                    controlCtrclockwise = false,        // turntable
+                    controlClockwise = false,
                     controlDump = false,                // dumping
                     controlResetDumping = false;
 

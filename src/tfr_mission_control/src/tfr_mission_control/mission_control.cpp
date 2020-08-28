@@ -424,21 +424,48 @@ namespace tfr_mission_control {
     /*
      * Callback for incoming joystick messages.
      * Use only with the Microsoft Xbox 360 Wired Controller for Linux.
+     *
+     * Arm control scheme:
+     * https://en.wikipedia.org/wiki/Excavator_controls#ISO_controls
      * */
     void MissionControl::joyCallback(const sensor_msgs::Joy::ConstPtr& joy)
     {
         using namespace JoyIndices;
+        using namespace JoyBounds;
+
         if(!teleopEnabled)
         {
             return;
         }
         // Lock the mutex to "claim" the control bools.
         std::lock_guard<std::mutex> controlLock(controlMutex);
-        controlDriveForward = joy->axes[JOY_AXIS_DPAD_Y] > -0.1;
-        controlDriveBackward = joy->axes[JOY_AXIS_DPAD_Y] < 0.1;
-        controlDriveLeft = joy->axes[JOY_AXIS_DPAD_X] > -0.1;
-        controlDriveRight = joy->axes[JOY_AXIS_DPAD_X] < 0.1;
-        controlDriveStop = joy->buttons[JOY_BUTTON_LB];
+
+        // Driving
+        controlDriveStop = joy->buttons[BUTTON_LB];
+        controlDriveForward = joy->axes[AXIS_DPAD_Y] > MIN_DPAD;
+        controlDriveBackward = joy->axes[AXIS_DPAD_Y] < -1 * MIN_DPAD;
+        controlDriveLeft = joy->axes[AXIS_DPAD_X] > MIN_DPAD;
+        controlDriveRight = joy->axes[AXIS_DPAD_X] < -1 * MIN_DPAD;
+
+        // Lower arm
+        controlLowerArmExtend = joy->axes[AXIS_RIGHT_Y] < -1 * MIN_RIGHT;
+        controlLowerArmRetract = joy->axes[AXIS_RIGHT_Y] > MIN_RIGHT;
+
+        // Upper arm
+        controlUpperArmExtend = joy->axes[AXIS_LEFT_Y] > MIN_LEFT;
+        controlUpperArmRetract = joy->axes[AXIS_LEFT_Y] < -1 * MIN_LEFT;
+
+        // Scoop
+        controlScoopExtend = joy->axes[AXIS_RIGHT_X] < -1 * MIN_RIGHT;
+        controlScoopRetract = joy->axes[AXIS_RIGHT_X] > MIN_RIGHT;
+
+        // Turntable
+        controlCtrclockwise = joy->axes[AXIS_LEFT_X] > MIN_LEFT;
+        controlClockwise = joy->axes[AXIS_LEFT_X] < -1 * MIN_LEFT;
+
+        // Dumping
+        controlDump = joy->buttons[BUTTON_X];
+        controlResetDumping = joy->buttons[BUTTON_Y];
     }
 
     /*
