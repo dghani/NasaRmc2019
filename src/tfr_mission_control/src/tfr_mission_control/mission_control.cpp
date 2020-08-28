@@ -12,13 +12,12 @@ namespace tfr_mission_control {
      * First thing to get called, NOTE ros::init called by superclass
      * Not needed here
      * */
-    MissionControl::MissionControl()
+     MissionControl::MissionControl()
         : rqt_gui_cpp::Plugin(),
         widget(nullptr),
         autonomy{"autonomous_action_server",true},
         teleop{"teleop_action_server",true},
         arm_client{"move_arm", true},
-        com{nh.subscribe("com", 5, &MissionControl::updateStatus, this)},
         teleopEnabled{false}
     {
         setObjectName("MissionControl");
@@ -33,7 +32,6 @@ namespace tfr_mission_control {
     MissionControl::~MissionControl()
     {
         delete countdownClock;
-        delete motorKill;
         delete widget;
     }
 
@@ -65,8 +63,19 @@ namespace tfr_mission_control {
         context.addWidget(widget);
 
         countdownClock = new QTimer(this); //mission clock, runs repeatedly
-        motorKill = new QTimer(this); //motor watchdog
-        motorKill->setSingleShot(true); //tells it to only run on demand
+
+        // Since rqt creates a Nodelet for the ROS side of things, we can
+        // use getNodeHandle() and similar functions instead of creating
+        // a NodeHandle member.
+        // getMTNodeHandle() gives us a multithreaded NodeHandle.
+        com = getMTNodeHandle().subscribe("/com", 5,
+            &MissionControl::updateStatus, this);
+
+        joySub = getMTNodeHandle().subscribe<sensor_msgs::Joy>("/joy", 5,
+            &MissionControl::joyCallback, this);
+
+        inputReadTimer = getMTNodeHandle().createTimer(ros::Duration(0.1),
+            &MissionControl::inputReadTimerCallback, this);
 
         /* Sets up all the signal/slot connections.
          *
@@ -96,13 +105,22 @@ namespace tfr_mission_control {
         connect(ui.control_enable_button,&QPushButton::clicked, [this] () {toggleControl(true);});
         connect(ui.control_disable_button,&QPushButton::clicked, [this] () {toggleControl(false);});
 
+        /* Joystick
+         * Note, Joystick is not linked to E-stop. setJoystick needs to be replaced with toggleJoystick
+         *
+         * */
+
+        connect(ui.joy_enable_button,&QPushButton::clicked, [this]() {setJoystick(true);});
+        connect(ui.joy_disable_button,&QPushButton::clicked, [this]() {setJoystick(false);});
+
         //PID
         connect(ui.arm_pid_enable_button,&QPushButton::clicked, [this] () {setArmPID(true);});
         connect(ui.arm_pid_disable_button,&QPushButton::clicked, [this] () {setArmPID(false);});
 
         connect(countdownClock, &QTimer::timeout, this,  &MissionControl::renderClock);
-        connect(this, &MissionControl::emitStatus, ui.status_log, &QPlainTextEdit::appendPlainText);
-        connect(ui.status_log, &QPlainTextEdit::textChanged, this,  &MissionControl::renderStatus);
+        connect(this, &MissionControl::emitStatus, ui.status_log,
+            &QPlainTextEdit::appendPlainText, Qt::QueuedConnection);
+        connect(ui.status_log, &QPlainTextEdit::textChanged, this, &MissionControl::renderStatus);
 
         /* NOTE Remember how I said parameters of signals/slots need to match
          * up. I want to be able to process teleop commands by passing the code
@@ -110,9 +128,6 @@ namespace tfr_mission_control {
          * to make the parameters match up but that could get tedious, luckily
          * qt5 did a little phenagling which allows us to use lambdas instead.
          * */
-
-        connect(motorKill, &QTimer::timeout,
-                [this] () {performTeleop(tfr_utilities::TeleopCode::STOP_DRIVEBASE);});
 
         connect(ui.reset_starting_button,&QPushButton::clicked,
                 [this] () {performTeleop(tfr_utilities::TeleopCode::RESET_STARTING);});
@@ -174,8 +189,7 @@ namespace tfr_mission_control {
         connect(ui.right_button,&QPushButton::released,
                 [this] () {performTeleop(tfr_utilities::TeleopCode::STOP_DRIVEBASE);});
 
-
-        //set upp our action servers
+        // Set up the action servers.
         ROS_INFO("Mission Control: connecting autonomy");
         autonomy.waitForServer();
         ROS_INFO("Mission Control: connected autonomy");
@@ -191,30 +205,14 @@ namespace tfr_mission_control {
      * */
     void MissionControl::shutdownPlugin()
     {
-        //note because qt plugins are weird we need to manually kill ros entities
+        // Using a Qt plugin means we must manually kill ROS entities.
+        inputReadTimer.stop();
         com.shutdown();
+        joySub.shutdown();
         autonomy.cancelAllGoals();
         autonomy.stopTrackingGoal();
         teleop.cancelAllGoals();
         teleop.stopTrackingGoal();
-    }
-
-    /* ========================================================================== */
-    /* Settings                                                                   */
-    /* ========================================================================== */
-
-    /* we inherit this, but I don't think we need it*/
-    void MissionControl::saveSettings(
-            qt_gui_cpp::Settings& plugin_settings,
-            qt_gui_cpp::Settings& instance_settings) const
-    {
-    }
-
-    /* we inherit this, but I don't think we need it*/
-    void MissionControl::restoreSettings(
-            const qt_gui_cpp::Settings& plugin_settings,
-            const qt_gui_cpp::Settings& instance_settings)
-    {
     }
 
     /* ========================================================================== */
@@ -231,11 +229,12 @@ namespace tfr_mission_control {
         std_srvs::Empty::Request req;
         std_srvs::Empty::Response res;
         while(!ros::service::call("/zero_turntable", req, res))
-            ros::Duration{0.1}.sleep();
+        {
+            ros::Duration{INPUT_READ_RATE}.sleep();
+        }
 
 	    performTeleop(tfr_utilities::TeleopCode::DRIVING_POSITION);
         toggleMotors(true);
-
     }
 
     /* greys/ungreys all teleop buttons, and tell's system whether to process teleop or
@@ -276,6 +275,12 @@ namespace tfr_mission_control {
         ui.control_disable_button->setEnabled(value);
     }
 
+    void MissionControl::setJoystick(bool value)
+    {
+        ui.joy_enable_button->setEnabled(!value);
+        ui.joy_disable_button->setEnabled(value);
+    }
+
     void MissionControl::setArmPID(bool value){
         ros::param::set("/write_arm_values", value);
         ui.arm_pid_enable_button->setEnabled(!value);
@@ -295,104 +300,106 @@ namespace tfr_mission_control {
     /* Events                                                                     */
     /* ========================================================================== */
     /*
-     * Processes key events, if we don't consume the event, we need to pass it
-     * on to the other filters. Note I do time based debouncing here, with a
-     * watchdog.
-     *
-     * The problem is repeated keypresses, and the debouncing in qt being
-     * rubbish.
-     *
-     * So when we get a valid key in, I start a watchdog for the motors.
-     * Whenever we get a repeat of that key I ignore it and restart the
-     * watchdog. When the watchdog expires it stops the drivebase
-     *
-     * This can cause problems if the user has a long key delay (gt .3
-     * seconds)
-     *
-     * I can't set the watchdog too long, or else there is an unacceptable delay
-     * in stopping the motors. So I make it a requirement that our laptop have a
-     * reasonable key delay set.
-     *
-     * QT provides some built in functionality for this, but it's rubbish, and I
-     * couldn't get fine enough control to meet our response requirements.
-     * */
+    * Key press/release events should not directly trigger teleop commands.
+    * Instead, we keep track of the key states and use key events to change
+    * those key state variables. Separate callbacks can periodically check
+    * all the key states and perform teleop (on a different thread).
+    *
+    * No matter how many times the keys get pressed down (from unintentional
+    * key bouncing), teleop will still be performed at a fixed rate.
+    *
+    * When writing callbacks for quick, repeated events like key presses,
+    * it is important that the callback returns as fast as possible.
+    * */
+
     bool MissionControl::eventFilter(QObject* obj, QEvent* event)
     {
-        if (event->type()==QEvent::KeyPress && teleopEnabled) {
-            QKeyEvent* key = static_cast<QKeyEvent*>(event);
-            auto  k = static_cast<Qt::Key>(key->key());
+        bool keyPress = event->type() == QEvent::KeyPress;
 
-            switch(k)
-            {
-                //process the key and start watchdog
-                case (Qt::Key_W):
-                    motorKill->start(MOTOR_INTERVAL);
-                    performTeleop(tfr_utilities::TeleopCode::FORWARD);
-                    break;
-                case (Qt::Key_S):
-                    motorKill->start(MOTOR_INTERVAL);
-                    performTeleop(tfr_utilities::TeleopCode::BACKWARD);
-                    break;
-                case (Qt::Key_A):
-                    motorKill->start(MOTOR_INTERVAL);
-                    performTeleop(tfr_utilities::TeleopCode::LEFT);
-                    break;
-                case (Qt::Key_D):
-                    motorKill->start(MOTOR_INTERVAL);
-                    performTeleop(tfr_utilities::TeleopCode::RIGHT);
-                    break;
-                case (Qt::Key_Shift):
-                    performTeleop(tfr_utilities::TeleopCode::STOP_DRIVEBASE);
-                    break;
-                case (Qt::Key_U):
-                    motorKill->start(MOTOR_INTERVAL);
-                    performTeleop(tfr_utilities::TeleopCode::LOWER_ARM_EXTEND);
-                    break;
-                case (Qt::Key_J):
-                    motorKill->start(MOTOR_INTERVAL);
-                    performTeleop(tfr_utilities::TeleopCode::LOWER_ARM_RETRACT);
-                    break;
-                case (Qt::Key_I):
-                    motorKill->start(MOTOR_INTERVAL);
-                    performTeleop(tfr_utilities::TeleopCode::UPPER_ARM_EXTEND);
-                    break;
-                case (Qt::Key_K):
-                    motorKill->start(MOTOR_INTERVAL);
-                    performTeleop(tfr_utilities::TeleopCode::UPPER_ARM_RETRACT);
-                    break;
-                case (Qt::Key_O):
-                    motorKill->start(MOTOR_INTERVAL);
-                    performTeleop(tfr_utilities::TeleopCode::SCOOP_EXTEND);
-                    break;
-                case (Qt::Key_L):
-                    motorKill->start(MOTOR_INTERVAL);
-                    performTeleop(tfr_utilities::TeleopCode::SCOOP_RETRACT);
-                    break;
-                case (Qt::Key_P):
-                    motorKill->start(MOTOR_INTERVAL);
-                    performTeleop(tfr_utilities::TeleopCode::CLOCKWISE);
-                    break;
-                case (Qt::Key_Semicolon):
-                    motorKill->start(MOTOR_INTERVAL);
-                    performTeleop(tfr_utilities::TeleopCode::COUNTERCLOCKWISE);
-                    break;
-                case (Qt::Key_Y):
-                    motorKill->start(MOTOR_INTERVAL);
-                    performTeleop(tfr_utilities::TeleopCode::DUMP);
-                    break;
-                case (Qt::Key_H):
-                    motorKill->start(MOTOR_INTERVAL);
-                    performTeleop(tfr_utilities::TeleopCode::RESET_DUMPING);
-                    break;
-            }
-            //consume the key
-            return true;
+        if (teleopEnabled && (keyPress || event->type() == QEvent::KeyRelease))
+        {
+            const Qt::Key key = static_cast<Qt::Key>(
+                static_cast<QKeyEvent*>(event)->key());
+
+            return processKey(key, keyPress);
         }
-        else {
-            //unrecognized event type, pass it on
+        else
+        {
+            // The event was not a key press/release, so pass it on to
+            // something else.
             return QObject::eventFilter(obj, event);
         }
     }
+
+    // This function returns a bool so its use inside of eventFilter() will
+    // allow the filter to consume or pass on a key event.
+    bool MissionControl::processKey(const Qt::Key key, const bool keyPress)
+    {
+        // Lock the mutex to "claim" the control bools.
+        std::lock_guard<std::mutex> controlLock(controlMutex);
+        // It might look tedious, but a switch statement for this few keys
+        // is more efficient than using an STL data structure to track keys.
+        switch (key)
+        {
+            // driving controls
+            case (Qt::Key_W):
+                controlDriveForward = keyPress;
+                break;
+            case (Qt::Key_S):
+                controlDriveBackward = keyPress;
+                break;
+            case (Qt::Key_A):
+                controlDriveLeft = keyPress;
+                break;
+            case (Qt::Key_D):
+                controlDriveRight = keyPress;
+                break;
+            case (Qt::Key_Shift):
+                controlDriveStop = keyPress;
+                break;
+            // lower arm controls
+            case (Qt::Key_U):
+                controlLowerArmExtend = keyPress;
+                break;
+            case (Qt::Key_J):
+                controlLowerArmRetract = keyPress;
+                break;
+            // upper arm controls
+            case (Qt::Key_I):
+                controlUpperArmExtend = keyPress;
+                break;
+            case (Qt::Key_K):
+                controlUpperArmRetract = keyPress;
+                break;
+            // scoop controls
+            case (Qt::Key_O):
+                controlScoopExtend = keyPress;
+                break;
+            case (Qt::Key_L):
+                controlScoopRetract = keyPress;
+                break;
+            // turntable controls
+            case (Qt::Key_P):
+                controlClockwise = keyPress;
+                break;
+            case (Qt::Key_Semicolon):
+                controlCtrclockwise = keyPress;
+                break;
+            // dumping controls
+            case (Qt::Key_Y):
+                controlDump = keyPress;
+                break;
+            case (Qt::Key_H):
+                controlResetDumping = keyPress;
+                break;
+
+            default:
+                // If we aren't using a key, don't consume its event.
+                return false;
+        }
+        // Consume the key event, so nothing else can use it.
+        return true;
+    } // MissionControl::processKey()
 
     /* ========================================================================== */
     /* Callbacks                                                                  */
@@ -407,11 +414,113 @@ namespace tfr_mission_control {
      * */
     void MissionControl::updateStatus(const tfr_msgs::SystemStatusConstPtr &status)
     {
-        auto str = getStatusMessage(static_cast<StatusCode>(status->status_code), status->data);
-        //need to wrap in signal safe "Q" object
-        QString msg = QString::fromStdString(str);
-        emit emitStatus(msg);
+        const std::string statusStr = getStatusMessage(
+            static_cast<StatusCode>(status->status_code), status->data);
+        // The status message must be wrapped in a signal-safe "Q" object.
+        QString statusMsg = QString::fromStdString(statusStr);
+        emit emitStatus(statusMsg);
     }
+
+    /*
+     * Callback for incoming joystick messages.
+     * Use only with the Microsoft Xbox 360 Wired Controller for Linux.
+     * */
+    void MissionControl::joyCallback(const sensor_msgs::Joy::ConstPtr& joy)
+    {
+        using namespace JoyIndices;
+        if(!teleopEnabled)
+        {
+            return;
+        }
+        // Lock the mutex to "claim" the control bools.
+        std::lock_guard<std::mutex> controlLock(controlMutex);
+        controlDriveForward = joy->axes[JOY_AXIS_DPAD_Y] > -0.1;
+        controlDriveBackward = joy->axes[JOY_AXIS_DPAD_Y] < 0.1;
+        controlDriveLeft = joy->axes[JOY_AXIS_DPAD_X] > -0.1;
+        controlDriveRight = joy->axes[JOY_AXIS_DPAD_X] < 0.1;
+        controlDriveStop = joy->buttons[JOY_BUTTON_LB];
+    }
+
+    /*
+     * This callback periodically reads the input control variables
+     * and sends the respective control commands over teleop.
+     * */
+    void MissionControl::inputReadTimerCallback(const ros::TimerEvent& event)
+    {
+        if(!teleopEnabled)
+        {
+            return;
+        }
+
+        tfr_utilities::TeleopCode code;
+        // Using unique_lock instead of lock_guard so we can control when
+        // to unlock, because we want to unlock the booleans before
+        // performing teleop.
+        std::unique_lock<std::mutex> controlLock(controlMutex);
+
+
+        // Using the inequality operator != is like doing A XOR B, so that
+        // only one can be active at a time. If you try to go forward
+        // and backward at the same time, this results in no action.
+
+        // These if blocks are organized by highest to lowest priority.
+        if(controlDriveStop)
+        {
+            code = tfr_utilities::TeleopCode::STOP_DRIVEBASE;
+        }
+        else if(controlLowerArmExtend != controlLowerArmRetract)
+        {
+            // Ternary operators are sometimes cleaner than if/else blocks.
+            code = controlLowerArmExtend
+                ? tfr_utilities::TeleopCode::LOWER_ARM_EXTEND
+                : tfr_utilities::TeleopCode::LOWER_ARM_RETRACT;
+        }
+        else if(controlUpperArmExtend != controlUpperArmRetract)
+        {
+            code = controlUpperArmExtend
+                ? tfr_utilities::TeleopCode::UPPER_ARM_EXTEND
+                : tfr_utilities::TeleopCode::UPPER_ARM_RETRACT;
+        }
+        else if(controlScoopExtend != controlScoopRetract)
+        {
+            code = controlScoopExtend
+                ? tfr_utilities::TeleopCode::SCOOP_EXTEND
+                : tfr_utilities::TeleopCode::SCOOP_RETRACT;
+        }
+        else if(controlClockwise != controlCtrclockwise)
+        {
+            code = controlClockwise
+                ? tfr_utilities::TeleopCode::CLOCKWISE
+                : tfr_utilities::TeleopCode::COUNTERCLOCKWISE;
+        }
+        else if(controlDump != controlResetDumping)
+        {
+            code = controlDump
+                ? tfr_utilities::TeleopCode::DUMP
+                : tfr_utilities::TeleopCode::RESET_DUMPING;
+        }
+        else if(controlDriveLeft != controlDriveRight)
+        {
+            code = controlDriveLeft
+                ? tfr_utilities::TeleopCode::LEFT
+                : tfr_utilities::TeleopCode::RIGHT;
+        }
+        else if(controlDriveForward != controlDriveBackward)
+        {
+            code = controlDriveForward
+                ? tfr_utilities::TeleopCode::FORWARD
+                : tfr_utilities::TeleopCode::BACKWARD;
+        }
+        else
+        {
+            // If there is no action, leave early. The unique_lock
+            // is unlocked when it gets destroyed (upon function return).
+            return;
+        }
+
+        controlLock.unlock();
+        performTeleop(code);
+    } // inputReadTimerCallback()
 
     /* ========================================================================== */
     /* Slots                                                                      */
@@ -469,8 +578,8 @@ namespace tfr_mission_control {
         widget->setFocus();
     }
 
-    //performs a teleop command asynchronously
-    void MissionControl::performTeleop(tfr_utilities::TeleopCode code)
+    // Performs a teleop command asynchronously.
+    void MissionControl::performTeleop(const tfr_utilities::TeleopCode& code)
     {
         tfr_msgs::TeleopGoal goal;
         goal.code = static_cast<uint8_t>(code);
@@ -507,15 +616,6 @@ namespace tfr_mission_control {
     {
         ui.status_log->verticalScrollBar()->setValue(ui.status_log->verticalScrollBar()->maximum());
     }
-
-
-
-
-    /* ========================================================================== */
-    /* Signals                                                                    */
-    /* ========================================================================== */
-
-
 } // namespace
 
 PLUGINLIB_EXPORT_CLASS(tfr_mission_control::MissionControl,
