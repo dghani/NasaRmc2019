@@ -19,12 +19,12 @@ namespace tfr_control
             const double *lower_lim, const double *upper_lim) :
 
 
-        brushless_left_tread_vel{n.subscribe("/device8/get_qry_blcntr/qry_blcntr_1", 32,
+        brushless_left_tread_vel{n.subscribe("/device8/get_qry_blcntr/qry_blcntr_1", 64,
                 &RobotInterface::setBrushlessLeftEncoder, this)},
         brushless_left_tread_vel_publisher{n.advertise<std_msgs::Int32>("/device8/set_cmd_cango/cmd_cango_1", 1)},
         
         
-        brushless_right_tread_vel{n.subscribe("/device8/get_qry_blcntr/qry_blcntr_2", 32,
+        brushless_right_tread_vel{n.subscribe("/device8/get_qry_blcntr/qry_blcntr_2", 64,
                 &RobotInterface::setBrushlessRightEncoder, this)},
         brushless_right_tread_vel_publisher{n.advertise<std_msgs::Int32>("/device8/set_cmd_cango/cmd_cango_2", 1)},
         
@@ -203,7 +203,7 @@ namespace tfr_control
         //RIGHT_TREAD
         double right_tread_command = command_values[static_cast<int32_t>(tfr_utilities::Joint::RIGHT_TREAD)];
         std_msgs::Int32 right_tread_msg;
-        right_tread_msg.data = -1 * clamp(static_cast<int32_t>(right_tread_command), -2000, 2000);
+        right_tread_msg.data = -1 * clamp(static_cast<int32_t>(right_tread_command), -2500, 2500);
         brushless_right_tread_vel_publisher.publish(right_tread_msg);
         
         //UPKEEP
