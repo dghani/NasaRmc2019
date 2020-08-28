@@ -203,7 +203,7 @@ namespace tfr_control
         //RIGHT_TREAD
         double right_tread_command = command_values[static_cast<int32_t>(tfr_utilities::Joint::RIGHT_TREAD)];
         std_msgs::Int32 right_tread_msg;
-        right_tread_msg.data = -1 * clamp(static_cast<int32_t>(right_tread_command), -2500, 2500);
+        right_tread_msg.data = -1 * clamp(static_cast<int32_t>(right_tread_command), -2000, 2000);
         brushless_right_tread_vel_publisher.publish(right_tread_msg);
         
         //UPKEEP
