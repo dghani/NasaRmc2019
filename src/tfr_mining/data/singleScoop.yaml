@@ -13,15 +13,11 @@ positions: [
   [3.14, 5.0, 4.2, 2.7], # Prep for rotation to discard 5
   [4.5, 5.0, 4.2, 2.7], # Rotate to discard position 6
   [4.5, 5.0, 4.2, 2.7],
-  [4.5, 5.0, 4.2, 2.7],
-  [4.5, 5.0, 4.2, 2.7],
   [4.5, 3.2, 1.1, 2.7], # Prepare to open scoop up to dump BP1 7
   [4.5, 3.2, 1.1, 0.3], # Open scoop up to dump BP1 8
   [4.5, 3.2, 1.1, 0.3], # Open scoop up to dump BP1 8
   [4.5, 5.0, 4.2, 0.3], # Prep for rotation to dig 9
   [3.14, 5.0, 4.2, 0.3], # Rotate back around 10
-  [3.14, 5.0, 4.2, 0.3],
-  [3.14, 5.0, 4.2, 0.3],
   [3.14, 5.0, 4.2, 0.3],
   [3.14, 5.0, 4.2, 0.3],
   [3.14, 3.0, 1.1, 0.3], # move over mining spot 1
@@ -29,18 +25,14 @@ positions: [
   [3.14, 1.8, 2.8, 1.1], # pull scoop through 3
   [3.14, 4.2, 3.0, 2.7], # Come back up 4
   [3.14, 5.0, 4.2, 2.7], # Prep for rotation to discard 5
-  [4.5, 5.0, 4.2, 2.7], # rotate to discard position 6
-  [4.5, 5.0, 4.2, 2.7],
-  [4.5, 5.0, 4.2, 2.7],
-  [4.5, 5.0, 4.2, 2.7],
-  [4.5, 5.0, 4.2, 2.7],
-  [4.5, 3.2, 1.1, 2.7], # Prepare to open scoop up to dump BP1 7
-  [4.5, 3.2, 1.1, 0.3], # Open scoop up to dump BP1 8
-  [4.5, 3.2, 1.1, 0.3], # Open scoop up to dump BP1 8
-  [4.5, 5.0, 4.2, 0.3], # Prep for rotation to dig 9
+  [4.0, 5.0, 4.2, 2.7], # rotate to discard position 6
+  [4.0, 5.0, 4.2, 2.7],
+  [4.0, 5.0, 4.2, 2.7],
+  [4.0, 3.2, 1.1, 2.7], # Prepare to open scoop up to dump BP1 7
+  [4.0, 3.2, 1.1, 0.3], # Open scoop up to dump BP1 8
+  [4.0, 3.2, 1.1, 0.3], # Open scoop up to dump BP1 8
+  [4.0, 5.0, 4.2, 0.3], # Prep for rotation to dig 9
   [3.14, 5.0, 4.2, 0.3], # Rotate back around 10
-  [3.14, 5.0, 4.2, 0.3],
-  [3.14, 5.0, 4.2, 0.3],
   [3.14, 5.0, 4.2, 0.3],
   [3.14, 5.0, 4.2, 0.3],
   [3.14, 3.0, 1.1, 0.3], # move over mining spot 1
@@ -48,15 +40,15 @@ positions: [
   [3.14, 1.5, 2.8, 1.1], # pull stick through 3
   [3.14, 4.2, 3.0, 2.7], # Come back up 4
   [3.14, 5.0, 4.2, 2.7], # Prep for rotation to discard 5
-  [4.5, 5.0, 4.2, 2.7], # Rotate to discard position 6
-  [4.5, 5.0, 4.2, 2.7],
-  [4.5, 5.0, 4.2, 2.7],
-  [4.5, 5.0, 4.2, 2.7],
-  [4.5, 5.0, 4.2, 2.7],
-  [4.5, 3.2, 1.1, 2.7], # Prepare to open scoop up to dump BP1 7
-  [4.5, 3.2, 1.1, 0.3], # Open scoop up to dump BP1 8
-  [4.5, 3.2, 1.1, 0.3], # Open scoop up to dump BP1 8
-  [4.5, 5.0, 4.2, 0.3], # Prep for rotation to dig 9
+  [4.0, 5.0, 4.2, 2.7], # Rotate to discard position 6
+  [4.0, 5.0, 4.2, 2.7],
+  [4.0, 5.0, 4.2, 2.7],
+  [4.0, 5.0, 4.2, 2.7],
+  [4.0, 5.0, 4.2, 2.7],
+  [4.0, 3.2, 1.1, 2.7], # Prepare to open scoop up to dump BP1 7
+  [4.0, 3.2, 1.1, 0.3], # Open scoop up to dump BP1 8
+  [4.0, 3.2, 1.1, 0.3], # Open scoop up to dump BP1 8
+  [4.0, 5.0, 4.2, 0.3], # Prep for rotation to dig 9
   [3.14, 5.0, 4.2, 0.3], # Rotate back around 10
   [3.14, 5.0, 4.2, 0.3],
   [3.14, 5.0, 4.2, 0.3],
