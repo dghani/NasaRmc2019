@@ -106,22 +106,21 @@ namespace tfr_mission_control {
             // These could be atomic, but if a value is checked twice, there
             // is a risk of the atomic bool flipping in the middle of it.
             // Instead, we can use normal bools and keep a mutex for locks.
-            bool    controlDriveForward,        // driving
-                    controlDriveBackward,
-                    controlDriveLeft,
-                    controlDriveRight,
-                    controlDriveStop,
-                    controlLowerArmExtend,      // lower arm
-                    controlLowerArmRetract,
-                    controlUpperArmExtend,      // upper arm
-                    controlUpperArmRetract,
-                    controlScoopExtend,         // scoop
-                    controlScoopRetract,
-                    controlClockwise,           // turntable
-                    controlCtrclockwise,
-                    controlDump,                // dumping
-                    controlResetDumping
-                    = false;
+            bool    controlDriveForward = false,        // driving
+                    controlDriveBackward = false,
+                    controlDriveLeft = false,
+                    controlDriveRight = false,
+                    controlDriveStop = false,
+                    controlLowerArmExtend = false,      // lower arm
+                    controlLowerArmRetract = false,
+                    controlUpperArmExtend = false,      // upper arm
+                    controlUpperArmRetract = false,
+                    controlScoopExtend = false,         // scoop
+                    controlScoopRetract = false,
+                    controlClockwise = false,           // turntable
+                    controlCtrclockwise = false,
+                    controlDump = false,                // dumping
+                    controlResetDumping = false;
 
             // Functions can lock this to temporarily "claim" the control
             // bools. Make sure every function using these bools locks

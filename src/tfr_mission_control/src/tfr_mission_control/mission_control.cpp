@@ -235,7 +235,6 @@ namespace tfr_mission_control {
 
 	    performTeleop(tfr_utilities::TeleopCode::DRIVING_POSITION);
         toggleMotors(true);
-
     }
 
     /* greys/ungreys all teleop buttons, and tell's system whether to process teleop or
