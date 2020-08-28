@@ -1,7 +1,7 @@
 <launch>
     <node name="clock_service" pkg="tfr_executive" type="clock_service" output="screen">
         <rosparam>
-            mission_time: 600
+            mission_time: 1800
             driving_time: 35 
             dumping_time: 45
             localization_time: 45
@@ -21,8 +21,8 @@
     </node>
     <node name="teleop_action_server" pkg="tfr_executive" type="teleop_action_server" output="screen">
         <rosparam>
-            linear_velocity: 0.5
-            angular_velocity: 1.0
+            linear_velocity: 1.0
+            angular_velocity: 2.0
             use_digging: true
             arm_lower_effort: 500
             arm_upper_effort: 500

@@ -23,8 +23,8 @@ const int COMMAND_SIZE_BYTES = 2;
 const int MOTOR_RIGHT = 0;
 const int MOTOR_LEFT  = 1;
 int fd;
-int right_power_scale = 75;
-int left_power_scale = 75;
+int right_power_scale = 100;
+int left_power_scale = 100;
 
 
 void serialWriteCallback(const tfr_msgs::PwmCommand & command) {

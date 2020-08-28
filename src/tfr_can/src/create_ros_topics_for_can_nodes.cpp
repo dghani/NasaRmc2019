@@ -180,6 +180,16 @@ void setupMaxonDevice(kaco::Device& device, kaco::Bridge& bridge, std::string& e
     // This way, the digging queue can wait until the arm is in the expected position before moving to the next one.
     auto iopub_1 = std::make_shared<kaco::EntryPublisher>(device, "statusword");
     bridge.add_publisher(iopub_1, loop_rate);
+	
+    auto iopub_2 = std::make_shared<kaco::EntryPublisher>(device, "error_history/number_of_errors");
+    bridge.add_publisher(iopub_2, loop_rate);
+    auto iosub_2 = std::make_shared<kaco::EntrySubscriber>(device, "error_history/number_of_errors");
+    bridge.add_subscriber(iosub_2);
+
+    auto iopub_3 = std::make_shared<kaco::EntryPublisher>(device, "internal_device_control/internal_error_control");
+    bridge.add_publisher(iopub_3, loop_rate);
+    auto iosub_3 = std::make_shared<kaco::EntrySubscriber>(device, "internal_device_control/internal_error_control");
+    bridge.add_subscriber(iosub_3);
 		
 }
 
@@ -314,8 +324,8 @@ int main(int argc, char* argv[]) {
 			auto iosub_8_1_1 = std::make_shared<kaco::EntrySubscriber>(device, "cmd_cango/cmd_cango_1");
     		bridge.add_subscriber(iosub_8_1_1);
 
-			//auto iopub_8_1_2 = std::make_shared<kaco::EntryPublisher>(device, "qry_relcntr/channel_1");
-    		//bridge.add_publisher(iopub_8_1_2, loop_rate);
+			auto iopub_8_1_2 = std::make_shared<kaco::EntryPublisher>(device, "qry_motcmd/channel_1");
+    		bridge.add_publisher(iopub_8_1_2, loop_rate);
 
 			auto iopub_8_1_3 = std::make_shared<kaco::EntryPublisher>(device, "qry_motamps/channel_1");
     		bridge.add_publisher(iopub_8_1_3, loop_rate);
@@ -330,8 +340,8 @@ int main(int argc, char* argv[]) {
 			auto iosub_8_2_1 = std::make_shared<kaco::EntrySubscriber>(device, "cmd_cango/cmd_cango_2");
     		bridge.add_subscriber(iosub_8_2_1);
 
-			//auto iopub_8_2_2 = std::make_shared<kaco::EntryPublisher>(device, "qry_relcntr/channel_2");
-    		//bridge.add_publisher(iopub_8_2_2, loop_rate);
+			auto iopub_8_2_2 = std::make_shared<kaco::EntryPublisher>(device, "qry_motcmd/channel_2");
+    		bridge.add_publisher(iopub_8_2_2, loop_rate);
 
 			auto iopub_8_2_3 = std::make_shared<kaco::EntryPublisher>(device, "qry_motamps/channel_2");
     		bridge.add_publisher(iopub_8_2_3, loop_rate);
