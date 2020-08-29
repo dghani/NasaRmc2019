@@ -2,12 +2,13 @@
 
 ArmManipulator::ArmManipulator(ros::NodeHandle &n, bool init_joints):
             turntable_publisher{n.advertise<sensor_msgs::JointState>("/device1/set_joint_state", 5)},
-            lower_arm_publisher{n.advertise<sensor_msgs::JointState>("/device23/set_joint_state", 5)},
-            upper_arm_publisher{n.advertise<sensor_msgs::JointState>("/device45/set_joint_state", 5)},
-            scoop_publisher{n.advertise<sensor_msgs::JointState>("/device56/set_joint_state", 5)},
-            left_bin_publisher{n.advertise<sensor_msgs::JointState>("/device77/set_joint_state", 5)},
-            right_bin_publisher{n.advertise<sensor_msgs::JointState>("/device88/set_joint_state", 5)},
-            turntable_statusword_subscriber{n.subscribe("/device1/statusword", 5, &ArmManipulator::updateTurntableTargetPosition, this)}
+            turntable_target_position_subscriber{n.subscribe("/device1/target_position", 5, &ArmManipulator::updateTurntableTargetPosition, this)},
+            turntable_position_actual_value_subscriber{n.subscribe("/device1/position_actual_value", 5, &ArmManipulator::updateTurntablePositionActualValue, this)},
+            lower_arm(n, 23), 
+            upper_arm(n, 45),
+            scoop(n, 56),
+            left_bin(n, 77),
+            right_bin(n, 88)
 {
   ROS_INFO("Initializing Arm Manipulator");
 }
@@ -32,53 +33,11 @@ void ArmManipulator::moveTurntablePosition(double turntable)
     turntable_publisher.publish(turntable_joint_state);
 }
 
-void ArmManipulator::moveLowerArmPosition(double lower_arm)
+bool ArmManipulator::isTurntablePositionReached()
 {
-    sensor_msgs::JointState lower_arm_joint_state;
-
-    lower_arm_joint_state.header.stamp = ros::Time::now();
-    lower_arm_joint_state.position.push_back(lower_arm);
-
-    lower_arm_publisher.publish(lower_arm_joint_state);
-}
-
-void ArmManipulator::moveUpperArmPosition(double upper_arm)
-{
-    sensor_msgs::JointState upper_arm_joint_state;
-
-    upper_arm_joint_state.header.stamp = ros::Time::now();
-    upper_arm_joint_state.position.push_back(upper_arm);
-
-    upper_arm_publisher.publish(upper_arm_joint_state);
-}
-
-void ArmManipulator::moveScoopPosition(double scoop)
-{
-    sensor_msgs::JointState scoop_joint_state;
-
-    scoop_joint_state.header.stamp = ros::Time::now();
-    scoop_joint_state.position.push_back(scoop);
-
-    scoop_publisher.publish(scoop_joint_state);
-}
-void ArmManipulator::moveLeftBinPosition(double leftBin)
-{
-    sensor_msgs::JointState left_bin_joint_state;
-
-    left_bin_joint_state.header.stamp = ros::Time::now();
-    left_bin_joint_state.position.push_back(leftBin);
-    
-    left_bin_publisher.publish(left_bin_joint_state);
-}
-
-void ArmManipulator::moveRightBinPosition(double rightBin)
-{
-    sensor_msgs::JointState right_bin_joint_state;
-
-    right_bin_joint_state.header.stamp = ros::Time::now();
-    right_bin_joint_state.position.push_back(rightBin);
-    
-    right_bin_publisher.publish(right_bin_joint_state);
+    // Return true if the turntable is within 1 degree of its target position.
+    // For the turntable there are 308224 ticks per revolution, so ~856 ticks == 1 degree.
+    return std::abs(turntable_target_position - turntable_position_actual_value) <= 856;
 }
 
 /*
@@ -91,37 +50,39 @@ void ArmManipulator::moveRightBinPosition(double rightBin)
  *    See digging_action_server.cpp for example.
  */
 void ArmManipulator::moveArmWithoutPlanningOrLimits(
-            const double& turntable, const double& lower_arm, const double& upper_arm, const double& scoop)
+            const double& turntable_pos, const double& lower_arm_pos, const double& upper_arm_pos, const double& scoop_pos)
 {
-    ROS_INFO_STREAM("moveArmWithoutPlanningOrLimits() called by: " << ros::this_node::getName() << ". Parameters: " << turntable << ", " << lower_arm << ", " << upper_arm << ", " << scoop << std::endl);
+    ROS_INFO_STREAM("moveArmWithoutPlanningOrLimits() called by: " << ros::this_node::getName() << ". Parameters: " << turntable_pos << ", " << lower_arm_pos << ", " << upper_arm_pos << ", " << scoop_pos << std::endl);
 
-    moveTurntablePosition(turntable);
-    moveLowerArmPosition(lower_arm);
-    moveUpperArmPosition(upper_arm);
-    moveScoopPosition(scoop);
+    moveTurntablePosition(turntable_pos);
+    lower_arm.movePosition(lower_arm_pos);
+    upper_arm.movePosition(upper_arm_pos);
+    scoop.movePosition(scoop_pos);
 
     return;
 }
 
 // return true if all the arm actuators have reached the positions they were asked to move to.
+// If you call this immediately after telling the arm to move somewhere, the actuators may not have started moving yet, and it
 bool ArmManipulator::isArmTargetPositionReached() 
 {
-    // TODO add lower arm, upper arm, and scoop.
-    return turntable_target_position_reached;
+    // TODO: the TURNTABLE is not included!
+    
+    bool is_arm_stopped = 
+        lower_arm.isTargetPositionReached() 
+     && upper_arm.isTargetPositionReached() 
+     && scoop.isTargetPositionReached()
+     && isTurntablePositionReached(); 
+
+    return is_arm_stopped;
 }
 
-void ArmManipulator::updateTurntableTargetPosition(const std_msgs::UInt16 &value)
+void ArmManipulator::updateTurntableTargetPosition(const std_msgs::Int32 &value)
 {
-    const uint16_t BIT10 = (1 << 10); // 0b0000010000000000
+    turntable_target_position = value.data;
+}
 
-    uint16_t target_position_reached_bit = (value.data & BIT10); // mask out just bit #10 of the statusword. This bit tells is 1 if the turntable has reached the last target position. (The turntable may still be moving, but it is near the target position.)
-
-    if (target_position_reached_bit != 0)
-    {
-        turntable_target_position_reached = true;
-    }
-    else
-    {
-        turntable_target_position_reached = false;
-    }
+void ArmManipulator::updateTurntablePositionActualValue(const std_msgs::Int32 &value)
+{
+    turntable_position_actual_value = value.data;
 }

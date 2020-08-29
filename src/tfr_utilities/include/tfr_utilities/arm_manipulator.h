@@ -3,13 +3,14 @@
 #include <ros/ros.h>
 #include <tfr_msgs/ArmMoveAction.h>
 #include <std_msgs/Float64MultiArray.h>
-#include <std_msgs/UInt16.h>
+#include <std_msgs/Int32.h>
 #include <actionlib/server/simple_action_server.h>
 #include <trajectory_msgs/JointTrajectory.h>
 #include <joints.h>
 #include <urdf/model.h>
 #include <actionlib/client/simple_action_client.h>
 #include <sensor_msgs/JointState.h>
+#include <servo_cylinder.h>
 
 /**
  * Provides a simple method for moving the arm.
@@ -30,26 +31,31 @@ class ArmManipulator
         void moveArmWithoutPlanningOrLimits(
             const double& turntable, const double& lower_arm, const double& upper_arm, const double& scoop);
 
+        // These ServoCylinder instances are public, so that users of ArmManipulator can call the methods of them to change each joint individually.
+        // e.g. You can do something like:
+        //
+        // ArmManipulator arm_manipulator{n};
+        // arm_manipulator.lower_arm.movePosition(2.5);
+        //
+        ServoCylinder lower_arm;
+        ServoCylinder upper_arm;
+        ServoCylinder scoop;
+        ServoCylinder left_bin;
+        ServoCylinder right_bin;
+
+        bool isArmTargetPositionReached(); 
+
+        bool isTurntablePositionReached();
         void moveTurntablePosition(double turntable);
-        void moveLowerArmPosition(double lower_arm);
-        void moveUpperArmPosition(double upper_arm);
-        void moveScoopPosition(double scoop);
-        void moveRightBinPosition(double rightBin);
-        void moveLeftBinPosition(double leftBin);
-
-        bool isArmTargetPositionReached(); // TODO
-
-        bool turntable_target_position_reached = false;
 
     private:
         ros::Publisher turntable_publisher;
-        ros::Publisher lower_arm_publisher;
-        ros::Publisher upper_arm_publisher;
-        ros::Publisher scoop_publisher;
-        ros::Publisher left_bin_publisher;
-        ros::Publisher right_bin_publisher;
-        ros::Subscriber turntable_statusword_subscriber;
-        void updateTurntableTargetPosition(const std_msgs::UInt16 &value);
+        ros::Subscriber turntable_target_position_subscriber;
+        ros::Subscriber turntable_position_actual_value_subscriber;
+        void updateTurntableTargetPosition(const std_msgs::Int32 &value);
+        void updateTurntablePositionActualValue(const std_msgs::Int32 &value);
+        int32_t turntable_target_position;
+        int32_t turntable_position_actual_value;
  };
 
 #endif

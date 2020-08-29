@@ -63,7 +63,7 @@ add_library(tf_manipulator ./src/tf_manipulator.cpp)
 add_dependencies(tf_manipulator ${catkin_EXPORTED_TARGETS})
 target_link_libraries(tf_manipulator ${catkin_LIBRARIES})
 
-add_library(arm_manipulator ./src/arm_manipulator.cpp)
+add_library(arm_manipulator ./src/arm_manipulator.cpp src/servo_cylinder.cpp)
 add_dependencies(arm_manipulator ${catkin_EXPORTED_TARGETS})
 target_link_libraries(arm_manipulator ${catkin_LIBRARIES})
 

@@ -214,7 +214,7 @@ class TeleopExecutive
                 case (tfr_utilities::TeleopCode::LOWER_ARM_EXTEND):
                     {
                         ROS_INFO("Teleop Action Server: Command Recieved, LOWER_ARM_EXTEND");
-			arm_manipulator.moveLowerArmPosition(1.6); // Move lower arm to a low position
+			arm_manipulator.lower_arm.movePosition(1.6); // Move lower arm to a low position
                         break;
                     }
                     
@@ -222,35 +222,35 @@ class TeleopExecutive
                 case (tfr_utilities::TeleopCode::LOWER_ARM_RETRACT):
                     {
                         ROS_INFO("Teleop Action Server: Command Recieved, LOWER_ARM_RETRACT");
-			arm_manipulator.moveLowerArmPosition(4.8); // Move lower arm to a high position
+			arm_manipulator.lower_arm.movePosition(4.8); // Move lower arm to a high position
                         break;
                     }
                     
                 case (tfr_utilities::TeleopCode::UPPER_ARM_EXTEND):
                     {
 			ROS_INFO("Teleop Action Server: Command Recieved, UPPER_ARM_EXTEND");
-			arm_manipulator.moveUpperArmPosition(1.1); // Extend upper arm
+			arm_manipulator.upper_arm.movePosition(1.1); // Extend upper arm
                         break;
                     }
                     
                 case (tfr_utilities::TeleopCode::UPPER_ARM_RETRACT):
                     {
  			ROS_INFO("Teleop Action Server: Command Recieved, UPPER_ARM_RETRACT");
-			arm_manipulator.moveUpperArmPosition(4.5); // Retract upper arm
+			arm_manipulator.upper_arm.movePosition(4.5); // Retract upper arm
 			break;
                     }
                     
                 case (tfr_utilities::TeleopCode::SCOOP_EXTEND):
                     {
                         ROS_INFO("Teleop Action Server: Command Recieved, SCOOP_EXTEND");
-			arm_manipulator.moveScoopPosition(0.3); // Extend scoop
+			arm_manipulator.scoop.movePosition(0.3); // Extend scoop
 			break;
                     }
                     
                 case (tfr_utilities::TeleopCode::SCOOP_RETRACT):
                     {
                         ROS_INFO("Teleop Action Server: Command Recieved, SCOOP_RETRACT");
-			arm_manipulator.moveScoopPosition(3.0); // Retract scoop
+			arm_manipulator.scoop.movePosition(3.0); // Retract scoop
 			break;
                     }
 
@@ -287,8 +287,8 @@ class TeleopExecutive
                         
                         
                         ROS_INFO("Teleop Action Server: Command Recieved, UPPER_ARM_EXTEND");
-			arm_manipulator.moveLeftBinPosition(5.0); // Extend left bin actuator
-			arm_manipulator.moveRightBinPosition(5.0); // Extend right bin actuator
+			            arm_manipulator.left_bin.movePosition(5.0); // Extend left bin actuator
+			            arm_manipulator.right_bin.movePosition(5.0); // Extend right bin actuator
                         ROS_INFO("Teleop Action Server: DUMP finished");
                         break;
                     }

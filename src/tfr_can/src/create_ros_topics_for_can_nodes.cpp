@@ -145,6 +145,26 @@ void setupServoCylinderDevice(kaco::Device& device, kaco::Bridge& bridge, std::s
     
     auto iosub_7 = std::make_shared<kaco::EntrySubscriber>(device, "profile_deceleration");
     bridge.add_subscriber(iosub_7);
+
+    // Read the "statusword" from the CANopen device.
+    // The statusword is available on all CANopen DS402 (motion control) devices.
+    // It's call statusword because it tells you about the status of the device, and "word" because the data takes up 1 word (2 bytes).
+    // 
+    // Here is a link (from some company that uses CANopen) explaining what is included in the statusword. This is standard across CANopen DS402 devices. search "Bit 10 (Target Reached)" near top of page.
+    // https://us.nanotec.com/products/manual/PD4C_CAN_EN/modes%252Fprofile_position.html/
+    // 
+    // The reason for reading the statusword is to check when the motor reaches the target position.
+    // This way, the digging queue can wait until the arm is in the expected position before moving to the next one.
+    auto iopub_8 = std::make_shared<kaco::EntryPublisher>(device, "statusword");
+    bridge.add_publisher(iopub_8, loop_rate); 
+
+    // position_window
+    auto iosub_9 = std::make_shared<kaco::EntrySubscriber>(device, "position_window");
+    bridge.add_subscriber(iosub_9);
+
+    // position_window_time
+    auto iosub_10 = std::make_shared<kaco::EntrySubscriber>(device, "position_window_time");
+    bridge.add_subscriber(iosub_10);
 }
 
 void setupMaxonDevice(kaco::Device& device, kaco::Bridge& bridge, std::string& eds_files_path)
@@ -169,18 +189,11 @@ void setupMaxonDevice(kaco::Device& device, kaco::Bridge& bridge, std::string& e
     auto jssub = std::make_shared<kaco::JointStateSubscriber>(device, -308224, 308224); 
     bridge.add_subscriber(jssub);		
 
-    // Read the "statusword" from the CANopen device.
-    // The statusword is available on all CANopen DS402 (motion control) devices.
-    // It's call statusword because it tells you about the status of the device, and "word" because the data takes up 1 word (2 bytes).
-    // 
-    // Here is a link (from some company that uses CANopen) explaining what is included in the statusword. This is standard across CANopen DS402 devices. search "Bit 10 (Target Reached)" near top of page.
-    // https://us.nanotec.com/products/manual/PD4C_CAN_EN/modes%252Fprofile_position.html/
-    // 
-    // The reason for reading the statusword is to check when the motor reaches the target position.
-    // This way, the digging queue can wait until the arm is in the expected position before moving to the next one.
-    auto iopub_1 = std::make_shared<kaco::EntryPublisher>(device, "statusword");
+    auto iopub_1 = std::make_shared<kaco::EntryPublisher>(device, "target_position");
     bridge.add_publisher(iopub_1, loop_rate); 
-	
+
+    auto iopub_2 = std::make_shared<kaco::EntryPublisher>(device, "position_actual_value");
+    bridge.add_publisher(iopub_2, loop_rate); 
 }
 
 // Usage: e.g. intToHexString(10) == "A"
