@@ -250,13 +250,21 @@ class TeleopExecutive
                 case (tfr_utilities::TeleopCode::SCOOP_RETRACT):
                     {
                         ROS_INFO("Teleop Action Server: Command Recieved, SCOOP_RETRACT");
-			arm_manipulator.moveScoopPosition(3.0); // Retract scoop
+			arm_manipulator.moveScoopPosition(2.5);// Retract scoop
 			break;
                     }
 
                 case (tfr_utilities::TeleopCode::DIG):
                     {
                         ROS_INFO("Teleop Action Server: commencing digging");
+			 /* do this in C++
+			rostopic echo /device23/get_torque_actual_value;
+			rostopic echo /device45/get_torque_actual_value;
+			rostopic echo /device56/get_torque_actual_value;
+			rosbag record /device23/get_torque_actual_value;
+			rosbag record /device45/get_torque_actual_value;
+			rosbag record /device56/get_torque_actual_value;
+			*/
                         tfr_msgs::DiggingGoal goal{};
                         ROS_INFO("Teleop Action Server: retrieving digging time");
                         tfr_msgs::DurationSrv digging_time;
