@@ -19,12 +19,12 @@ namespace tfr_control
             const double *lower_lim, const double *upper_lim) :
 
 
-        brushless_left_tread_vel{n.subscribe("/device8/get_qry_blcntr/qry_blcntr_1", 64,
+        brushless_left_tread_vel{n.subscribe("/device8/get_qry_blcntr/qry_blcntr_1", 1,
                 &RobotInterface::setBrushlessLeftEncoder, this)},
         brushless_left_tread_vel_publisher{n.advertise<std_msgs::Int32>("/device8/set_cmd_cango/cmd_cango_1", 1)},
         
         
-        brushless_right_tread_vel{n.subscribe("/device8/get_qry_blcntr/qry_blcntr_2", 64,
+        brushless_right_tread_vel{n.subscribe("/device8/get_qry_blcntr/qry_blcntr_2", 1,
                 &RobotInterface::setBrushlessRightEncoder, this)},
         brushless_right_tread_vel_publisher{n.advertise<std_msgs::Int32>("/device8/set_cmd_cango/cmd_cango_2", 1)},
         
