@@ -243,13 +243,13 @@ int main(int argc, char* argv[]) {
    std::this_thread::sleep_for(std::chrono::milliseconds(250));
 	
     resetCanopenNode(busname, SERVO_CYLINDER_BIN_RIGHT);
-    std::this_thread::sleep_for(std::chrono::milliseconds(250));
+  //  std::this_thread::sleep_for(std::chrono::milliseconds(250));
 
     // Reset the turntable motor controller.
     // There is a bug which occurs during normal operation, where once the robot is connected to power, the turntable motor controller gets into an error state. It's said that this has something to do with the Xavier booting up.
     // There was also previously a bug with calling resetCanopenNode() when the node is a value less than 16 (because it doesn't end up getting padded to 2 digits. This was fixed in another branch and could be merged.
     // In the meantime we will just write out the message for resetting the turntable here.
-    std::system(("cansend " + busname + " 000#8101").c_str());
+  //  std::system(("cansend " + busname + " 000#8101").c_str());
 
 	while (master.num_devices()<num_devices_required) {
 		ERROR("Number of devices found: " << master.num_devices() << ". Waiting for " << num_devices_required << ".");
