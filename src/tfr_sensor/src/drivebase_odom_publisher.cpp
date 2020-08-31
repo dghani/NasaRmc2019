@@ -311,7 +311,7 @@ int main(int argc, char **argv)
     ros::param::param<std::string>("~parent_frame", parent_frame, "odom");
     ros::param::param<std::string>("~child_frame", child_frame, "base_footprint");
     ros::param::param<double>("~wheel_span", wheel_span, 0.36);
-    ros::param::param<double>("~rate", rate, 32.0);
+    ros::param::param<double>("~rate", rate, 16.0);
     DrivebaseOdometryPublisher publisher{n, parent_frame, child_frame, wheel_span};
     ros::Rate loop_rate(rate);
     while(ros::ok())
