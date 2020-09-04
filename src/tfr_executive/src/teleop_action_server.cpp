@@ -405,20 +405,17 @@ class TeleopExecutive
          * */
 void getLowerArmTorque(const std_msgs::Int16 &msg)
 {   
-    lower_arm_torque = msg.data;
-    bag.write("lowerArmTorque", ros::Time::now(), lower_arm_torque);
+    bag.write("lowerArmTorque", ros::Time::now(), msg.data);
 }
 
 void getUpperArmTorque(const std_msgs::Int16 &msg)
 {
-    upper_arm_torque = msg.data;
-    bag.write("upperArmTorque", ros::Time::now(), upper_arm_torque);
+    bag.write("upperArmTorque", ros::Time::now(), msg.data);
 }
 
 void getScoopTorque(const std_msgs::Int16 &msg)
 {
-    scoop_torque = msg.data;
-    bag.write("scoopTorque", ros::Time::now(), scoop_torque);
+    bag.write("scoopTorque", ros::Time::now(), msg.data);
 }
 
         actionlib::SimpleActionServer<tfr_msgs::TeleopAction> server;
