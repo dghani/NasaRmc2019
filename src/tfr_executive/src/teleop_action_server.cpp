@@ -31,6 +31,7 @@
  */ 
 #include <ros/ros.h>
 #include <ros/console.h>
+#include <rosbag/bag.h>
 #include <tfr_utilities/teleop_code.h>
 #include <tfr_utilities/control_code.h>
 #include <tfr_msgs/TeleopAction.h>
@@ -42,6 +43,7 @@
 #include <tfr_utilities/arm_manipulator.h>
 #include <trajectory_msgs/JointTrajectory.h>
 #include <geometry_msgs/Twist.h>
+#include <std_msgs/Int16.h>
 #include <std_msgs/Int32.h>
 #include <std_msgs/Float64.h>
 #include <tfr_msgs/ArmMoveAction.h>
@@ -70,6 +72,9 @@ class TeleopExecutive
             server{n, "teleop_action_server",
                 boost::bind(&TeleopExecutive::processCommand, this, _1),
                 false},
+            lower_arm_torque_sub{n.subscribe("/device23/get_torque_actual_value", 5, &TeleopExecutive::getLowerArmTorque, this)},
+            upper_arm_torque_sub{n.subscribe("/device45/get_torque_actual_value", 5, &TeleopExecutive::getUpperArmTorque, this)},
+            scoop_torque_sub{n.subscribe("/device56/get_torque_actual_value", 5, &TeleopExecutive::getScoopTorque, this)},
             drivebase_publisher{n.advertise<geometry_msgs::Twist>("cmd_vel", 5)},
             arm_manipulator{n},
             bin_publisher{n.advertise<std_msgs::Float64>("/bin_position_controller/command", 5)},
@@ -96,6 +101,7 @@ class TeleopExecutive
                 ROS_INFO("Teleop Action Server conecting to arm");
                 arm_client.waitForServer();
                 ROS_INFO("Teleop Action Server connected to arm");
+                bag.open("armTorque.bag", rosbag::bagmode::Write);
             }
             else {
                 ROS_INFO("Teleop Action Server not using digging");
@@ -103,7 +109,6 @@ class TeleopExecutive
             server.start();
             ROS_INFO("Teleop Action Server: Online %f", ros::Time::now().toSec());
         }
-        ~TeleopExecutive() = default;
         TeleopExecutive(const TeleopExecutive&) = delete;
         TeleopExecutive& operator=(const TeleopExecutive&) = delete;
         TeleopExecutive(TeleopExecutive&&) = delete;
@@ -256,15 +261,8 @@ class TeleopExecutive
 
                 case (tfr_utilities::TeleopCode::DIG):
                     {
-                        ROS_INFO("Teleop Action Server: commencing digging");
-			 /* do this in C++
-			rostopic echo /device23/get_torque_actual_value;
-			rostopic echo /device45/get_torque_actual_value;
-			rostopic echo /device56/get_torque_actual_value;
-			rosbag record /device23/get_torque_actual_value;
-			rosbag record /device45/get_torque_actual_value;
-			rosbag record /device56/get_torque_actual_value;
-			*/
+                        ROS_INFO("Teleop Action Server: commencing digging");			
+
                         tfr_msgs::DiggingGoal goal{};
                         ROS_INFO("Teleop Action Server: retrieving digging time");
                         tfr_msgs::DurationSrv digging_time;
@@ -402,10 +400,37 @@ class TeleopExecutive
             tfr_msgs::TeleopResult result{};
             server.setSucceeded(result);
         }
+        /*
+         *Making the helpers to subscribe for torque
+         * */
+void getLowerArmTorque(const std_msgs::Int16 &msg)
+{   
+    lower_arm_torque = msg.data;
+    bag.write("lowerArmTorque", ros::Time::now(), lower_arm_torque);
+}
+
+void getUpperArmTorque(const std_msgs::Int16 &msg)
+{
+    upper_arm_torque = msg.data;
+    bag.write("upperArmTorque", ros::Time::now(), upper_arm_torque);
+}
+
+void getScoopTorque(const std_msgs::Int16 &msg)
+{
+    scoop_torque = msg.data;
+    bag.write("scoopTorque", ros::Time::now(), scoop_torque);
+}
 
         actionlib::SimpleActionServer<tfr_msgs::TeleopAction> server;
         actionlib::SimpleActionClient<tfr_msgs::DiggingAction> digging_client;
         actionlib::SimpleActionClient<tfr_msgs::ArmMoveAction> arm_client;
+        rosbag::Bag bag;
+        ros::Subscriber lower_arm_torque_sub;
+        int16_t lower_arm_torque;
+        ros::Subscriber upper_arm_torque_sub;
+        int16_t upper_arm_torque;
+        ros::Subscriber scoop_torque_sub;
+        int16_t scoop_torque;
         ros::Publisher right_bin_pub;
         ros::Publisher left_bin_pub;
         ros::Publisher turntable_pub;
@@ -428,6 +453,12 @@ class TeleopExecutive
 
 };
 
+/*
+         *Making the destructor
+         * */
+TeleopExecutive::~TeleopExecutive(){
+    bag.close();
+}
 
 
 int main(int argc, char** argv)
