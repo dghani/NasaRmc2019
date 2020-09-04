@@ -423,11 +423,8 @@ void getScoopTorque(const std_msgs::Int16 &msg)
         actionlib::SimpleActionClient<tfr_msgs::ArmMoveAction> arm_client;
         rosbag::Bag bag;
         ros::Subscriber lower_arm_torque_sub;
-        int16_t lower_arm_torque;
         ros::Subscriber upper_arm_torque_sub;
-        int16_t upper_arm_torque;
         ros::Subscriber scoop_torque_sub;
-        int16_t scoop_torque;
         ros::Publisher right_bin_pub;
         ros::Publisher left_bin_pub;
         ros::Publisher turntable_pub;
@@ -453,7 +450,8 @@ void getScoopTorque(const std_msgs::Int16 &msg)
 /*
          *Making the destructor
          * */
-TeleopExecutive::~TeleopExecutive(){
+TeleopExecutive:: ~TeleopExecutive() 
+{
     bag.close();
 }
 
