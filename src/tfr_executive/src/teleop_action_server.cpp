@@ -109,6 +109,7 @@ class TeleopExecutive
             server.start();
             ROS_INFO("Teleop Action Server: Online %f", ros::Time::now().toSec());
         }
+        ~TeleopExecutive(){bag.close();};
         TeleopExecutive(const TeleopExecutive&) = delete;
         TeleopExecutive& operator=(const TeleopExecutive&) = delete;
         TeleopExecutive(TeleopExecutive&&) = delete;
@@ -452,13 +453,6 @@ class TeleopExecutive
         bool use_digging;
 
 };
-
-/*
-         *Making the destructor
-         * */
-TeleopExecutive::~TeleopExecutive(){
-    bag.close();
-}
 
 
 int main(int argc, char** argv)
