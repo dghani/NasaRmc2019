@@ -109,6 +109,7 @@ class TeleopExecutive
             server.start();
             ROS_INFO("Teleop Action Server: Online %f", ros::Time::now().toSec());
         }
+        ~TeleopExecutive(){bag.close();};
         TeleopExecutive(const TeleopExecutive&) = delete;
         TeleopExecutive& operator=(const TeleopExecutive&) = delete;
         TeleopExecutive(TeleopExecutive&&) = delete;
@@ -403,28 +404,34 @@ class TeleopExecutive
         /*
          *Making the helpers to subscribe for torque
          * */
-void getLowerArmTorque(const std_msgs::Int16 &msg)
-{   
-    bag.write("lowerArmTorque", ros::Time::now(), msg.data);
-}
+        void getLowerArmTorque(const std_msgs::Int16 &msg)
+        {   
+            //lower_arm_torque = msg.data;
+            bag.write("lowerArmTorque", ros::Time::now(), msg);
+        }
 
-void getUpperArmTorque(const std_msgs::Int16 &msg)
-{
-    bag.write("upperArmTorque", ros::Time::now(), msg.data);
-}
+        void getUpperArmTorque(const std_msgs::Int16 &msg)
+        {
+            //upper_arm_torque = msg.data;
+            bag.write("upperArmTorque", ros::Time::now(), msg);
+        }
 
-void getScoopTorque(const std_msgs::Int16 &msg)
-{
-    bag.write("scoopTorque", ros::Time::now(), msg.data);
-}
+        void getScoopTorque(const std_msgs::Int16 &msg)
+        {
+            //scoop_torque = msg.data;
+            bag.write("scoopTorque", ros::Time::now(), msg);
+        }
 
         actionlib::SimpleActionServer<tfr_msgs::TeleopAction> server;
         actionlib::SimpleActionClient<tfr_msgs::DiggingAction> digging_client;
         actionlib::SimpleActionClient<tfr_msgs::ArmMoveAction> arm_client;
         rosbag::Bag bag;
         ros::Subscriber lower_arm_torque_sub;
+        int16_t lower_arm_torque;
         ros::Subscriber upper_arm_torque_sub;
+        int16_t upper_arm_torque;
         ros::Subscriber scoop_torque_sub;
+        int16_t scoop_torque;
         ros::Publisher right_bin_pub;
         ros::Publisher left_bin_pub;
         ros::Publisher turntable_pub;
@@ -446,14 +453,6 @@ void getScoopTorque(const std_msgs::Int16 &msg)
         bool use_digging;
 
 };
-
-/*
-         *Making the destructor
-         * */
-TeleopExecutive:: ~TeleopExecutive() 
-{
-    bag.close();
-}
 
 
 int main(int argc, char** argv)
