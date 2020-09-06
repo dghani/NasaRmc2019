@@ -21,8 +21,8 @@ encoder_limits:
         min: 0
         max: 0
     left_tread_joint:
-        min: -2000000
-        max: 2000000
+        min: 0
+        max: 0
     right_tread_joint:
-        min: -20000000  
-        max: 20000000
+        min: 0 
+        max: 0
