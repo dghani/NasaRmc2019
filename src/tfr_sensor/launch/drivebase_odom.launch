@@ -8,7 +8,7 @@
 #The encoder is 32 PPR, but the motor controller multiplies by 4. 
 #Gear ratio is 100:1 for output shaft.  128 * 100 = 12800.  
             wheelRadius: .15
-            rate: 16
+            rate: 32
         </rosparam>
     </node>
     <node name="drivebase_odom_publisher" pkg="tfr_sensor" type="drivebase_odom_publisher" output="screen">
@@ -16,6 +16,7 @@
             parent_frame: odom
             child_frame: base_footprint
             wheel_span: 0.36
+            rate: 32
         </rosparam>
     </node>
 </launch>

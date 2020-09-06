@@ -182,13 +182,9 @@ void setupMaxonDevice(kaco::Device& device, kaco::Bridge& bridge, std::string& e
     auto iopub_1 = std::make_shared<kaco::EntryPublisher>(device, "statusword");
     bridge.add_publisher(iopub_1, loop_rate);
 	
-    auto iopub_2 = std::make_shared<kaco::EntryPublisher>(device, "error_history/number_of_errors");
-    bridge.add_publisher(iopub_2, loop_rate);
-    auto iosub_2 = std::make_shared<kaco::EntrySubscriber>(device, "error_history/number_of_errors");
+    auto iosub_2 = std::make_shared<kaco::EntrySubscriber>(device, "error history/number of errors");
     bridge.add_subscriber(iosub_2);
 
-    auto iopub_3 = std::make_shared<kaco::EntryPublisher>(device, "internal_device_control/internal_error_control");
-    bridge.add_publisher(iopub_3, loop_rate);
     auto iosub_3 = std::make_shared<kaco::EntrySubscriber>(device, "internal_device_control/internal_error_control");
     bridge.add_subscriber(iosub_3);
 		
@@ -244,13 +240,14 @@ int main(int argc, char* argv[]) {
    std::this_thread::sleep_for(std::chrono::milliseconds(250));
 	
     resetCanopenNode(busname, SERVO_CYLINDER_BIN_RIGHT);
-  //  std::this_thread::sleep_for(std::chrono::milliseconds(250));
+    std::this_thread::sleep_for(std::chrono::milliseconds(250));
 
     // Reset the turntable motor controller.
     // There is a bug which occurs during normal operation, where once the robot is connected to power, the turntable motor controller gets into an error state. It's said that this has something to do with the Xavier booting up.
     // There was also previously a bug with calling resetCanopenNode() when the node is a value less than 16 (because it doesn't end up getting padded to 2 digits. This was fixed in another branch and could be merged.
     // In the meantime we will just write out the message for resetting the turntable here.
-  //  std::system(("cansend " + busname + " 000#8101").c_str());
+    std::system(("cansend " + busname + " 000#8100").c_str());
+    std::this_thread::sleep_for(std::chrono::milliseconds(250));
 
 	while (master.num_devices()<num_devices_required) {
 		ERROR("Number of devices found: " << master.num_devices() << ". Waiting for " << num_devices_required << ".");
@@ -309,19 +306,9 @@ int main(int argc, char* argv[]) {
 	    setupMaxonDevice(device, bridge, eds_files_path);
 	}
 		
-		//if (deviceId == 4)
-		//{
-		//	device.load_dictionary_from_eds(eds_files_path + "roboteq_motor_controllers_v60.eds");
-			
-		//	ROS_DEBUG_STREAM("tfr_can: case: Device 4" << std::endl);
-			
-			//device.print_dictionary();
-			
-		//	setupDevice4Topics(device, bridge, eds_files_path);
-		//}
 		
 		
-		else if (deviceId == 8)
+		else if (deviceId == 8) //Drivetrain Motor controller
 		{
 			device.load_dictionary_from_eds(eds_files_path + "roboteq_motor_controllers_v60.eds");
 			
@@ -362,52 +349,6 @@ int main(int argc, char* argv[]) {
 			
 		}
 		
-		//else if (deviceId == 12)
-		//{
-			//device.load_dictionary_from_eds(eds_files_path + "roboteq_motor_controllers_v60.eds");
-			
-			//ROS_DEBUG_STREAM("tfr_can: case: Device 12" << std::endl);
-			
-			
-			//auto iosub_12_1_1 = std::make_shared<kaco::EntrySubscriber>(device, "cmd_cango/cmd_cango_1");
-    		//bridge.add_subscriber(iosub_12_1_1);
-
-			//auto iopub_12_1_2 = std::make_shared<kaco::EntryPublisher>(device, "qry_motamps/channel_1");
-    		//bridge.add_publisher(iopub_12_1_2, loop_rate);
-			
-		//	auto iopub_12_1_3 = std::make_shared<kaco::EntryPublisher>(device, "qry_abcntr/channel_1");
-    		//bridge.add_publisher(iopub_12_1_3, loop_rate);
-			
-		//	auto iopub_12_1_4 = std::make_shared<kaco::EntrySubscriber>(device, "cmd_sencntr/counter_1");
-		//	bridge.add_subscriber(iopub_12_1_4);
-			
-			
-		//	auto iosub_12_2_1 = std::make_shared<kaco::EntrySubscriber>(device, "cmd_cango/cmd_cango_2");
-    		//bridge.add_subscriber(iosub_12_2_1);
-
-		//	auto iopub_12_2_2 = std::make_shared<kaco::EntryPublisher>(device, "qry_motamps/channel_2");
-    		//bridge.add_publisher(iopub_12_2_2, loop_rate);
-			
-		//	auto iopub_12_2_3 = std::make_shared<kaco::EntryPublisher>(device, "qry_abcntr/channel_2");
-    		//bridge.add_publisher(iopub_12_2_3, loop_rate);
-			
-		//	auto iopub_12_2_4 = std::make_shared<kaco::EntrySubscriber>(device, "cmd_sencntr/counter_2");
-		//	bridge.add_subscriber(iopub_12_2_4);
-			
-			
-		//	auto iosub_12_3_1 = std::make_shared<kaco::EntrySubscriber>(device, "cmd_cango/cmd_cango_3");
-    		//bridge.add_subscriber(iosub_12_3_1);
-
-		//	auto iopub_12_3_2 = std::make_shared<kaco::EntryPublisher>(device, "qry_motamps/channel_3");
-    		//bridge.add_publisher(iopub_12_3_2, loop_rate);
-			
-		//	auto iopub_12_3_3 = std::make_shared<kaco::EntryPublisher>(device, "qry_abcntr/channel_3");
-    		//bridge.add_publisher(iopub_12_3_3, loop_rate);
-			
-		//	auto iopub_12_3_4 = std::make_shared<kaco::EntrySubscriber>(device, "cmd_sencntr/counter_3");
-		//	bridge.add_subscriber(iopub_12_3_4);
-			
-		//}
 		
 
 	}
