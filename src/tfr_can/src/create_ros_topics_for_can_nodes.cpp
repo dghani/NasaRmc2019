@@ -249,8 +249,8 @@ int main(int argc, char* argv[]) {
    
     std::system(("cansend " + busname + " 000#8101").c_str()); //Testing reset remote node command
     PRINT("The turntable reset message just got sent in spot 1");
-	std::this_thread::sleep_for(std::chrono::seconds(30));
-	PRINT("The 30 second wait is over");
+	std::this_thread::sleep_for(std::chrono::seconds(2));
+	PRINT("The 2 second wait is over");
 
 	while (master.num_devices()<num_devices_required) {
 		ERROR("Number of devices found: " << master.num_devices() << ". Waiting for " << num_devices_required << ".");
