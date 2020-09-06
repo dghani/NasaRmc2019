@@ -75,6 +75,8 @@ class TeleopExecutive
             lower_arm_torque_sub{n.subscribe("/device23/get_torque_actual_value", 5, &TeleopExecutive::getLowerArmTorque, this)},
             upper_arm_torque_sub{n.subscribe("/device45/get_torque_actual_value", 5, &TeleopExecutive::getUpperArmTorque, this)},
             scoop_torque_sub{n.subscribe("/device56/get_torque_actual_value", 5, &TeleopExecutive::getScoopTorque, this)},
+            motor_amp_ch1_sub{n.subscribe("qry_motamps/channel_1", 5 , &TeleopExecutive::getMotorAmpCh1 , this)},
+            motor_amp_ch2_sub{n.subscribe("qry_motamps/channel_2", 5 , &TeleopExecutive::getMotorAmpCh2, this)},
             drivebase_publisher{n.advertise<geometry_msgs::Twist>("cmd_vel", 5)},
             arm_manipulator{n},
             bin_publisher{n.advertise<std_msgs::Float64>("/bin_position_controller/command", 5)},
@@ -101,7 +103,7 @@ class TeleopExecutive
                 ROS_INFO("Teleop Action Server conecting to arm");
                 arm_client.waitForServer();
                 ROS_INFO("Teleop Action Server connected to arm");
-                bag.open("armTorque.bag", rosbag::bagmode::Write);
+                bag.open("armTorqueMotorAmp.bag", rosbag::bagmode::Write);
             }
             else {
                 ROS_INFO("Teleop Action Server not using digging");
@@ -422,6 +424,14 @@ class TeleopExecutive
             bag.write("scoopTorque", ros::Time::now(), msg);
         }
 
+        void getMotorAmpCh1(const std_msgs::Int16 &msg){
+            bag.write("motorAmpCh1", ros::Time::now(), msg);
+        }
+
+        void getMotorAmpCh2(const std_msgs::Int16 &msg){
+            bag.write("motorAmpCh2", ros::Time::now(), msg);
+        }
+
         actionlib::SimpleActionServer<tfr_msgs::TeleopAction> server;
         actionlib::SimpleActionClient<tfr_msgs::DiggingAction> digging_client;
         actionlib::SimpleActionClient<tfr_msgs::ArmMoveAction> arm_client;
@@ -432,6 +442,8 @@ class TeleopExecutive
         int16_t upper_arm_torque;
         ros::Subscriber scoop_torque_sub;
         int16_t scoop_torque;
+        ros::Subscriber motor_amp_ch1_sub;
+        ros::Subscriber motor_armp_ch2_sub;
         ros::Publisher right_bin_pub;
         ros::Publisher left_bin_pub;
         ros::Publisher turntable_pub;
