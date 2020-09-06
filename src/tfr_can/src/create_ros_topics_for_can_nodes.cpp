@@ -30,53 +30,11 @@ const int fast_loop_rate = 128; // 128 Hz
 const int SERVO_CYLINDER_LOWER_ARM = 23;
 const int SERVO_CYLINDER_UPPER_ARM = 45;
 const int SERVO_CYLINDER_SCOOP = 56;
-const int TURNTABLE = 1;
+const int TURNTABLE = 21;
 const int SERVO_CYLINDER_BIN_LEFT = 77; 
 const int SERVO_CYLINDER_BIN_RIGHT = 88; 
 
-//void setupDevice4Topics(kaco::Device& device, kaco::Bridge& bridge, std::string& eds_files_path){
-    // Roboteq SDC3260 in Closed Loop Count Position mode.
-
-	//auto iosub_4_1_1 = std::make_shared<kaco::EntrySubscriber>(device, "cmd_cango/cmd_cango_1");
-	//bridge.add_subscriber(iosub_4_1_1);
-
-	//auto iopub_4_1_2 = std::make_shared<kaco::EntryPublisher>(device, "qry_motamps/channel_1");
-	//bridge.add_publisher(iopub_4_1_2, loop_rate);
-	
-	//auto iopub_4_1_3 = std::make_shared<kaco::EntryPublisher>(device, "qry_abcntr/channel_1");
-	//bridge.add_publisher(iopub_4_1_3, loop_rate);
-	
-	//auto iopub_4_1_4 = std::make_shared<kaco::EntrySubscriber>(device, "cmd_sencntr/counter_1");
-	//bridge.add_subscriber(iopub_4_1_4);
-	
-	
-	//auto iosub_4_2_1 = std::make_shared<kaco::EntrySubscriber>(device, "cmd_cango/cmd_cango_2");
-	//bridge.add_subscriber(iosub_4_2_1);
-
-	//auto iopub_4_2_2 = std::make_shared<kaco::EntryPublisher>(device, "qry_motamps/channel_2");
-	//bridge.add_publisher(iopub_4_2_2, loop_rate);
-	
-	//auto iopub_4_2_3 = std::make_shared<kaco::EntryPublisher>(device, "qry_abcntr/channel_2");
-	//bridge.add_publisher(iopub_4_2_3, loop_rate);
-	
-	//auto iopub_4_2_4 = std::make_shared<kaco::EntrySubscriber>(device, "cmd_sencntr/counter_2");
-	//bridge.add_subscriber(iopub_4_2_4);
-	
-	
-	//auto iosub_4_3_1 = std::make_shared<kaco::EntrySubscriber>(device, "cmd_cango/cmd_cango_3");
-	//bridge.add_subscriber(iosub_4_3_1);
-
-	//auto iopub_4_3_2 = std::make_shared<kaco::EntryPublisher>(device, "qry_motamps/channel_3");
-	//bridge.add_publisher(iopub_4_3_2, loop_rate);
-	
-	//auto iopub_4_3_3 = std::make_shared<kaco::EntryPublisher>(device, "qry_abcntr/channel_3");
-	//bridge.add_publisher(iopub_4_3_3, loop_rate);
-	
-	//auto iopub_4_3_4 = std::make_shared<kaco::EntrySubscriber>(device, "cmd_sencntr/counter_3");
-	//bridge.add_subscriber(iopub_4_3_4);
-//}
-
-// initialize the topics for any Servo Cylinder actuator (must be 5.75" stroke length)
+// initialize the topics for any Servo Cylinder actuator 
 void setupServoCylinderDevice(kaco::Device& device, kaco::Bridge& bridge, std::string& eds_files_path)
 {
     
@@ -181,12 +139,6 @@ void setupMaxonDevice(kaco::Device& device, kaco::Bridge& bridge, std::string& e
     // This way, the digging queue can wait until the arm is in the expected position before moving to the next one.
     auto iopub_1 = std::make_shared<kaco::EntryPublisher>(device, "statusword");
     bridge.add_publisher(iopub_1, loop_rate);
-	
-    auto iosub_2 = std::make_shared<kaco::EntrySubscriber>(device, "error history/number of errors");
-    bridge.add_subscriber(iosub_2);
-
-    auto iosub_3 = std::make_shared<kaco::EntrySubscriber>(device, "internal_device_control/internal_error_control");
-    bridge.add_subscriber(iosub_3);
 		
 }
 
@@ -242,22 +194,20 @@ int main(int argc, char* argv[]) {
     resetCanopenNode(busname, SERVO_CYLINDER_BIN_RIGHT);
     std::this_thread::sleep_for(std::chrono::milliseconds(250));
 
+	resetCanopenNode(busname, TURNTABLE);
+    std::this_thread::sleep_for(std::chrono::milliseconds(250));
     // Reset the turntable motor controller.
     // There is a bug which occurs during normal operation, where once the robot is connected to power, the turntable motor controller gets into an error state. It's said that this has something to do with the Xavier booting up.
     // There was also previously a bug with calling resetCanopenNode() when the node is a value less than 16 (because it doesn't end up getting padded to 2 digits. This was fixed in another branch and could be merged.
     // In the meantime we will just write out the message for resetting the turntable here.
    
-  //  std::system(("cansend " + busname + " 000#8101").c_str()); //Testing reset remote node command
+   // std::system(("cansend " + busname + " 000#8100").c_str()); //Testing reset remote node command
    // PRINT("The turntable reset message just got sent in spot 1");
-	//std::this_thread::sleep_for(std::chrono::seconds(15));
-	//PRINT("The 2 second wait is over");
+	//std::this_thread::sleep_for(std::chrono::seconds(10));
+	//PRINT("The 10 second wait is over");
 
 	while (master.num_devices()<num_devices_required) {
 		ERROR("Number of devices found: " << master.num_devices() << ". Waiting for " << num_devices_required << ".");
-    std::system(("cansend " + busname + " 000#8000").c_str()); //Testing reset remote node command
-    PRINT("The turntable reset message just got sent in spot 2");
-	std::this_thread::sleep_for(std::chrono::seconds(15));
-	PRINT("The 15 second wait is over");
 		std::this_thread::sleep_for(std::chrono::seconds(2));
 	}
 
@@ -317,7 +267,7 @@ int main(int argc, char* argv[]) {
 		{
 			device.load_dictionary_from_eds(eds_files_path + "roboteq_motor_controllers_v60.eds");
 			
-			ROS_DEBUG_STREAM("tfr_can: case: Device 8" << std::endl);
+		//	ROS_DEBUG_STREAM("tfr_can: case: Device 8" << std::endl);
 			
 			// Roboteq SBL2360.
 
