@@ -1,7 +1,7 @@
 <launch>
     <node name="tread_distance_publisher" pkg="tfr_sensor" type="tread_distance_publisher" output="screen">
-        <remap from="/left_tread_count" to="/device8/get_qry_blcntr/qry_blcntr_1"/>
-        <remap from="/right_tread_count" to="/device8/get_qry_blcntr/qry_blcntr_2"/>
+        <remap from="/left_tread_count" to="/device8/get_qry_blcntr/qry_blcntr_2"/>
+        <remap from="/right_tread_count" to="/device8/get_qry_blcntr/qry_blcntr_1"/>
         <rosparam>
             maxTicks: 2147483647 
             ticksPerRevolution: 3200 
