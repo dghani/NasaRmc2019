@@ -246,14 +246,18 @@ int main(int argc, char* argv[]) {
     // There is a bug which occurs during normal operation, where once the robot is connected to power, the turntable motor controller gets into an error state. It's said that this has something to do with the Xavier booting up.
     // There was also previously a bug with calling resetCanopenNode() when the node is a value less than 16 (because it doesn't end up getting padded to 2 digits. This was fixed in another branch and could be merged.
     // In the meantime we will just write out the message for resetting the turntable here.
-    std::system(("cansend " + busname + " 000#0100").c_str()); //Testing start remote node command
-    std::this_thread::sleep_for(std::chrono::milliseconds(250));
+   
+    //std::system(("cansend " + busname + " 000#0100").c_str()); //Testing start remote node command
+    //std::this_thread::sleep_for(std::chrono::milliseconds(250));
+	//PRINT("The turntable reset message just got sent in spot 1");
 
 	while (master.num_devices()<num_devices_required) {
 		ERROR("Number of devices found: " << master.num_devices() << ". Waiting for " << num_devices_required << ".");
 		//PRINT("Trying to discover more nodes via NMT Node Guarding...");
 		//master.core.nmt.discover_nodes();
-		std::this_thread::sleep_for(std::chrono::seconds(2));
+		std::system(("cansend " + busname + " 000#0100").c_str()); //Testing start remote node command
+		PRINT("The turntable reset message just got sent in spot 2");
+		std::this_thread::sleep_for(std::chrono::seconds(5));
 	}
 
 	// Create bridge
