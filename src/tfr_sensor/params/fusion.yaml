@@ -51,10 +51,10 @@ imu0_linear_acceleration_rejection_threshold: 0.8
 #It records yaw because based off the position of the navigational marker, it has to know how it is facing. 
 odom0: /fiducial_odom
 odom0_config: [true,  true, false,
-               true, true,  true,
                false, false, false,
-               false,  false,  false,
-               false,  false,  false]
+               false, false, false,
+               false, false, false,
+               false, false, false]
 odom0_differential:  false
 odom0_relative: false
 odom0_queue_size: 10
@@ -62,11 +62,11 @@ odom0_queue_size: 10
 #This is the drivebase controller. 
 #This is also measuring the change in yaw over time to counteract error. 
 odom1: /drivebase_odom
-odom1_config: [false, false,  false,
-               false, false,  false,
+odom1_config: [false, false, false,
+               false, false, false,
                true, true, false,
-               false,  false,  true,
-               false,  false,  false]
+               false, false, true,
+               false, false, false]
 odom1_differential: false 
 odom1_relative: false
 odom1_queue_size: 16
