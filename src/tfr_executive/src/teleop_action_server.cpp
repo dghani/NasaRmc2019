@@ -443,7 +443,7 @@ class TeleopExecutive
         ros::Subscriber scoop_torque_sub;
         int16_t scoop_torque;
         ros::Subscriber motor_amp_ch1_sub;
-        ros::Subscriber motor_armp_ch2_sub;
+        ros::Subscriber motor_amp_ch2_sub;
         ros::Publisher right_bin_pub;
         ros::Publisher left_bin_pub;
         ros::Publisher turntable_pub;
