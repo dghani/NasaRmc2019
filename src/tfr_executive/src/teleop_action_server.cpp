@@ -258,7 +258,7 @@ class TeleopExecutive
                 case (tfr_utilities::TeleopCode::SCOOP_RETRACT):
                     {
                         ROS_INFO("Teleop Action Server: Command Recieved, SCOOP_RETRACT");
-			arm_manipulator.moveScoopPosition(2.5);// Retract scoop
+			arm_manipulator.moveScoopPosition(1.7);// Retract scoop
 			break;
                     }
 
@@ -475,7 +475,7 @@ int main(int argc, char** argv)
     bool use_digging; 
     ros::param::param<double>("~linear_velocity", linear_velocity, 0.25);
     ros::param::param<double>("~angular_velocity", angular_velocity, 0.3);
-    ros::param::param<double>("~rate", rate, 10.0);
+    ros::param::param<double>("~rate", rate, 32.0);
     ros::param::param<bool>("~use_digging", use_digging, true);
     TeleopExecutive::DriveVelocity velocities{linear_velocity, angular_velocity};
     TeleopExecutive teleop{n, velocities, 1.0/rate, use_digging};
