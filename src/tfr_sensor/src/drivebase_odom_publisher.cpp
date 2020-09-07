@@ -55,6 +55,7 @@ class DrivebaseOdometryPublisher
             x{},
             y{},
             angle{},
+            heading{},
             tf_broadcaster{},
             leftTreadDistance{},
             rightTreadDistance{}
@@ -113,7 +114,7 @@ class DrivebaseOdometryPublisher
         leftTreadDistance = 0;
 
         //basic differential kinematics to get combined velocities
-        double v_ang =  0.5*((v_r-v_l)/wheel_span);
+        double v_ang = ((v_r-v_l)/wheel_span);
         double v_lin = (v_r+v_l)/2;
         
         //break into xy components and increment
@@ -132,6 +133,7 @@ class DrivebaseOdometryPublisher
         double d_y = v_y * d_t;
         y += d_y;
 
+        heading += d_angle;
         t_0 = t_1;
 
         //let's package up the message
@@ -183,6 +185,7 @@ class DrivebaseOdometryPublisher
         double leftTreadDistance, rightTreadDistance;
         double x; //the x coordinate of the robot (meters)
         double y; //the y coordinate of the robot (meters)
+        double heading; //The heading of the robot (radians)
         geometry_msgs::Quaternion angle; 
         const double MAX_XY_DELTA = 0.25;
         const double MAX_THETA_DELTA = 0.65;
