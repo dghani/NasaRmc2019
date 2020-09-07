@@ -118,7 +118,8 @@ class DrivebaseOdometryPublisher
         
         //break into xy components and increment
         double d_angle = v_ang * d_t;
-        rotateQuaternionByYaw(angle, d_angle);
+        angle += d_angle;
+        // rotateQuaternionByYaw(angle, d_angle);
 
         // yaw (z-axis rotation)
         auto yaw = quaternionToYaw(angle);
@@ -130,10 +131,7 @@ class DrivebaseOdometryPublisher
         x += d_x;
 
         double d_y = v_y * d_t;
-        y += d_y;
-
-        angle += d_angle; 
-
+        y += d_y; 
         t_0 = t_1;
 
         //let's package up the message
