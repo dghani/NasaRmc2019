@@ -143,7 +143,7 @@ class DrivebaseOdometryPublisher
         msg.pose.pose.position.x = x;
         msg.pose.pose.position.y = y;
         msg.pose.pose.position.z = 0;
-        msg.pose.pose.orientation = yaw; 
+        msg.pose.pose.orientation = double yaw; 
         msg.pose.covariance = { 
             1e-1, 0,    0,    0,    0,    0,
             0, 1e-1,    0,    0,    0,    0,
