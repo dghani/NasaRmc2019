@@ -349,7 +349,7 @@ namespace tfr_control
         turntable_mutex.unlock();
     }
     
-    void RobotInterface::readTurntableTorque(const std_msgs::Int32 &msg)
+    void RobotInterface::readTurntableTorque(const std_msgs::Int16 &msg)
     {
         turntable_torque = msg.data;
     }
