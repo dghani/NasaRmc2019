@@ -340,7 +340,7 @@ namespace tfr_control
         position.push_back(position_values[static_cast<int>(tfr_utilities::Joint::SCOOP)]);
     }
 
-    void RobotInterface::readTurntableEncoder(const std_msgs::Int32 &msg)
+    void RobotInterface::readTurntableEncoder(const std_msgs::JointState &msg)
     {
         turntable_mutex.lock();
         
@@ -349,7 +349,7 @@ namespace tfr_control
         turntable_mutex.unlock();
     }
     
-    void RobotInterface::readTurntableTorque(const std_msgs::Float64 &msg)
+    void RobotInterface::readTurntableTorque(const std_msgs::Int32 &msg)
     {
         turntable_torque = msg.data;
     }
@@ -364,7 +364,7 @@ namespace tfr_control
     }
     
     // TODO: Add mutex to protect all of these arm readings from reading while writing.
-    void RobotInterface::readLowerArmTorque(const std_msgs::Float64 &msg)
+    void RobotInterface::readLowerArmTorque(const std_msgs::Int16 &msg)
     {
         lower_arm_torque = msg.data;
     }
@@ -378,7 +378,7 @@ namespace tfr_control
         upper_arm_mutex.unlock();
     }
     
-    void RobotInterface::readUpperArmTorque(const std_msgs::Float64 &msg)
+    void RobotInterface::readUpperArmTorque(const std_msgs::Int16 &msg)
     {
         upper_arm_torque = msg.data;
     }
@@ -392,7 +392,7 @@ namespace tfr_control
         scoop_mutex.unlock();
     }
     
-    void RobotInterface::readScoopTorque(const std_msgs::Float64 &msg)
+    void RobotInterface::readScoopTorque(const std_msgs::Int16 &msg)
     {
         scoop_torque = msg.data;
     }
