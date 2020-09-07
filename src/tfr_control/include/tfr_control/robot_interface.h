@@ -129,16 +129,16 @@ namespace tfr_control {
         std::mutex scoop_mutex;
         
         void readTurntableEncoder(const std_msgs::Int32 &msg);
-        void readTurntableTorque(const std_msgs::Float64 &msg);
+        void readTurntableTorque(const std_msgs::Int32 &msg);
         
         void readLowerArmEncoder(const sensor_msgs::JointState &msg);
-        void readLowerArmTorque(const std_msgs::Float64 &msg);
+        void readLowerArmTorque(const std_msgs::Int16 &msg);
         
         void readUpperArmEncoder(const sensor_msgs::JointState &msg);
-        void readUpperArmTorque(const std_msgs::Float64 &msg);
+        void readUpperArmTorque(const std_msgs::Int16 &msg);
         
         void readScoopEncoder(const sensor_msgs::JointState &msg);
-        void readScoopTorque(const std_msgs::Float64 &msg);
+        void readScoopTorque(const std_msgs::Int16 &msg);
         
         ros::Publisher brushless_right_tread_vel_publisher;
         ros::Publisher brushless_left_tread_vel_publisher;
