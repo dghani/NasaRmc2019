@@ -156,7 +156,7 @@ class DrivebaseOdometryPublisher
         msg.twist.twist.linear.z = 0;
         msg.twist.twist.angular.x = 0;
         msg.twist.twist.angular.y = 0;
-        msg.twist.twist.angular.z = v_ang/2;
+        msg.twist.twist.angular.z = v_ang;
         msg.twist.covariance = { 5e-2,    0,    0,    0,    0,    0,
             0, 5e-2,    0,    0,    0,    0,
             0,    0, 5e-2,    0,    0,    0,
