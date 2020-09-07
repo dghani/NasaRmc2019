@@ -60,8 +60,8 @@ class DrivebaseOdometryPublisher
             rightTreadDistance{}
     {
         //get most current sensor infromation
-        boost::function<void(const std_msgs::Float64&)> leftTreadCallback = [this](const std_msgs::Float64& msg) {this->leftTreadDistance += msg.data; };
-        boost::function<void(const std_msgs::Float64&)> rightTreadCallback = [this](const std_msgs::Float64& msg) {this->rightTreadDistance += msg.data; };
+        boost::function<void(const std_msgs::Float64&)> leftTreadCallback = [this](const std_msgs::Float64& msg) {this->leftTreadDistance = msg.data; };
+        boost::function<void(const std_msgs::Float64&)> rightTreadCallback = [this](const std_msgs::Float64& msg) {this->rightTreadDistance = msg.data; };
         
 
 		leftTreadDistanceSub = n.subscribe<std_msgs::Float64>("/left_tread_distance", 15, leftTreadCallback);
@@ -117,7 +117,7 @@ class DrivebaseOdometryPublisher
         double v_lin = (v_r+v_l)/2;
         
         //break into xy components and increment
-        double d_angle = -1 * v_ang * d_t;
+        double d_angle = v_ang * d_t;
         rotateQuaternionByYaw(angle, d_angle);
 
         // yaw (z-axis rotation)
