@@ -121,7 +121,7 @@ class DrivebaseOdometryPublisher
         rotateQuaternionByYaw(angle, d_angle);
 
         // yaw (z-axis rotation)
-        geometry_msgs::Quaternion yaw = tf::createQuaternionMsgFromYaw(angle);
+        geometry_msgs::Quaternion yaw = tf2::createQuaternionMsgFromYaw(angle);
         double v_x = v_lin*cos(yaw);
         double v_y = v_lin*sin(yaw);
 
