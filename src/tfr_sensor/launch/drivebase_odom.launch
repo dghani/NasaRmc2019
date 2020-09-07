@@ -4,7 +4,7 @@
         <remap from="/right_tread_count" to="/device8/get_qry_blcntr/qry_blcntr_2"/>
         <rosparam>
             maxTicks: 2147483647 
-            ticksPerRevolution: 3200 
+            ticksPerRevolution: 2000 #Using hall effect sensors
 #The encoder is 32 PPR, but the motor controller multiplies by 4. 
 #Gear ratio is 100:1 for output shaft.  128 * 100 = 12800.  
             wheelRadius: .15
