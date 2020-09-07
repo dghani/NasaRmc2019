@@ -113,7 +113,7 @@ class DrivebaseOdometryPublisher
         leftTreadDistance = 0;
 
         //basic differential kinematics to get combined velocities
-        double v_ang =  2*((v_r-v_l)/wheel_span);
+        double v_ang =  0.5*((v_r-v_l)/wheel_span);
         double v_lin = (v_r+v_l)/2;
         
         //break into xy components and increment
