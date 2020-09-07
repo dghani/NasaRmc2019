@@ -154,9 +154,6 @@ class DrivebaseOdometryPublisher
 
         msg.twist.twist.linear.x = v_x;
         msg.twist.twist.linear.y = v_y;
-        msg.twist.twist.linear.z = 0;
-        msg.twist.twist.angular.x = 0;
-        msg.twist.twist.angular.y = 0;
         msg.twist.twist.angular.z = v_ang;
         msg.twist.covariance = { 5e-2,    0,    0,    0,    0,    0,
             0, 5e-2,    0,    0,    0,    0,
@@ -183,8 +180,8 @@ class DrivebaseOdometryPublisher
         double x; //the x coordinate of the robot (meters)
         double y; //the y coordinate of the robot (meters)
         geometry_msgs::Quaternion angle; 
-        const double MAX_XY_DELTA = 0.25;
-        const double MAX_THETA_DELTA = 0.065;
+        const double MAX_XY_DELTA = 1.25;
+        const double MAX_THETA_DELTA = 1.65;
         ros::Time t_0;
 
        
@@ -311,7 +308,7 @@ int main(int argc, char **argv)
     ros::param::param<std::string>("~parent_frame", parent_frame, "odom");
     ros::param::param<std::string>("~child_frame", child_frame, "base_footprint");
     ros::param::param<double>("~wheel_span", wheel_span, 0.36);
-    ros::param::param<double>("~rate", rate, 16.0);
+    ros::param::param<double>("~rate", rate, 32);
     DrivebaseOdometryPublisher publisher{n, parent_frame, child_frame, wheel_span};
     ros::Rate loop_rate(rate);
     while(ros::ok())

@@ -22,9 +22,8 @@ const std::string baudrate = "250K";
 
 const size_t num_devices_required = 5;
 
-const double loop_rate = 10; // 10 Hz
+const double loop_rate = 32; // 32 Hz
 const int slow_loop_rate = 1; // 1 Hz
-const int fast_loop_rate = 128; // 128 Hz
 
 // CANopen node IDs:
 const int SERVO_CYLINDER_LOWER_ARM = 23;
@@ -285,7 +284,7 @@ int main(int argc, char* argv[]) {
     		//bridge.add_publisher(iopub_8_1_4, loop_rate);
     		
     		auto iopub_8_1_5 = std::make_shared<kaco::EntryPublisher>(device, "qry_blcntr/qry_blcntr_1");
-    		bridge.add_publisher(iopub_8_1_5, fast_loop_rate);
+    		bridge.add_publisher(iopub_8_1_5, loop_rate);
 			
 			
 			auto iosub_8_2_1 = std::make_shared<kaco::EntrySubscriber>(device, "cmd_cango/cmd_cango_2");
@@ -301,7 +300,7 @@ int main(int argc, char* argv[]) {
     		//bridge.add_publisher(iopub_8_2_4, loop_rate);
     		
     		auto iopub_8_2_5 = std::make_shared<kaco::EntryPublisher>(device, "qry_blcntr/qry_blcntr_2");
-    		bridge.add_publisher(iopub_8_2_5, fast_loop_rate);
+    		bridge.add_publisher(iopub_8_2_5, loop_rate);
 			
 		}
 		

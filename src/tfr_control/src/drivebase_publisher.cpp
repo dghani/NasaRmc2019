@@ -34,8 +34,8 @@ namespace tfr_control
             left_velocity = 0.05;
             right_velocity = 0.05;
             if(msg->linear.y < 0){
-          //      left_velocity = -left_velocity; Troubleshooting direction
-          //      right_velocity = -right_velocity; Troubleshooting direction
+                left_velocity = -left_velocity; 
+                right_velocity = -right_velocity; 
             }
         }
         
