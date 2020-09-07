@@ -4,17 +4,17 @@
         <remap from="/right_tread_count" to="/device8/get_qry_blcntr/qry_blcntr_2"/>
         <rosparam>
             maxTicks: 2147483647 
-            ticksPerRevolution: 1200 #Using hall effect sensors 4 pulses per hall effect * 3 halls * 100:1 gear ratio equals 1200
+            ticksPerRevolution: 2400 #Using hall effect sensors 4 pulses per hall effect * 3 halls * 100:1 gear ratio equals 1200
 #The encoder is 32 PPR, but the motor controller multiplies by 4. 
 #Gear ratio is 100:1 for output shaft.  128 * 100 = 12800.  
-            wheelRadius: .15
+            wheelRadius: 0.15
         </rosparam>
     </node>
     <node name="drivebase_odom_publisher" pkg="tfr_sensor" type="drivebase_odom_publisher" output="screen">
         <rosparam>
             parent_frame: odom
             child_frame: base_footprint
-            wheel_span: 0.45
+            wheel_span: 0.37
         </rosparam>
     </node>
 </launch>
