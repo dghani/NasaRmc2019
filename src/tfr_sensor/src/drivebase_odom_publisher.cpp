@@ -86,7 +86,7 @@ class DrivebaseOdometryPublisher
     DrivebaseOdometryPublisher& operator=(DrivebaseOdometryPublisher&) = delete;
 
     /*****************************************************************************************
-    * processOdometry: Main business logic for the node, takes in readings from the arduino,
+    * processOdometry: Main business logic for the node, takes in readings from the controller,
     *       and publishes them across the network.
     * Preconditions: is subscribed to recieve information from the treads (tfr_sensor/src/tread_distance_publisher)
     * Postconditions: Velocities from the treads are published across the network
@@ -111,7 +111,7 @@ class DrivebaseOdometryPublisher
         //zero out aggregate distances
         rightTreadDistance = 0;
         leftTreadDistance = 0;
-
+        double angle = 0.0
         //basic differential kinematics to get combined velocities
         double v_ang = (v_r-v_l)/wheel_span;
         double v_lin = (v_r+v_l)/2;
