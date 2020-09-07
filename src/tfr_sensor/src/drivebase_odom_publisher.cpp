@@ -113,7 +113,7 @@ class DrivebaseOdometryPublisher
         leftTreadDistance = 0;
 
         //basic differential kinematics to get combined velocities
-        double v_ang = (v_r-v_l)/wheel_span;
+        double v_ang =  2*((v_r-v_l)/wheel_span);
         double v_lin = (v_r+v_l)/2;
         
         //break into xy components and increment
@@ -143,7 +143,7 @@ class DrivebaseOdometryPublisher
         msg.pose.pose.position.x = x;
         msg.pose.pose.position.y = y;
         msg.pose.pose.position.z = 0;
-        msg.pose.pose.orientation = d_angle;
+        msg.pose.pose.orientation = angle;
         msg.pose.covariance = { 
             1e-1, 0,    0,    0,    0,    0,
             0, 1e-1,    0,    0,    0,    0,
@@ -183,8 +183,7 @@ class DrivebaseOdometryPublisher
         double leftTreadDistance, rightTreadDistance;
         double x; //the x coordinate of the robot (meters)
         double y; //the y coordinate of the robot (meters)
-        geometry_msgs::Quaternion angle;
-        double d_angle; 
+        geometry_msgs::Quaternion angle; 
         const double MAX_XY_DELTA = 0.25;
         const double MAX_THETA_DELTA = 0.65;
         ros::Time t_0;
