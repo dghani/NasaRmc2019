@@ -129,7 +129,7 @@ namespace tfr_control {
         volatile double scoop_torque = 0.0;
         std::mutex scoop_mutex;
         
-        void readTurntableEncoder(const std_msgs::Int32 &msg);
+        void readTurntableEncoder(const std_msgs::JointState &msg);
         void readTurntableTorque(const std_msgs::Int32 &msg);
         
         void readLowerArmEncoder(const sensor_msgs::JointState &msg);
