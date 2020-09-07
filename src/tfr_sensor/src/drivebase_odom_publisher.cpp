@@ -183,7 +183,8 @@ class DrivebaseOdometryPublisher
         double leftTreadDistance, rightTreadDistance;
         double x; //the x coordinate of the robot (meters)
         double y; //the y coordinate of the robot (meters)
-        geometry_msgs::Quaternion angle; 
+        geometry_msgs::Quaternion angle;
+        double d_angle; 
         const double MAX_XY_DELTA = 0.25;
         const double MAX_THETA_DELTA = 0.65;
         ros::Time t_0;
