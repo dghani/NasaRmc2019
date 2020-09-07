@@ -117,11 +117,11 @@ class DrivebaseOdometryPublisher
         double v_lin = (v_r+v_l)/2;
         
         //break into xy components and increment
-        double d_angle = v_ang * d_t;
+        double d_angle = -1 * v_ang * d_t;
         rotateQuaternionByYaw(angle, d_angle);
 
         // yaw (z-axis rotation)
-        geometry_msgs::Quaternion yaw = tf2::createQuaternionMsgFromYaw(angle);
+        auto yaw = quaternionToYaw(angle);
         double v_x = v_lin*cos(yaw);
         double v_y = v_lin*sin(yaw);
 
@@ -143,7 +143,7 @@ class DrivebaseOdometryPublisher
         msg.pose.pose.position.x = x;
         msg.pose.pose.position.y = y;
         msg.pose.pose.position.z = 0;
-        msg.pose.pose.orientation = yaw; 
+        msg.pose.pose.orientation = angle;
         msg.pose.covariance = { 
             1e-1, 0,    0,    0,    0,    0,
             0, 1e-1,    0,    0,    0,    0,
