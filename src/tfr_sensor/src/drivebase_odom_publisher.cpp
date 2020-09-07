@@ -111,15 +111,14 @@ class DrivebaseOdometryPublisher
         //zero out aggregate distances
         rightTreadDistance = 0;
         leftTreadDistance = 0;
-        double angle = 0.0;
+
         //basic differential kinematics to get combined velocities
         double v_ang = (v_r-v_l)/wheel_span;
         double v_lin = (v_r+v_l)/2;
         
         //break into xy components and increment
         double d_angle = v_ang * d_t;
-        angle += d_angle;
-        // rotateQuaternionByYaw(angle, d_angle);
+        rotateQuaternionByYaw(angle, d_angle);
 
         // yaw (z-axis rotation)
         auto yaw = quaternionToYaw(angle);
@@ -131,7 +130,8 @@ class DrivebaseOdometryPublisher
         x += d_x;
 
         double d_y = v_y * d_t;
-        y += d_y; 
+        y += d_y;
+
         t_0 = t_1;
 
         //let's package up the message
@@ -143,7 +143,7 @@ class DrivebaseOdometryPublisher
         msg.pose.pose.position.x = x;
         msg.pose.pose.position.y = y;
         msg.pose.pose.position.z = 0;
-        msg.pose.pose.orientation = angle;
+        msg.pose.pose.orientation = yaw; 
         msg.pose.covariance = { 
             1e-1, 0,    0,    0,    0,    0,
             0, 1e-1,    0,    0,    0,    0,
@@ -154,6 +154,9 @@ class DrivebaseOdometryPublisher
 
         msg.twist.twist.linear.x = v_x;
         msg.twist.twist.linear.y = v_y;
+        msg.twist.twist.linear.z = 0;
+        msg.twist.twist.angular.x = 0;
+        msg.twist.twist.angular.y = 0;
         msg.twist.twist.angular.z = v_ang;
         msg.twist.covariance = { 5e-2,    0,    0,    0,    0,    0,
             0, 5e-2,    0,    0,    0,    0,
@@ -164,6 +167,7 @@ class DrivebaseOdometryPublisher
         //publish the message
         odometry_publisher.publish(msg);
     }
+
 
 
     private:
