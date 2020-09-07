@@ -143,7 +143,7 @@ class DrivebaseOdometryPublisher
         msg.pose.pose.position.x = x;
         msg.pose.pose.position.y = y;
         msg.pose.pose.position.z = 0;
-        msg.pose.pose.orientation = angle;
+        msg.pose.pose.orientation = d_angle;
         msg.pose.covariance = { 
             1e-1, 0,    0,    0,    0,    0,
             0, 1e-1,    0,    0,    0,    0,
@@ -184,8 +184,8 @@ class DrivebaseOdometryPublisher
         double x; //the x coordinate of the robot (meters)
         double y; //the y coordinate of the robot (meters)
         geometry_msgs::Quaternion angle; 
-        const double MAX_XY_DELTA = 1.25;
-        const double MAX_THETA_DELTA = 1.65;
+        const double MAX_XY_DELTA = 0.25;
+        const double MAX_THETA_DELTA = 0.65;
         ros::Time t_0;
 
        
