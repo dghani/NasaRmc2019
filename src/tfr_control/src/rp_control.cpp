@@ -39,7 +39,7 @@ void serialWriteCallback(const tfr_msgs::PwmCommand & command) {
         
 
         motorPower[MOTOR_RIGHT] = command.tread_right * right_power_scale;
-        motorPower[MOTOR_LEFT] = -command.tread_left * left_power_scale;
+        motorPower[MOTOR_LEFT] = command.tread_left * left_power_scale; // Jon changed this from negative to try and debug the right tread not spinning due to being sent -1 commands randomly
         
         if (command.tread_right != 0 || command.tread_left != 0) {
             ROS_INFO("writing power: %d, %d", motorPower[MOTOR_RIGHT], motorPower[MOTOR_LEFT]);

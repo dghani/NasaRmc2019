@@ -139,7 +139,10 @@ void setupMaxonDevice(kaco::Device& device, kaco::Bridge& bridge, std::string& e
     // This way, the digging queue can wait until the arm is in the expected position before moving to the next one.
     auto iopub_1 = std::make_shared<kaco::EntryPublisher>(device, "statusword");
     bridge.add_publisher(iopub_1, loop_rate);
-		
+
+    auto iopub_2 = std::make_shared<kaco::EntryPublisher>(device, "torque_actual_values/torque_actual_value_averaged");
+    bridge.add_publisher(iopub_2, loop_rate);
+    
 }
 
 // Usage: e.g. intToHexString(10) == "A"
