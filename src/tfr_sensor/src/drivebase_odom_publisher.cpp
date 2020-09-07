@@ -132,6 +132,8 @@ class DrivebaseOdometryPublisher
         double d_y = v_y * d_t;
         y += d_y;
 
+        angle += d_angle; 
+
         t_0 = t_1;
 
         //let's package up the message
