@@ -55,7 +55,6 @@ class DrivebaseOdometryPublisher
             x{},
             y{},
             angle{},
-            heading{},
             tf_broadcaster{},
             leftTreadDistance{},
             rightTreadDistance{}
@@ -133,7 +132,8 @@ class DrivebaseOdometryPublisher
         double d_y = v_y * d_t;
         y += d_y;
 
-        heading += d_angle;
+        angle = angle + (v_ang * d_t);
+        
         t_0 = t_1;
 
         //let's package up the message
@@ -145,7 +145,7 @@ class DrivebaseOdometryPublisher
         msg.pose.pose.position.x = x;
         msg.pose.pose.position.y = y;
         msg.pose.pose.position.z = 0;
-        msg.pose.pose.orientation = heading;
+        msg.pose.pose.orientation = angle;
         msg.pose.covariance = { 
             1e-1, 0,    0,    0,    0,    0,
             0, 1e-1,    0,    0,    0,    0,
@@ -185,7 +185,6 @@ class DrivebaseOdometryPublisher
         double leftTreadDistance, rightTreadDistance;
         double x; //the x coordinate of the robot (meters)
         double y; //the y coordinate of the robot (meters)
-        double heading; //The heading of the robot (radians)
         geometry_msgs::Quaternion angle; 
         const double MAX_XY_DELTA = 0.25;
         const double MAX_THETA_DELTA = 0.65;
