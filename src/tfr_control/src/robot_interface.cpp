@@ -340,11 +340,11 @@ namespace tfr_control
         position.push_back(position_values[static_cast<int>(tfr_utilities::Joint::SCOOP)]);
     }
 
-    void RobotInterface::readTurntableEncoder(const std_msgs::JointState &msg)
+    void RobotInterface::readTurntableEncoder(const sensor_msgs::JointState &msg)
     {
         turntable_mutex.lock();
         
-        turntable_encoder = msg.data;
+        turntable_encoder = msg.position[0];
         
         turntable_mutex.unlock();
     }
