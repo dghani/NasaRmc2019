@@ -111,7 +111,7 @@ class DrivebaseOdometryPublisher
         //zero out aggregate distances
         rightTreadDistance = 0;
         leftTreadDistance = 0;
-        double angle = 0.0
+        double angle = 0.0;
         //basic differential kinematics to get combined velocities
         double v_ang = (v_r-v_l)/wheel_span;
         double v_lin = (v_r+v_l)/2;
