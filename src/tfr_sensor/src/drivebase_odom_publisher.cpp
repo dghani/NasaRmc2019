@@ -131,9 +131,6 @@ class DrivebaseOdometryPublisher
 
         double d_y = v_y * d_t;
         y += d_y;
-
-        angle = angle + (v_ang * d_t);
-        
         t_0 = t_1;
 
         //let's package up the message
@@ -159,7 +156,7 @@ class DrivebaseOdometryPublisher
         msg.twist.twist.linear.z = 0;
         msg.twist.twist.angular.x = 0;
         msg.twist.twist.angular.y = 0;
-        msg.twist.twist.angular.z = v_ang;
+        msg.twist.twist.angular.z = v_ang/2;
         msg.twist.covariance = { 5e-2,    0,    0,    0,    0,    0,
             0, 5e-2,    0,    0,    0,    0,
             0,    0, 5e-2,    0,    0,    0,
