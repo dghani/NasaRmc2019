@@ -4,7 +4,7 @@
         <rosparam>
             height_adjustment: 0.0
             safe_mining_distance: 1.0
-            finish_line: 1.5
+            finish_line: 0.5
         </rosparam>
     </node>
     <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">

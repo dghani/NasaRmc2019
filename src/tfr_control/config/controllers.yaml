@@ -64,7 +64,7 @@ arm_controller:
         - lower_arm_joint
         - upper_arm_joint
     constraints:
-        goal_time: 10.0
+        goal_time: 100.0
 
 # Controls the end effector (scoop) of the arm. This is
 # separate from the main arm controller as MoveIt requires
@@ -74,4 +74,4 @@ arm_end_controller:
     joints:
         - scoop_joint
     constraints:
-        goal_time: 10.0
+        goal_time: 100.0
