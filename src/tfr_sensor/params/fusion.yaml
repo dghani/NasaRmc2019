@@ -28,18 +28,18 @@ print_diagnostics: true
 #This is messaging the change in yaw over time.
 imu0: /sensors/imu
 imu0_config: [false, false, false,
-              true,  true,  true,
+              false,  false,  true,
               false, false, false,
-              true,  true,  true,
-              true,  true,  true]
-imu0_differential: false
+              false,  false,  true,
+              true,  false,  false]
+imu0_differential: true
 imu0_nodelay: false
-imu0_relative: true
+imu0_relative: false
 #outputs at ~50 hz whic is >> than fusion hz (10) so we need a big queue
-imu0_queue_size: 100
+imu0_queue_size: 50
 imu0_remove_gravitational_acceleration: false
-imu0_pose_rejection_threshold: 0.8        
-imu0_twist_rejection_threshold: 0.8                
+imu0_pose_rejection_threshold: 1.1        
+imu0_twist_rejection_threshold: 1.1                
 imu0_linear_acceleration_rejection_threshold: 0.8  
 
 #basic 2d configuration for the fiducial odom publisher we don't use it's
@@ -51,25 +51,25 @@ imu0_linear_acceleration_rejection_threshold: 0.8
 #It records yaw because based off the position of the navigational marker, it has to know how it is facing. 
 odom0: /fiducial_odom
 odom0_config: [true,  true, false,
-               false, false,  true,
+               false, false,  false,
                false, false, false,
                false,  false,  false,
                false,  false,  false]
 odom0_differential:  false
 odom0_relative: false
-odom0_queue_size: 2
+odom0_queue_size: 1
 
 #This is the drivebase controller. 
 #This is also measuring the change in yaw over time to counteract error. 
 odom1: /drivebase_odom
 odom1_config: [false, false,  false,
                false, false,  false,
-               true, false, false,
+               true, true, false,
                false,  false,  false,
                false,  false,  false]
 odom1_differential: false 
 odom1_relative: false
-odom1_queue_size: 16
+odom1_queue_size: 2
 odom1_nodelay: false
 use_control: true
 control_config: [true, false, false, false, false, true]
@@ -81,7 +81,7 @@ control_config: [true, false, false, false, false, true]
     #control_timeout: 0.5
     ## Which velocities are being controlled. Order is vx, vy, vz, vroll, vpitch, vyaw.
     ## Places limits on how large the acceleration term will be. Should match your robot's kinematics.
-    #acceleration_limits: [0.4, 0.0, 0.0, 0.0, 0.0, 0.9]
+    acceleration_limits: [0.4, 0.0, 0.0, 0.0, 0.0, 0.9]
     ## Acceleration and deceleration limits are not always the same for robots.
     #deceleration_limits: [0.4, 0.0, 0.0, 0.0, 0.0, 0.9]
     #
@@ -106,16 +106,16 @@ process_noise_covariance: [0.05, 0,    0,    0,    0,    0,    0,     0,     0, 
                            0,    0,    0,    0,    0,    0,    0,     0,     0,    0,    0,    0,    0,    0,    0,  #z
                            0,    0,    0,    0,    0,    0,    0,     0,     0,    0,    0,    0,    0,    0,    0,  #roll
                            0,    0,    0,    0,    0,    0,    0,     0,     0,    0,    0,    0,    0,    0,    0,  #pitch
-                           0,    0,    0,    0,    0,    0.01, 0,     0,     0,    0,    0,    0,    0,    0,    0,  #yaw
-                           0,    0,    0,    0,    0,    0,    0.01,     0,     0,    0,    0,    0,    0,    0,    0,  #vx
-                           0,    0,    0,    0,    0,    0,    0,     0.01,     0,    0,    0,    0,    0,    0,    0,  #vy
+                           0,    0,    0,    0,    0,    0.06, 0,     0,     0,    0,    0,    0,    0,    0,    0,  #yaw
+                           0,    0,    0,    0,    0,    0,    0.025,     0,     0,    0,    0,    0,    0,    0,    0,  #vx
+                           0,    0,    0,    0,    0,    0,    0,     0.025,     0,    0,    0,    0,    0,    0,    0,  #vy
                            0,    0,    0,    0,    0,    0,    0,     0,     0,    0,    0,    0,    0,    0,    0,  #vz
                            0,    0,    0,    0,    0,    0,    0,     0,     0,    0,    0,    0,    0,    0,    0,  #vroll
                            0,    0,    0,    0,    0,    0,    0,     0,     0,    0,    0,    0,    0,    0,    0,  #vpitch
                            0,    0,    0,    0,    0,    0,    0,     0,     0,    0,    0,    0.03, 0,    0,    0,  #vyaw
                            0,    0,    0,    0,    0,    0,    0,     0,     0,    0,    0,    0,    0.03,    0,    0,  #ax
-                           0,    0,    0,    0,    0,    0,    0,     0,     0,    0,    0,    0,    0,    0.03,    0,  #ay
-                           0,    0,    0,    0,    0,    0,    0,     0,     0,    0,    0,    0,    0,    0,    0.03]  #az
+                           0,    0,    0,    0,    0,    0,    0,     0,     0,    0,    0,    0,    0,    0,    0,  #ay
+                           0,    0,    0,    0,    0,    0,    0,     0,     0,    0,    0,    0,    0,    0,    0]  #az
 
     # [ADVANCED] This represents the initial value for the state estimate error covariance matrix. Setting a diagonal
     # value (variance) to a large value will result in rapid convergence for initial measurements of the variable in
