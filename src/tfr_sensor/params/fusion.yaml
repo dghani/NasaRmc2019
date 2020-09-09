@@ -1,9 +1,9 @@
-#This is the frequency in Hz, this outputs a position estimate. 
- frequency: 32
+#This is the frequency in Hz, this outputs a position estimate.
+frequency: 32
 
 #These are all map variable definations for the kalman filter.
 #stock settings for robots without gps and no big hills
- odom_frame: odom
+odom_frame: odom
 base_link_frame: base_footprint
 world_frame: odom 
 two_d_mode: true
@@ -81,7 +81,7 @@ control_config: [true, false, false, false, false, true]
     #control_timeout: 0.5
     ## Which velocities are being controlled. Order is vx, vy, vz, vroll, vpitch, vyaw.
     ## Places limits on how large the acceleration term will be. Should match your robot's kinematics.
-    acceleration_limits: [0.4, 0.0, 0.0, 0.0, 0.0, 0.9]
+    #acceleration_limits: [0.4, 0.0, 0.0, 0.0, 0.0, 0.9]
     ## Acceleration and deceleration limits are not always the same for robots.
     #deceleration_limits: [0.4, 0.0, 0.0, 0.0, 0.0, 0.9]
     #
@@ -101,21 +101,21 @@ control_config: [true, false, false, false, false, true]
     # ordered as x, y, z, roll, pitch, yaw, vx, vy, vz, vroll, vpitch, vyaw, ax, ay, az. Defaults to the matrix below if
     # unspecified. (this is not the default anymore, Brad changed it).
 
-process_noise_covariance: [0.05, 0,    0,    0,    0,    0,    0,     0,     0,    0,    0,    0,    0,    0,    0,  #x
-                           0,    0.05, 0,    0,    0,    0,    0,     0,     0,    0,    0,    0,    0,    0,    0,  #y
-                           0,    0,    0,    0,    0,    0,    0,     0,     0,    0,    0,    0,    0,    0,    0,  #z
-                           0,    0,    0,    0,    0,    0,    0,     0,     0,    0,    0,    0,    0,    0,    0,  #roll
-                           0,    0,    0,    0,    0,    0,    0,     0,     0,    0,    0,    0,    0,    0,    0,  #pitch
-                           0,    0,    0,    0,    0,    0.06, 0,     0,     0,    0,    0,    0,    0,    0,    0,  #yaw
-                           0,    0,    0,    0,    0,    0,    0.025,     0,     0,    0,    0,    0,    0,    0,    0,  #vx
-                           0,    0,    0,    0,    0,    0,    0,     0.025,     0,    0,    0,    0,    0,    0,    0,  #vy
-                           0,    0,    0,    0,    0,    0,    0,     0,     0,    0,    0,    0,    0,    0,    0,  #vz
-                           0,    0,    0,    0,    0,    0,    0,     0,     0,    0,    0,    0,    0,    0,    0,  #vroll
-                           0,    0,    0,    0,    0,    0,    0,     0,     0,    0,    0,    0,    0,    0,    0,  #vpitch
-                           0,    0,    0,    0,    0,    0,    0,     0,     0,    0,    0,    0.03, 0,    0,    0,  #vyaw
-                           0,    0,    0,    0,    0,    0,    0,     0,     0,    0,    0,    0,    0.03,    0,    0,  #ax
-                           0,    0,    0,    0,    0,    0,    0,     0,     0,    0,    0,    0,    0,    0,    0,  #ay
-                           0,    0,    0,    0,    0,    0,    0,     0,     0,    0,    0,    0,    0,    0,    0]  #az
+process_noise_covariance: [0.05, 0,    0,    0,    0,    0,    0,     0,     0,    0,    0,    0,    0,    0,    0,
+                           0,    0.05, 0,    0,    0,    0,    0,     0,     0,    0,    0,    0,    0,    0,    0,
+                           0,    0,    0,    0,    0,    0,    0,     0,     0,    0,    0,    0,    0,    0,    0,
+                           0,    0,    0,    0,    0,    0,    0,     0,     0,    0,    0,    0,    0,    0,    0,
+                           0,    0,    0,    0,    0,    0,    0,     0,     0,    0,    0,    0,    0,    0,    0,
+                           0,    0,    0,    0,    0,    0.06, 0,     0,     0,    0,    0,    0,    0,    0,    0,
+                           0,    0,    0,    0,    0,    0,    0.025, 0,     0,    0,    0,    0,    0,    0,    0,
+                           0,    0,    0,    0,    0,    0,    0,     0.025, 0,    0,    0,    0,    0,    0,    0,
+                           0,    0,    0,    0,    0,    0,    0,     0,     0,    0,    0,    0,    0,    0,    0,
+                           0,    0,    0,    0,    0,    0,    0,     0,     0,    0,    0,    0,    0,    0,    0,
+                           0,    0,    0,    0,    0,    0,    0,     0,     0,    0,    0,    0,    0,    0,    0,
+                           0,    0,    0,    0,    0,    0,    0,     0,     0,    0,    0,    0.02, 0,    0,    0,
+                           0,    0,    0,    0,    0,    0,    0,     0,     0,    0,    0,    0,    0.03, 0,    0,
+                           0,    0,    0,    0,    0,    0,    0,     0,     0,    0,    0,    0,    0,    0,    0,
+                           0,    0,    0,    0,    0,    0,    0,     0,     0,    0,    0,    0,    0,    0,    0]
 
     # [ADVANCED] This represents the initial value for the state estimate error covariance matrix. Setting a diagonal
     # value (variance) to a large value will result in rapid convergence for initial measurements of the variable in
