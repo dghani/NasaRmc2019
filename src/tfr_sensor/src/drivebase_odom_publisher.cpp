@@ -301,8 +301,8 @@ class DrivebaseOdometryPublisher
 int main(int argc, char **argv)
 {
     ros::init(argc, argv, "drivebase_odometry_publisher");
-    PRINT("This is the angle:" angle);
-    PRINT("This is the yaw:" yaw);
+    PRINT("This is the angle:" + angle);
+    PRINT("This is the yaw:" + yaw);
     //NodeHandle is the main access point to communications with the ROS system.
     ros::NodeHandle n;
     std::string parent_frame, child_frame;
