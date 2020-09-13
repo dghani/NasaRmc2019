@@ -295,10 +295,11 @@ namespace tfr_control
     void RobotInterface::clearCommands()
     {
         //LEFT_TREAD
-        command_values[static_cast<int>(tfr_utilities::Joint::LEFT_TREAD)] = 0;
+       // command_values[static_cast<int>(tfr_utilities::Joint::LEFT_TREAD)] = 0; Does this stop the bug?
+    
 
         //RIGHT_TREAD
-        command_values[static_cast<int>(tfr_utilities::Joint::RIGHT_TREAD)] = 0;
+      //  command_values[static_cast<int>(tfr_utilities::Joint::RIGHT_TREAD)] = 0;
 
         //TURNTABLE
         command_values[static_cast<int>(tfr_utilities::Joint::TURNTABLE)] = 
