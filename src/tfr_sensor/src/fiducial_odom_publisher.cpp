@@ -138,12 +138,12 @@ class FiducialOdom
 
                 //get our pose and fudge some covariances
                 odom.pose.pose = relative_pose;
-                odom.pose.covariance = {  1e-1,   0,   0,   0,   0,   0,
+                /*odom.pose.covariance = {  1e-1,   0,   0,   0,   0,   0,
                     0,1e-1,   0,   0,   0,   0,
                     0,   0,1e-1,   0,   0,   0,
                     0,   0,   0,1e-1,   0,   0,
                     0,   0,   0,   0,1e-1,   0,
-                    0,   0,   0,   0,   0,1e-1};
+                    0,   0,   0,   0,   0,1e-1}; */
                 //fire it off! and cleanup
                 publisher.publish(odom);
 

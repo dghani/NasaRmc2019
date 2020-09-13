@@ -143,13 +143,13 @@ class DrivebaseOdometryPublisher
         msg.pose.pose.position.y = y;
         msg.pose.pose.position.z = 0;
         msg.pose.pose.orientation = angle;
-        msg.pose.covariance = { 
+        /*msg.pose.covariance = { 
             1e-1, 0,    0,    0,    0,    0,
             0, 1e-1,    0,    0,    0,    0,
             0,    0, 1e-1,    0,    0,    0,
             0,    0,    0, 1e-1,    0,    0,
             0,    0,    0,    0, 1e-1,    0,
-            0,    0,    0,    0,    0, 1e-1 };
+            0,    0,    0,    0,    0, 1e-1 };*/
 
         msg.twist.twist.linear.x = v_x;
         msg.twist.twist.linear.y = v_y;
@@ -157,13 +157,13 @@ class DrivebaseOdometryPublisher
         msg.twist.twist.angular.x = 0;
         msg.twist.twist.angular.y = 0;
         msg.twist.twist.angular.z = v_ang;
-        msg.twist.covariance = { 1e-1,    0,    0,    0,    0,    0,
+        /*msg.twist.covariance = { 1e-1,    0,    0,    0,    0,    0,
             0, 1e-1,    0,    0,    0,    0,
             0,    0, 1e-1,    0,    0,    0,
             0,    0,    0, 1e-1,    0,    0,
             0,    0,    0,    0, 1e-1,    0,
             0,    0,    0,    0,    0, 1e-1 };
-        //publish the message
+        //publish the message */
         odometry_publisher.publish(msg);
     }
 
