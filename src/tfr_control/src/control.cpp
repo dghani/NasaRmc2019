@@ -211,7 +211,7 @@ class Control
         //if our motors are enabled
         bool enabled;
 
-		void publishIMUOdometry()
+		/* void publishIMUOdometry()
 		{
 		    //TODO:
 		    ros::NodeHandle n;
@@ -304,7 +304,7 @@ class Control
                 last_time = current_time;
                 //r.sleep();
             }
-		}
+		} */
 
         /*
          * Toggles the emergency stop on and off
