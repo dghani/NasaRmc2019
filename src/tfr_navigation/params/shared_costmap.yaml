@@ -23,5 +23,5 @@ static_map: false
 rolling_window: true
 
 resolution: 0.1
-transform_tolerance: 0.5
+transform_tolerance: 5.5
 inflation: 0.1
