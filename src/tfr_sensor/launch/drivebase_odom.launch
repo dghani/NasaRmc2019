@@ -14,7 +14,7 @@
         <rosparam>
             parent_frame: odom
             child_frame: base_footprint
-            wheel_span: 0.37
+            wheel_span: 0.74 #This value does not match the real robot due to not being an ideal shape for differential drive.
         </rosparam>
     </node>
 </launch>

@@ -137,18 +137,18 @@ class DrivebaseOdometryPublisher
         msg.header.stamp = ros::Time::now();
         msg.header.frame_id = parent_frame;
         msg.child_frame_id = child_frame;
-
-        msg.pose.pose.position.x = x;
-        msg.pose.pose.position.y = y;
-        msg.pose.pose.position.z = 0;
-        msg.pose.pose.orientation = angle;
-        msg.pose.covariance = { 
+        // Drivebase odometry should not be reporting position to our kalman filter to reduce error. This information can be extrapolated from the velocities.  
+       // msg.pose.pose.position.x = x;
+       // msg.pose.pose.position.y = y;
+       // msg.pose.pose.position.z = 0;
+       // msg.pose.pose.orientation = angle;
+       /* msg.pose.covariance = { 
             1e-1, 0,    0,    0,    0,    0,
             0, 1e-1,    0,    0,    0,    0,
             0,    0, 1e-1,    0,    0,    0,
             0,    0,    0, 1e-1,    0,    0,
             0,    0,    0,    0, 1e-1,    0,
-            0,    0,    0,    0,    0, 1e-1 };
+            0,    0,    0,    0,    0, 1e-1 }; */
 
         msg.twist.twist.linear.x = v_x;
         msg.twist.twist.linear.y = v_y;
@@ -156,12 +156,12 @@ class DrivebaseOdometryPublisher
         msg.twist.twist.angular.x = 0;
         msg.twist.twist.angular.y = 0;
         msg.twist.twist.angular.z = v_ang;
-        msg.twist.covariance = { 1e-2,    0,    0,    0,    0,    0,
-            0, 1e-2,    0,    0,    0,    0,
-            0,    0, 1e-2,    0,    0,    0,
-            0,    0,    0, 1e-2,    0,    0,
-            0,    0,    0,    0, 1e-2,    0,
-            0,    0,    0,    0,    0, 1e-2 };
+        msg.twist.covariance = { 5e-2,    0,    0,    0,    0,    0,
+            0, 5e-2,    0,    0,    0,    0,
+            0,    0, 5e-2,    0,    0,    0,
+            0,    0,    0, 5e-2,    0,    0,
+            0,    0,    0,    0, 5e-2,    0,
+            0,    0,    0,    0,    0, 5e-2 };
         //publish the message 
         odometry_publisher.publish(msg);
     }

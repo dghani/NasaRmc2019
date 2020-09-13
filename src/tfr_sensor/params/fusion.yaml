@@ -27,14 +27,14 @@ print_diagnostics: true
 imu0: /sensors/imu
 imu0_config: [false, false, false,
               false, false, false,
+              true, true, true,
               false, false, false,
-              false, false, true,
-              true, false, false]
+              true, true, true]
 imu0_differential: false
 imu0_nodelay: false
 imu0_relative: true
-#outputs at ~50 hz whic is >> than fusion hz (10) so we need a big queue
-imu0_queue_size: 80
+#outputs at ~200 hz so want to average a lot of values
+imu0_queue_size: 80 
 imu0_remove_gravitational_acceleration: true
 imu0_pose_rejection_threshold: 2.5  
 imu0_twist_rejection_threshold: 2.5               
@@ -63,7 +63,7 @@ odom1: /drivebase_odom
 odom1_config: [false, false,  false,
                false, false,  false,
                true, true, false,
-               false,  false,  false,
+               false,  false,  true,
                false,  false,  false]
 odom1_differential: false 
 odom1_relative: false
