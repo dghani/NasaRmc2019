@@ -119,7 +119,6 @@ class DrivebaseOdometryPublisher
         //break into xy components and increment
         double d_angle = v_ang * d_t;
         rotateQuaternionByYaw(angle, d_angle);
-
         // yaw (z-axis rotation)
         auto yaw = quaternionToYaw(angle);
         double v_x = v_lin*cos(yaw);
@@ -143,13 +142,13 @@ class DrivebaseOdometryPublisher
         msg.pose.pose.position.y = y;
         msg.pose.pose.position.z = 0;
         msg.pose.pose.orientation = angle;
-        /*msg.pose.covariance = { 
+        msg.pose.covariance = { 
             1e-1, 0,    0,    0,    0,    0,
             0, 1e-1,    0,    0,    0,    0,
             0,    0, 1e-1,    0,    0,    0,
             0,    0,    0, 1e-1,    0,    0,
             0,    0,    0,    0, 1e-1,    0,
-            0,    0,    0,    0,    0, 1e-1 };*/
+            0,    0,    0,    0,    0, 1e-1 };
 
         msg.twist.twist.linear.x = v_x;
         msg.twist.twist.linear.y = v_y;
@@ -157,13 +156,13 @@ class DrivebaseOdometryPublisher
         msg.twist.twist.angular.x = 0;
         msg.twist.twist.angular.y = 0;
         msg.twist.twist.angular.z = v_ang;
-        /*msg.twist.covariance = { 1e-1,    0,    0,    0,    0,    0,
-            0, 1e-1,    0,    0,    0,    0,
-            0,    0, 1e-1,    0,    0,    0,
-            0,    0,    0, 1e-1,    0,    0,
-            0,    0,    0,    0, 1e-1,    0,
-            0,    0,    0,    0,    0, 1e-1 };
-        //publish the message */
+        msg.twist.covariance = { 1e-2,    0,    0,    0,    0,    0,
+            0, 1e-2,    0,    0,    0,    0,
+            0,    0, 1e-2,    0,    0,    0,
+            0,    0,    0, 1e-2,    0,    0,
+            0,    0,    0,    0, 1e-2,    0,
+            0,    0,    0,    0,    0, 1e-2 };
+        //publish the message 
         odometry_publisher.publish(msg);
     }
 
@@ -302,7 +301,8 @@ class DrivebaseOdometryPublisher
 int main(int argc, char **argv)
 {
     ros::init(argc, argv, "drivebase_odometry_publisher");
-
+    PRINT("This is the angle:" angle);
+    PRINT("This is the yaw:" yaw);
     //NodeHandle is the main access point to communications with the ROS system.
     ros::NodeHandle n;
     std::string parent_frame, child_frame;
