@@ -34,7 +34,7 @@ imu0_differential: false
 imu0_nodelay: false
 imu0_relative: true
 #outputs at ~200 hz so want to average a lot of values
-imu0_queue_size: 350 
+imu0_queue_size: 90 
 imu0_remove_gravitational_acceleration: true
 imu0_pose_rejection_threshold: 2.5  
 imu0_twist_rejection_threshold: 2.5               
@@ -55,7 +55,7 @@ odom0_config: [true,  true, false,
                false,  false,  false]
 odom0_differential:  false
 odom0_relative: false
-odom0_queue_size: 2
+odom0_queue_size: 32
 
 #This is the drivebase controller. 
 #This is also measuring the change in yaw over time to counteract error. 
@@ -67,7 +67,7 @@ odom1_config: [false, false,  false,
                false,  false,  false]
 odom1_differential: false 
 odom1_relative: false
-odom1_queue_size: 12
+odom1_queue_size: 64
 odom1_nodelay: false
 use_control: true
 control_config: [true, false, false, false, false, true]
