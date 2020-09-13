@@ -12,10 +12,10 @@ TrajectoryPlannerROS:
     acc_lim_theta: 0.5
     acc_lim_x: 0.1
 
-    sim_granulairity: 0.05
+    sim_granulairity: 0.1
 
     yaw_goal_tolerance: 0.15
-    latch_xy_goal_tolerance: true
-    xy_goal_tolerance: 0.2
+    latch_xy_goal_tolerance: false
+    xy_goal_tolerance: 0.1
     meter_scoring: false
     heading_scoring: false
