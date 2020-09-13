@@ -15,3 +15,7 @@
 	path = src/lpms_imu
 	url = https://github.com/larics/lpms_imu.git
 	branch = master
+[submodule "src/openzenros"]
+	path = src/openzenros
+	url = https://bitbucket.org/lpresearch/openzenros.git
+	branch = yolo_hall
