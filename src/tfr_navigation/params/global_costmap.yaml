@@ -1,3 +1,4 @@
 global_costmap:
     width: 12
     height: 12
+update_frequency: 1.0
