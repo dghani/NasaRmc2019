@@ -27,7 +27,7 @@ namespace tfr_control
         ros::param::getCached("~wheel_span", wheel_span);
         //ROS_INFO("Wheel Span: %f", wheel_span);
 
-        double left_velocity = msg->linear.x - (wheel_span * msg->angular.z) / 2;
+        /* double left_velocity = msg->linear.x - (wheel_span * msg->angular.z) / 2;
         double right_velocity = msg->linear.x + (wheel_span * msg->angular.z) / 2;
         
         if (msg->linear.x == 0 && msg->angular.z == 0 && msg->linear.y){
@@ -37,7 +37,7 @@ namespace tfr_control
                 left_velocity = -left_velocity; 
                 right_velocity = -right_velocity; 
             }
-        }
+        } */ //Commenting out to try and fix control bug
         
 
         std_msgs::Float64 left_cmd;
