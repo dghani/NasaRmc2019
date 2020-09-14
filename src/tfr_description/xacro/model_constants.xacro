@@ -51,7 +51,7 @@
   <xacro:property name="lower_arm_primary_length" value="${721*mmtom}" /> <!-- -->
   <xacro:property name="lower_arm_width" value="${82.55*mmtom}" />
   <xacro:property name="lower_arm_height" value="${107.09*mmtom}" /> <!-- Original H: 107.09 mm -->
-  <xacro:property name="lower_arm_min" value="0.206" /> <!-- Not given measures-->
+  <xacro:property name="lower_arm_min" value="0.20" /> <!-- Not given measures-->
   <xacro:property name="lower_arm_max" value="1.55" /> <!-- Not given measures-->
 
   <!-- Upper arm parameters -->
