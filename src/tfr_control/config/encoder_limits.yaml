@@ -1,5 +1,5 @@
 # ------------------------------------------------------------
-# Limits for the encoders on our robot.
+# Position limits for the joints on our robot.
 # 
 #
 # ------------------------------------------------------------
@@ -8,18 +8,18 @@ encoder_limits:
     bin_joint:
         min: 0
         max: 0
-    turntable_joint:
+    turntable_joint: #Starts at 3.14, can be moved either direction 180 degrees counterclockwise to 0 or 6.28, clockwise
         min: 0
-        max: 0
-    lower_arm_joint:
-        min: 0
-        max: 0
-    upper_arm_joint:
-        min: 0
-        max: 0
-    scoop_joint:
-        min: 0
-        max: 0
+        max: 6.28
+    lower_arm_joint: #Lower arm down to 0.20 radians, to lower arm raised up to 1.55 radians
+        min: 0.5
+        max: 5.1
+    upper_arm_joint: #Upper arm lowered down to 0.98 radians, to upper arm raised up to 1.33 radians
+        min: 0.5
+        max: 5.1 #careful, can impact the arm
+    scoop_joint: #Scoop closed to -1.65 radians up to Scoop fully open, 0.25
+        min: 0.3 
+        max: 2.7 #careful, can impact the arm
     left_tread_joint:
         min: 0
         max: 0
