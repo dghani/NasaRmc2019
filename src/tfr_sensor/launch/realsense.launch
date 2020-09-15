@@ -13,4 +13,6 @@
         <arg name="color_fps"  value="15"/>
         <arg name="filters" value="pointcloud"/>
     </include>
+    <node name="realsense_tf_broadcaster" pkg="tf2_ros" type="static_transform_publisher"
+        args="0.48 0 0.127 0 0 0 1 base_link imu"/>
 </launch>
