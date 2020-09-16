@@ -3,10 +3,9 @@
         args="0.48 0.076 0.127 0 0 0 1 base_link front_cam_link"/>
     <node name="front_cam" pkg="cv_camera" type="cv_camera_node" output="screen">
         <rosparam>
-            file: "gst-launch-1.0 -e nvarguscamerasrc sensor-id=0 ! video/x-raw(memory:NVMM), width=(int)2028, height=(int)1520, format=(string)NV12, framerate=(fraction)30/1 \ 
-! nvv4l2h264enc bitrate=8000000 ! h264parse ! qtmux ! appsink"
+            file: "nvarguscamerasrc sensor-id=0 ! video/x-raw(memory:NVMM), width=1920, height=1080, format=NV12, framerate=(fraction)20/1 ! nvvidconv flip-method=0 ! video/x-raw, format=(string)BGRx ! videoconvert ! appsink"
             frame_id: front_cam_link
-            rate: 30
+            rate: 20
         </rosparam>
         <param name="camera_info_url" value="file://$(find tfr_sensor)/calib/front_4056x3040.yaml"/>
     </node>
@@ -14,15 +13,14 @@
         <rosparam>
             camera_topic: /sensors/front_cam/image_raw
             service_name: /on_demand/front_cam/image_raw
-            rate: 30
         </rosparam>
     </node>
     <node name="rear_cam_tf_broadcaster" pkg="tf2_ros" type="static_transform_publisher"
         args="-0.48 -0.048 0.254 0 0 1 0 base_link rear_cam_link"/>
     <node name="rear_cam" pkg="cv_camera" type="cv_camera_node" output="screen">
         <rosparam>
-            file: "gst-launch-1.0 -e nvarguscamerasrc sensor-id=2 ! video/x-raw(memory:NVMM), width=(int)2028, height=(int)1520, format=(string)NV12, framerate=(fraction)30/1 \ 
-! nvv4l2h264enc bitrate=8000000 ! h264parse ! qtmux ! appsink"
+            file: "nvarguscamerasrc sensor-id=2 ! video/x-raw(memory:NVMM), width=1920, height=1080, format=NV12, framerate=(fraction)20/1 ! nvvidconv flip-method=1 ! video/x-raw, format=(string)BGRx ! videoconvert ! appsink"
+            rate: 20
             frame_id: rear_cam_link
         </rosparam>
         <param name="camera_info_url" value="file://$(find tfr_sensor)/calib/rear_4056x3040.yaml"/>
