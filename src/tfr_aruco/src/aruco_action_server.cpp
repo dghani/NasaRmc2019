@@ -133,7 +133,7 @@ int main(int argc, char** argv)
     ros::init(argc, argv, "aruco_action_server");
     ros::NodeHandle n{};
     TFR_Aruco aruco{n};
-    ros::Rate rate(1);
+    ros::Rate rate(3);
     while(ros::ok()){
         ros::spinOnce();
         rate.sleep();

@@ -19,7 +19,7 @@
         args="-0.48 -0.048 0.254 0 0 1 0 base_link rear_cam_link"/>
     <node name="rear_cam" pkg="cv_camera" type="cv_camera_node" output="screen">
         <rosparam>
-            file: "nvarguscamerasrc sensor-id=2 ! video/x-raw(memory:NVMM), width=1920, height=1080, format=NV12, framerate=(fraction)20/1 ! nvvidconv flip-method=1 ! video/x-raw, format=(string)BGRx ! videoconvert ! appsink"
+            file: "nvarguscamerasrc sensor-id=2 ! video/x-raw(memory:NVMM), width=1920, height=1080, format=NV12, framerate=(fraction)20/1 ! nvvidconv flip-method=0 ! video/x-raw, format=(string)BGRx ! videoconvert ! appsink"
             rate: 20
             frame_id: rear_cam_link
         </rosparam>
