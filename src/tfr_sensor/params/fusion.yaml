@@ -1,4 +1,4 @@
-#This is the frequency in Hz, this outputs a position estimate. 
+#This is the frequency in Hz, this outputs a position estimate.
 frequency: 32
 
 #These are all map variable definations for the kalman filter.
@@ -7,8 +7,8 @@ odom_frame: odom
 base_link_frame: base_footprint
 world_frame: odom 
 two_d_mode: true
-sensor_timeout: 0.5
-transform_timeout: 0.4
+sensor_timeout: 0.15
+transform_timeout: 0.2
 debug: false
 
 #push all of this information to the transform node360
@@ -22,25 +22,23 @@ print_diagnostics: true
 #NOTE: I also don't do any outlier removal or thresholding, it doesn't play
 #well with fiducial odometry
     
-#The two trues are set of true for angular rotation (turning).  
-#The only reason he was using the sensor data in the IMU was to combate the accuracy in turning.   
-#basic 2d settings for xsens
+#See the LPMS IMU driver to see what is being published.
 #This is messaging the change in yaw over time.
 imu0: /sensors/imu
 imu0_config: [false, false, false,
-              false,  false,  false,
               false, false, false,
-              false,  false,  true,
-              false,  false,  false]
+              true, true, false,
+              false, false, true,
+              true, true, false]
 imu0_differential: false
 imu0_nodelay: false
 imu0_relative: true
-#outputs at ~50 hz whic is >> than fusion hz (10) so we need a big queue
-imu0_queue_size: 32
+#outputs at ~200 hz so want to average a lot of values
+imu0_queue_size: 90 
 imu0_remove_gravitational_acceleration: true
-imu0_pose_rejection_threshold: 0.8        
-imu0_twist_rejection_threshold: 0.8                
-imu0_linear_acceleration_rejection_threshold: 0.8  
+imu0_pose_rejection_threshold: 2.5  
+imu0_twist_rejection_threshold: 2.5               
+imu0_linear_acceleration_rejection_threshold: 0.9  
 
 #basic 2d configuration for the fiducial odom publisher we don't use it's
 #velocity, because it is very unreliable, and we get good velocity 
@@ -50,26 +48,26 @@ imu0_linear_acceleration_rejection_threshold: 0.8
 #It records x and y position because it can do that using geometry.
 #It records yaw because based off the position of the navigational marker, it has to know how it is facing. 
 odom0: /fiducial_odom
-odom0_config: [false,  false, false,
-               false, false,  false,
+odom0_config: [true,  true, false,
+               false, false,  true,
                false, false, false,
                false,  false,  false,
                false,  false,  false]
 odom0_differential:  false
 odom0_relative: false
-odom0_queue_size: 2
+odom0_queue_size: 32
 
 #This is the drivebase controller. 
 #This is also measuring the change in yaw over time to counteract error. 
 odom1: /drivebase_odom
-odom1_config: [true, true,  false,
+odom1_config: [false, false,  false,
                false, false,  true,
-               false, false, false,
-               false,  false,  false,
+               true, true, false,
+               false,  false,  true,
                false,  false,  false]
 odom1_differential: false 
 odom1_relative: false
-odom1_queue_size: 16
+odom1_queue_size: 64
 odom1_nodelay: false
 use_control: true
 control_config: [true, false, false, false, false, true]
@@ -101,21 +99,21 @@ control_config: [true, false, false, false, false, true]
     # ordered as x, y, z, roll, pitch, yaw, vx, vy, vz, vroll, vpitch, vyaw, ax, ay, az. Defaults to the matrix below if
     # unspecified. (this is not the default anymore, Brad changed it).
 
-process_noise_covariance: [0.05, 0,    0,    0,    0,    0,    0,     0,     0,    0,    0,    0,    0,    0,    0,  #x
-                           0,    0.05, 0,    0,    0,    0,    0,     0,     0,    0,    0,    0,    0,    0,    0,  #y
-                           0,    0,    0,    0,    0,    0,    0,     0,     0,    0,    0,    0,    0,    0,    0,  #z
-                           0,    0,    0,    0,    0,    0,    0,     0,     0,    0,    0,    0,    0,    0,    0,  #roll
-                           0,    0,    0,    0,    0,    0,    0,     0,     0,    0,    0,    0,    0,    0,    0,  #pitch
-                           0,    0,    0,    0,    0,    0.01, 0,     0,     0,    0,    0,    0,    0,    0,    0,  #yaw
-                           0,    0,    0,    0,    0,    0,    0,     0,     0,    0,    0,    0,    0,    0,    0,  #vx
-                           0,    0,    0,    0,    0,    0,    0,     0,     0,    0,    0,    0,    0,    0,    0,  #vy
-                           0,    0,    0,    0,    0,    0,    0,     0,     0,    0,    0,    0,    0,    0,    0,  #vz
-                           0,    0,    0,    0,    0,    0,    0,     0,     0,    0,    0,    0,    0,    0,    0,  #vroll
-                           0,    0,    0,    0,    0,    0,    0,     0,     0,    0,    0,    0,    0,    0,    0,  #vpitch
-                           0,    0,    0,    0,    0,    0,    0,     0,     0,    0,    0,    0.03, 0,    0,    0,  #vyaw
-                           0,    0,    0,    0,    0,    0,    0,     0,     0,    0,    0,    0,    0,    0,    0,  #ax
-                           0,    0,    0,    0,    0,    0,    0,     0,     0,    0,    0,    0,    0,    0,    0,  #ay
-                           0,    0,    0,    0,    0,    0,    0,     0,     0,    0,    0,    0,    0,    0,    0]  #az
+process_noise_covariance: [0.05, 0,    0,    0,    0,    0,    0,     0,     0,    0,    0,    0,    0,    0,    0,
+                           0,    0.05, 0,    0,    0,    0,    0,     0,     0,    0,    0,    0,    0,    0,    0,
+                           0,    0,    0.06, 0,    0,    0,    0,     0,     0,    0,    0,    0,    0,    0,    0,
+                           0,    0,    0,    0.03, 0,    0,    0,     0,     0,    0,    0,    0,    0,    0,    0,
+                           0,    0,    0,    0,    0.03, 0,    0,     0,     0,    0,    0,    0,    0,    0,    0,
+                           0,    0,    0,    0,    0,    0.06, 0,     0,     0,    0,    0,    0,    0,    0,    0,
+                           0,    0,    0,    0,    0,    0,    0.025, 0,     0,    0,    0,    0,    0,    0,    0,
+                           0,    0,    0,    0,    0,    0,    0,     0.025, 0,    0,    0,    0,    0,    0,    0,
+                           0,    0,    0,    0,    0,    0,    0,     0,     0.04, 0,    0,    0,    0,    0,    0,
+                           0,    0,    0,    0,    0,    0,    0,     0,     0,    0.01, 0,    0,    0,    0,    0,
+                           0,    0,    0,    0,    0,    0,    0,     0,     0,    0,    0.01, 0,    0,    0,    0,
+                           0,    0,    0,    0,    0,    0,    0,     0,     0,    0,    0,    0.02, 0,    0,    0,
+                           0,    0,    0,    0,    0,    0,    0,     0,     0,    0,    0,    0,    0.01, 0,    0,
+                           0,    0,    0,    0,    0,    0,    0,     0,     0,    0,    0,    0,    0,    0.01, 0,
+                           0,    0,    0,    0,    0,    0,    0,     0,     0,    0,    0,    0,    0,    0,    0.015]
 
     # [ADVANCED] This represents the initial value for the state estimate error covariance matrix. Setting a diagonal
     # value (variance) to a large value will result in rapid convergence for initial measurements of the variable in
@@ -138,3 +136,4 @@ initial_estimate_covariance: [1e-9, 0,    0,    0,    0,    0,    0,    0,    0,
                               0,    0,    0,    0,    0,    0,    0,    0,    0,    0,     0,     0,     1e-9, 0,    0,
                               0,    0,    0,    0,    0,    0,    0,    0,    0,    0,     0,     0,     0,    1e-9, 0,
                               0,    0,    0,    0,    0,    0,    0,    0,    0,    0,     0,     0,     0,    0,    1e-9]
+                              

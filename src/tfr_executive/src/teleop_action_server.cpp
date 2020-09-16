@@ -31,6 +31,7 @@
  */ 
 #include <ros/ros.h>
 #include <ros/console.h>
+#include <rosbag/bag.h>
 #include <tfr_utilities/teleop_code.h>
 #include <tfr_utilities/control_code.h>
 #include <tfr_msgs/TeleopAction.h>
@@ -42,6 +43,7 @@
 #include <tfr_utilities/arm_manipulator.h>
 #include <trajectory_msgs/JointTrajectory.h>
 #include <geometry_msgs/Twist.h>
+#include <std_msgs/Int16.h>
 #include <std_msgs/Int32.h>
 #include <std_msgs/Float64.h>
 #include <tfr_msgs/ArmMoveAction.h>
@@ -70,6 +72,11 @@ class TeleopExecutive
             server{n, "teleop_action_server",
                 boost::bind(&TeleopExecutive::processCommand, this, _1),
                 false},
+            lower_arm_torque_sub{n.subscribe("/device23/get_torque_actual_value", 5, &TeleopExecutive::getLowerArmTorque, this)},
+            upper_arm_torque_sub{n.subscribe("/device45/get_torque_actual_value", 5, &TeleopExecutive::getUpperArmTorque, this)},
+            scoop_torque_sub{n.subscribe("/device56/get_torque_actual_value", 5, &TeleopExecutive::getScoopTorque, this)},
+            motor_amp_ch1_sub{n.subscribe("qry_motamps/channel_1", 5 , &TeleopExecutive::getMotorAmpCh1 , this)},
+            motor_amp_ch2_sub{n.subscribe("qry_motamps/channel_2", 5 , &TeleopExecutive::getMotorAmpCh2, this)},
             drivebase_publisher{n.advertise<geometry_msgs::Twist>("cmd_vel", 5)},
             arm_manipulator{n},
             bin_publisher{n.advertise<std_msgs::Float64>("/bin_position_controller/command", 5)},
@@ -96,6 +103,7 @@ class TeleopExecutive
                 ROS_INFO("Teleop Action Server conecting to arm");
                 arm_client.waitForServer();
                 ROS_INFO("Teleop Action Server connected to arm");
+                bag.open("armTorqueMotorAmp.bag", rosbag::bagmode::Write);
             }
             else {
                 ROS_INFO("Teleop Action Server not using digging");
@@ -103,7 +111,7 @@ class TeleopExecutive
             server.start();
             ROS_INFO("Teleop Action Server: Online %f", ros::Time::now().toSec());
         }
-        ~TeleopExecutive() = default;
+        ~TeleopExecutive(){bag.close();};
         TeleopExecutive(const TeleopExecutive&) = delete;
         TeleopExecutive& operator=(const TeleopExecutive&) = delete;
         TeleopExecutive(TeleopExecutive&&) = delete;
@@ -250,13 +258,14 @@ class TeleopExecutive
                 case (tfr_utilities::TeleopCode::SCOOP_RETRACT):
                     {
                         ROS_INFO("Teleop Action Server: Command Recieved, SCOOP_RETRACT");
-			arm_manipulator.moveScoopPosition(3.0); // Retract scoop
+			arm_manipulator.moveScoopPosition(1.7);// Retract scoop
 			break;
                     }
 
                 case (tfr_utilities::TeleopCode::DIG):
                     {
-                        ROS_INFO("Teleop Action Server: commencing digging");
+                        ROS_INFO("Teleop Action Server: commencing digging");			
+
                         tfr_msgs::DiggingGoal goal{};
                         ROS_INFO("Teleop Action Server: retrieving digging time");
                         tfr_msgs::DurationSrv digging_time;
@@ -285,45 +294,20 @@ class TeleopExecutive
                 case (tfr_utilities::TeleopCode::DUMP):
                     {
                         
-                        
-                        ROS_INFO("Teleop Action Server: Command Recieved, UPPER_ARM_EXTEND");
-			arm_manipulator.moveLeftBinPosition(5.0); // Extend left bin actuator
-			arm_manipulator.moveRightBinPosition(5.0); // Extend right bin actuator
+                        //TODO: Match the rate to avoid torquing the bin. 
+                        ROS_INFO("Teleop Action Server: Command Recieved, DUMP");
+			            arm_manipulator.moveLeftBinPosition(5.0); // Extend left bin actuator
+			            arm_manipulator.moveRightBinPosition(5.0); // Extend right bin actuator
                         ROS_INFO("Teleop Action Server: DUMP finished");
                         break;
                     }
 
                 case (tfr_utilities::TeleopCode::RESET_DUMPING):
                     {
-                        //drivebase_publisher.publish(move_cmd);
+                        //TODO: Match the rate to avoid torquing the bin. 
                         ROS_INFO("Teleop Action Server: Command Recieved, RESET_DUMPING");
-                        stop_bin_movement();
-                        int effort = 1;
-                        if (not ros::param::getCached("~dump_effort", effort)) {effort = 1;}
-						std_msgs::Int32 msg;
-                        msg.data = -effort;
-                        right_bin_pub.publish(msg);
-                        left_bin_pub.publish(msg);
-                       /* //all zeros by default
-                        std_msgs::Float64 bin_cmd;
-                        bin_cmd.data = tfr_utilities::JointAngle::BIN_MIN;
-                        tfr_msgs::BinStateSrv query;
-                        while (!server.isPreemptRequested() && ros::ok())
-                        {
-                            ros::service::call("bin_state", query);
-                            using namespace tfr_utilities;
-                            if (query.response.state - JointAngle::BIN_MIN <
-                                    0.01)
-                                break;
-                            bin_publisher.publish(bin_cmd);
-                            frequency.sleep();
-                        }
-                        if (server.isPreemptRequested())
-                        {
-                            ROS_INFO("Teleop Action Server: DUMPING_RESET preempted");
-                            server.setPreempted();
-                            return;
-                        }*/
+                        arm_manipulator.moveLeftBinPosition(1.0); // Retract left bin actuator
+			            arm_manipulator.moveRightBinPosition(1.0); // Retract right bin actuator
                         ROS_INFO("Teleop Action Server: DUMPING_RESET finished");
                         break;
                     }
@@ -331,39 +315,14 @@ class TeleopExecutive
                 case (tfr_utilities::TeleopCode::RESET_STARTING):
                     {
                         ROS_INFO("Teleop Action Server: Command Recieved, RESET_STARTING");
-                        /*//all zeros by default
-                        drivebase_publisher.publish(move_cmd);
-                        //first grab the current state of the arm
-                        tfr_msgs::ArmStateSrv query;
-                        ros::service::call("arm_state", query);
-                        arm_manipulator.moveArm(query.response.states[0], 0.20, 1.0, 1.6);
-                        ros::Duration(5.0).sleep();
-                        arm_manipulator.moveArm(0, 0.20, 1.0, 1.6);
-                        ros::Duration(8.0).sleep();
-                        arm_manipulator.moveArm(0, 0.50, 1.0, 1.6);
-                        ros::Duration(2.0).sleep();
-                        arm_manipulator.moveArm(0, 0.60, 1.0, 1.6);
-                        ros::Duration(2.0).sleep();
-                        arm_manipulator.moveArm(0, 0.70, 1.0, 1.6);
-                        ros::Duration(2.0).sleep();
-                        arm_manipulator.moveArm(0, 0.80, 1.0, 1.6);
-                        ros::Duration(2.0).sleep();
-                        arm_manipulator.moveArm(0, 0.85, 1.0, 1.6);
-                        ros::Duration(2.0).sleep();
-                        arm_manipulator.moveArm(0, 0.90, 1.0, 1.6);
-                        ros::Duration(2.0).sleep();*/
-
+                        //Not needed
                         ROS_INFO("Teleop Action Server: arm reset finished");
                         break;
                     }
                 case (tfr_utilities::TeleopCode::DRIVING_POSITION):
                     {
                         ROS_INFO("Teleop Action Server: Command Recieved, DRIVING_POSITION");
-                        //all zeros by default
                         drivebase_publisher.publish(move_cmd);
-                        //first grab the current state of the arm
-                        //arm_manipulator.moveArm(0, 0.50, 1.07, 1.6);
-                        //arm_manipulator.moveArm(3.05, 0.1, 0.98, -1.17);
                         ROS_INFO("Teleop Action Server: arm raise finished");
                         break;
                     }
@@ -394,10 +353,47 @@ class TeleopExecutive
             tfr_msgs::TeleopResult result{};
             server.setSucceeded(result);
         }
+        /*
+         *Making the helpers to subscribe for torque
+         * */
+        void getLowerArmTorque(const std_msgs::Int16 &msg)
+        {   
+            //lower_arm_torque = msg.data;
+            bag.write("lowerArmTorque", ros::Time::now(), msg);
+        }
+
+        void getUpperArmTorque(const std_msgs::Int16 &msg)
+        {
+            //upper_arm_torque = msg.data;
+            bag.write("upperArmTorque", ros::Time::now(), msg);
+        }
+
+        void getScoopTorque(const std_msgs::Int16 &msg)
+        {
+            //scoop_torque = msg.data;
+            bag.write("scoopTorque", ros::Time::now(), msg);
+        }
+
+        void getMotorAmpCh1(const std_msgs::Int16 &msg){
+            bag.write("motorAmpCh1", ros::Time::now(), msg);
+        }
+
+        void getMotorAmpCh2(const std_msgs::Int16 &msg){
+            bag.write("motorAmpCh2", ros::Time::now(), msg);
+        }
 
         actionlib::SimpleActionServer<tfr_msgs::TeleopAction> server;
         actionlib::SimpleActionClient<tfr_msgs::DiggingAction> digging_client;
         actionlib::SimpleActionClient<tfr_msgs::ArmMoveAction> arm_client;
+        rosbag::Bag bag;
+        ros::Subscriber lower_arm_torque_sub;
+        int16_t lower_arm_torque;
+        ros::Subscriber upper_arm_torque_sub;
+        int16_t upper_arm_torque;
+        ros::Subscriber scoop_torque_sub;
+        int16_t scoop_torque;
+        ros::Subscriber motor_amp_ch1_sub;
+        ros::Subscriber motor_amp_ch2_sub;
         ros::Publisher right_bin_pub;
         ros::Publisher left_bin_pub;
         ros::Publisher turntable_pub;
@@ -421,7 +417,6 @@ class TeleopExecutive
 };
 
 
-
 int main(int argc, char** argv)
 {
     ros::init(argc, argv, "teleop_action_server");
@@ -430,7 +425,7 @@ int main(int argc, char** argv)
     bool use_digging; 
     ros::param::param<double>("~linear_velocity", linear_velocity, 0.25);
     ros::param::param<double>("~angular_velocity", angular_velocity, 0.3);
-    ros::param::param<double>("~rate", rate, 10.0);
+    ros::param::param<double>("~rate", rate, 32.0);
     ros::param::param<bool>("~use_digging", use_digging, true);
     TeleopExecutive::DriveVelocity velocities{linear_velocity, angular_velocity};
     TeleopExecutive teleop{n, velocities, 1.0/rate, use_digging};

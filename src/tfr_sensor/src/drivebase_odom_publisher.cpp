@@ -86,7 +86,7 @@ class DrivebaseOdometryPublisher
     DrivebaseOdometryPublisher& operator=(DrivebaseOdometryPublisher&) = delete;
 
     /*****************************************************************************************
-    * processOdometry: Main business logic for the node, takes in readings from the arduino,
+    * processOdometry: Main business logic for the node, takes in readings from the controller,
     *       and publishes them across the network.
     * Preconditions: is subscribed to recieve information from the treads (tfr_sensor/src/tread_distance_publisher)
     * Postconditions: Velocities from the treads are published across the network
@@ -113,13 +113,12 @@ class DrivebaseOdometryPublisher
         leftTreadDistance = 0;
 
         //basic differential kinematics to get combined velocities
-        double v_ang = (v_r-v_l)/wheel_span;
+        double v_ang = ((v_r-v_l)/wheel_span);
         double v_lin = (v_r+v_l)/2;
         
         //break into xy components and increment
         double d_angle = v_ang * d_t;
         rotateQuaternionByYaw(angle, d_angle);
-
         // yaw (z-axis rotation)
         auto yaw = quaternionToYaw(angle);
         double v_x = v_lin*cos(yaw);
@@ -131,7 +130,6 @@ class DrivebaseOdometryPublisher
 
         double d_y = v_y * d_t;
         y += d_y;
-
         t_0 = t_1;
 
         //let's package up the message
@@ -139,7 +137,7 @@ class DrivebaseOdometryPublisher
         msg.header.stamp = ros::Time::now();
         msg.header.frame_id = parent_frame;
         msg.child_frame_id = child_frame;
-
+        //Drivebase odometry should not be reporting position to our kalman filter to reduce error. This information can be extrapolated from the velocities.  
         msg.pose.pose.position.x = x;
         msg.pose.pose.position.y = y;
         msg.pose.pose.position.z = 0;
@@ -150,7 +148,7 @@ class DrivebaseOdometryPublisher
             0,    0, 1e-1,    0,    0,    0,
             0,    0,    0, 1e-1,    0,    0,
             0,    0,    0,    0, 1e-1,    0,
-            0,    0,    0,    0,    0, 1e-1 };
+            0,    0,    0,    0,    0, 1e-1 }; 
 
         msg.twist.twist.linear.x = v_x;
         msg.twist.twist.linear.y = v_y;
@@ -164,9 +162,10 @@ class DrivebaseOdometryPublisher
             0,    0,    0, 5e-2,    0,    0,
             0,    0,    0,    0, 5e-2,    0,
             0,    0,    0,    0,    0, 5e-2 };
-        //publish the message
+        //publish the message 
         odometry_publisher.publish(msg);
     }
+
 
 
     private:
@@ -184,7 +183,7 @@ class DrivebaseOdometryPublisher
         double y; //the y coordinate of the robot (meters)
         geometry_msgs::Quaternion angle; 
         const double MAX_XY_DELTA = 0.25;
-        const double MAX_THETA_DELTA = 0.065;
+        const double MAX_THETA_DELTA = 0.65;
         ros::Time t_0;
 
        
@@ -302,7 +301,6 @@ class DrivebaseOdometryPublisher
 int main(int argc, char **argv)
 {
     ros::init(argc, argv, "drivebase_odometry_publisher");
-
     //NodeHandle is the main access point to communications with the ROS system.
     ros::NodeHandle n;
     std::string parent_frame, child_frame;
@@ -311,7 +309,7 @@ int main(int argc, char **argv)
     ros::param::param<std::string>("~parent_frame", parent_frame, "odom");
     ros::param::param<std::string>("~child_frame", child_frame, "base_footprint");
     ros::param::param<double>("~wheel_span", wheel_span, 0.36);
-    ros::param::param<double>("~rate", rate, 32.0);
+    ros::param::param<double>("~rate", rate, 32);
     DrivebaseOdometryPublisher publisher{n, parent_frame, child_frame, wheel_span};
     ros::Rate loop_rate(rate);
     while(ros::ok())

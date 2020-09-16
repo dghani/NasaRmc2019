@@ -17,6 +17,7 @@
 #include <ros/ros.h>
 #include <std_msgs/Float64.h>
 #include <std_msgs/Int32.h>
+#include <std_msgs/Int16.h>
 #include <sensor_msgs/JointState.h>
 #include <hardware_interface/joint_command_interface.h>
 #include <hardware_interface/joint_state_interface.h>
@@ -101,44 +102,44 @@ namespace tfr_control {
         ros::Subscriber brushless_left_tread_vel;
         
         volatile ros::Subscriber turntable_subscriber_encoder;
-        volatile ros::Subscriber turntable_subscriber_amps;
+        volatile ros::Subscriber turntable_subscriber_torque;
         ros::Publisher  turntable_publisher;
-        volatile int32_t turntable_encoder = 0;
-        volatile double turntable_amps = 0.0;
+        volatile double turntable_encoder = 0;
+        volatile double turntable_torque = 0.0;
         std::mutex turntable_mutex;
         
         volatile ros::Subscriber lower_arm_subscriber_encoder;
-        volatile ros::Subscriber lower_arm_subscriber_amps;
+        volatile ros::Subscriber lower_arm_subscriber_torque;
         ros::Publisher  lower_arm_publisher;
         volatile double lower_arm_encoder = 0;
-        volatile double lower_arm_amps = 0.0;
+        volatile double lower_arm_torque = 0.0;
         std::mutex lower_arm_mutex;
         
         volatile ros::Subscriber upper_arm_subscriber_encoder;
-        volatile ros::Subscriber upper_arm_subscriber_amps;
+        volatile ros::Subscriber upper_arm_subscriber_torque;
         ros::Publisher  upper_arm_publisher;
         volatile double upper_arm_encoder = 0;
-        volatile double upper_arm_amps = 0.0;
+        volatile double upper_arm_torque = 0.0;
         std::mutex upper_arm_mutex;
         
         volatile ros::Subscriber scoop_subscriber_encoder;
-        volatile ros::Subscriber scoop_subscriber_amps;
+        volatile ros::Subscriber scoop_subscriber_torque;
         ros::Publisher  scoop_publisher;
         volatile double scoop_encoder = 0;
-        volatile double scoop_amps = 0.0;
+        volatile double scoop_torque = 0.0;
         std::mutex scoop_mutex;
         
-        void readTurntableEncoder(const std_msgs::Int32 &msg);
-        void readTurntableAmps(const std_msgs::Float64 &msg);
+        void readTurntableEncoder(const sensor_msgs::JointState &msg);
+        void readTurntableTorque(const std_msgs::Int16 &msg);
         
         void readLowerArmEncoder(const sensor_msgs::JointState &msg);
-        void readLowerArmAmps(const std_msgs::Float64 &msg);
+        void readLowerArmTorque(const std_msgs::Int16 &msg);
         
         void readUpperArmEncoder(const sensor_msgs::JointState &msg);
-        void readUpperArmAmps(const std_msgs::Float64 &msg);
+        void readUpperArmTorque(const std_msgs::Int16 &msg);
         
         void readScoopEncoder(const sensor_msgs::JointState &msg);
-        void readScoopAmps(const std_msgs::Float64 &msg);
+        void readScoopTorque(const std_msgs::Int16 &msg);
         
         ros::Publisher brushless_right_tread_vel_publisher;
         ros::Publisher brushless_left_tread_vel_publisher;
@@ -181,36 +182,31 @@ namespace tfr_control {
         double readBrushlessRightVel();
         double readBrushlessLeftVel();
         
-        const bool enable_left_tread_pid_debug_output = true;
+        //const bool enable_left_tread_pid_debug_output = true;
         
-        ros::Publisher left_tread_publisher_pid_debug_setpoint;
-        ros::Publisher left_tread_publisher_pid_debug_state;
-        ros::Publisher left_tread_publisher_pid_debug_command;
+       // ros::Publisher left_tread_publisher_pid_debug_setpoint;
+        //ros::Publisher left_tread_publisher_pid_debug_state;
+       // ros::Publisher left_tread_publisher_pid_debug_command;
         
         
-        const int32_t brushless_encoder_count_per_revolution = 5120;
+        const int32_t brushless_encoder_count_per_revolution = 3200;
         double brushlessEncoderCountToRadians(int32_t encoder_count);
         double brushlessEncoderCountToRevolutions(int32_t encoder_count);
         double encoderDeltaToLinearSpeed(int32_t encoder_delta, ros::Duration time_delta);
         
         int32_t bin_encoder_min = 0;
-        int32_t bin_encoder_max = 1000;
+        int32_t bin_encoder_max = 0;
         double bin_joint_min = 0.0;
         double bin_joint_max = 0.0;
 
-        int32_t turntable_encoder_min = -25760;
-        int32_t turntable_encoder_max = 25760;
+        int32_t turntable_encoder_min = -308224;
+        int32_t turntable_encoder_max = 308224;
         double turntable_joint_min = -2 * 3.14159265358979;
         double turntable_joint_max = 2 * 3.14159265358979;
 
         
         /* 
-            Arm all the way up (actutator extended):
-                encoder: 0
-                joint position: 0.1
-            Arm all the way down (actuator retracted):
-                encoder: 149
-                joint position: 1.55
+            TODO: Update this entire section for ultramotion
         */
          double arm_lower_encoder_min = 5.2;
          double arm_lower_encoder_max = 1.2;

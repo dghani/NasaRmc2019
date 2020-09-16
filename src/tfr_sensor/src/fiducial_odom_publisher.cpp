@@ -143,7 +143,7 @@ class FiducialOdom
                     0,   0,1e-1,   0,   0,   0,
                     0,   0,   0,1e-1,   0,   0,
                     0,   0,   0,   0,1e-1,   0,
-                    0,   0,   0,   0,   0,1e-1};
+                    0,   0,   0,   0,   0,1e-1}; 
                 //fire it off! and cleanup
                 publisher.publish(odom);
 

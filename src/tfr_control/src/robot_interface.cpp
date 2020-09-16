@@ -19,46 +19,46 @@ namespace tfr_control
             const double *lower_lim, const double *upper_lim) :
 
 
-        brushless_left_tread_vel{n.subscribe("/device8/get_qry_abcntr/channel_1", 5,
+        brushless_left_tread_vel{n.subscribe("/device8/get_qry_blcntr/qry_blcntr_1", 5,
                 &RobotInterface::setBrushlessLeftEncoder, this)},
         brushless_left_tread_vel_publisher{n.advertise<std_msgs::Int32>("/device8/set_cmd_cango/cmd_cango_1", 1)},
         
         
-        brushless_right_tread_vel{n.subscribe("/device8/get_qry_abcntr/channel_2", 5,
+        brushless_right_tread_vel{n.subscribe("/device8/get_qry_blcntr/qry_blcntr_2", 5,
                 &RobotInterface::setBrushlessRightEncoder, this)},
         brushless_right_tread_vel_publisher{n.advertise<std_msgs::Int32>("/device8/set_cmd_cango/cmd_cango_2", 1)},
         
         
-        turntable_subscriber_encoder{n.subscribe("/device4/get_qry_abcntr/channel_1", 5,
+        turntable_subscriber_encoder{n.subscribe("/device1/get_joint_state", 5,
                 &RobotInterface::readTurntableEncoder, this)},
-        turntable_subscriber_amps{n.subscribe("/device4/get_qry_batamps/channel_1", 1,
-                &RobotInterface::readTurntableAmps, this)},
+        turntable_subscriber_torque{n.subscribe("/device1/current_actual_values/current_actual_value_averaged", 1,
+                &RobotInterface::readTurntableTorque, this)},
         turntable_publisher{n.advertise<std_msgs::Int32>("/device4/set_cmd_cango/cmd_cango_1", 1)},
         
         
         lower_arm_subscriber_encoder{n.subscribe("/device23/get_joint_state", 5, 
                 &RobotInterface::readLowerArmEncoder, this)},
-        lower_arm_subscriber_amps{n.subscribe("/device12/get_qry_batamps/channel_1", 1,
-                &RobotInterface::readLowerArmAmps, this)},
+        lower_arm_subscriber_torque{n.subscribe("/device23/get_torque_actual_value", 1,
+                &RobotInterface::readLowerArmTorque, this)},
         lower_arm_publisher{n.advertise<sensor_msgs::JointState>("/device23/set_joint_state", 1)},
         
         
         upper_arm_subscriber_encoder{n.subscribe("/device45/get_joint_state", 5,
                 &RobotInterface::readUpperArmEncoder, this)},
-        upper_arm_subscriber_amps{n.subscribe("/device4/get_qry_batamps/channel_3", 1,
-                &RobotInterface::readUpperArmAmps, this)},
+        upper_arm_subscriber_torque{n.subscribe("/device45/get_torque_actual_value", 1,
+                &RobotInterface::readUpperArmTorque, this)},
         upper_arm_publisher{n.advertise<sensor_msgs::JointState>("/device45/set_joint_state", 1)},
         
         
         scoop_subscriber_encoder{n.subscribe("/device56/get_joint_state", 5,
                 &RobotInterface::readScoopEncoder, this)},
-        scoop_subscriber_amps{n.subscribe("/device4/get_qry_batamps/channel_2", 1,
-                &RobotInterface::readScoopAmps, this)},
+        scoop_subscriber_torque{n.subscribe("/device56/get_torque_actual_value", 1,
+                &RobotInterface::readScoopTorque, this)},
         scoop_publisher{n.advertise<sensor_msgs::JointState>("/device56/set_joint_state", 1)},
         
-        left_tread_publisher_pid_debug_setpoint{n.advertise<std_msgs::Float64>("/left_tread_velocity_controller/pid_debug/setpoint", 1)},
-        left_tread_publisher_pid_debug_state{n.advertise<std_msgs::Float64>("/left_tread_velocity_controller/pid_debug/state", 1)},
-        left_tread_publisher_pid_debug_command{n.advertise<std_msgs::Int32>("/left_tread_velocity_controller/pid_debug/command", 1)},
+        //left_tread_publisher_pid_debug_setpoint{n.advertise<std_msgs::Float64>("/left_tread_velocity_controller/pid_debug/setpoint", 1)}, Not sure if this does anything so disabling for debug purposes
+        //left_tread_publisher_pid_debug_state{n.advertise<std_msgs::Float64>("/left_tread_velocity_controller/pid_debug/state", 1)}, Not sure if this does anything so disabling for debug purposes
+       // left_tread_publisher_pid_debug_command{n.advertise<std_msgs::Int32>("/left_tread_velocity_controller/pid_debug/command", 1)}, Not sure if this does anything so disabling for debug purposes
         
         use_fake_values{fakes}, lower_limits{lower_lim},
         upper_limits{upper_lim}, drivebase_v0{std::make_pair(0,0)},
@@ -197,13 +197,15 @@ namespace tfr_control
         //LEFT_TREAD
         double left_tread_command = command_values[static_cast<int32_t>(tfr_utilities::Joint::LEFT_TREAD)];
         std_msgs::Int32 left_tread_msg;
-        left_tread_msg.data = -1 * clamp(static_cast<int32_t>(left_tread_command), -1000, 1000);
+        left_tread_msg.data = 1 * clamp(static_cast<int32_t>(left_tread_command), -2000, 2000); //changed -1 to 1 for debugging hall direction
+       // left_tread_msg.data += 1; // for debugging only
         brushless_left_tread_vel_publisher.publish(left_tread_msg);
 
         //RIGHT_TREAD
         double right_tread_command = command_values[static_cast<int32_t>(tfr_utilities::Joint::RIGHT_TREAD)];
         std_msgs::Int32 right_tread_msg;
-        right_tread_msg.data = -1 * clamp(static_cast<int32_t>(right_tread_command), -1000, 1000);
+        right_tread_msg.data = 1 * clamp(static_cast<int32_t>(right_tread_command), -2000, 2000); //changed -1 to 1 for debugging hall direction
+        //right_tread_msg.data += 1; // for debugging only
         brushless_right_tread_vel_publisher.publish(right_tread_msg);
         
         //UPKEEP
@@ -293,10 +295,11 @@ namespace tfr_control
     void RobotInterface::clearCommands()
     {
         //LEFT_TREAD
-        command_values[static_cast<int>(tfr_utilities::Joint::LEFT_TREAD)] = 0;
+       // command_values[static_cast<int>(tfr_utilities::Joint::LEFT_TREAD)] = 0; Does this stop the bug?
+    
 
         //RIGHT_TREAD
-        command_values[static_cast<int>(tfr_utilities::Joint::RIGHT_TREAD)] = 0;
+      //  command_values[static_cast<int>(tfr_utilities::Joint::RIGHT_TREAD)] = 0;
 
         //TURNTABLE
         command_values[static_cast<int>(tfr_utilities::Joint::TURNTABLE)] = 
@@ -338,18 +341,18 @@ namespace tfr_control
         position.push_back(position_values[static_cast<int>(tfr_utilities::Joint::SCOOP)]);
     }
 
-    void RobotInterface::readTurntableEncoder(const std_msgs::Int32 &msg)
+    void RobotInterface::readTurntableEncoder(const sensor_msgs::JointState &msg)
     {
         turntable_mutex.lock();
         
-        turntable_encoder = msg.data;
+        turntable_encoder = msg.position[0];
         
         turntable_mutex.unlock();
     }
     
-    void RobotInterface::readTurntableAmps(const std_msgs::Float64 &msg)
+    void RobotInterface::readTurntableTorque(const std_msgs::Int16 &msg)
     {
-        turntable_amps = msg.data;
+        turntable_torque = msg.data;
     }
 
     void RobotInterface::readLowerArmEncoder(const sensor_msgs::JointState &msg)
@@ -362,9 +365,9 @@ namespace tfr_control
     }
     
     // TODO: Add mutex to protect all of these arm readings from reading while writing.
-    void RobotInterface::readLowerArmAmps(const std_msgs::Float64 &msg)
+    void RobotInterface::readLowerArmTorque(const std_msgs::Int16 &msg)
     {
-        lower_arm_amps = msg.data;
+        lower_arm_torque = msg.data;
     }
     
     void RobotInterface::readUpperArmEncoder(const sensor_msgs::JointState &msg)
@@ -376,9 +379,9 @@ namespace tfr_control
         upper_arm_mutex.unlock();
     }
     
-    void RobotInterface::readUpperArmAmps(const std_msgs::Float64 &msg)
+    void RobotInterface::readUpperArmTorque(const std_msgs::Int16 &msg)
     {
-        upper_arm_amps = msg.data;
+        upper_arm_torque = msg.data;
     }
     
     void RobotInterface::readScoopEncoder(const sensor_msgs::JointState &msg)
@@ -390,9 +393,9 @@ namespace tfr_control
         scoop_mutex.unlock();
     }
     
-    void RobotInterface::readScoopAmps(const std_msgs::Float64 &msg)
+    void RobotInterface::readScoopTorque(const std_msgs::Int16 &msg)
     {
-        scoop_amps = msg.data;
+        scoop_torque = msg.data;
     }
 
     /*

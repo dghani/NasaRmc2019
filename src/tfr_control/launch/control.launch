@@ -10,17 +10,16 @@
         type="robot_state_publisher" respawn="false" />
 
     <node name="drivebase" pkg="tfr_control" type="drivebase" output="screen">
-        <param name="wheel_span"  value="0.36"/> 
+        <param name="wheel_span"  value="0.72"/> 
         <param name="wheel_radius" value="0.15"/> 
     </node>
 
     <!-- Load the controller manager plugin for the drivebase -->
     <node name="control" pkg="tfr_control" type="control" output="screen">
         <rosparam>
-            rate: 16
+            rate: 4 <!-- Keep this rate low, or zeros will sneak into drivebase commands-->
         </rosparam>
     </node>
-	<rosparam file="$(find tfr_control)/config/encoder_limits.yaml" command="load" />
 	
     <!-- Spawn the controllers -->
     <node name="controller_spawner" pkg="controller_manager" type="spawner"
