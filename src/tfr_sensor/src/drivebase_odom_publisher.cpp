@@ -121,8 +121,8 @@ class DrivebaseOdometryPublisher
         rotateQuaternionByYaw(angle, d_angle);
         // yaw (z-axis rotation)
         auto yaw = quaternionToYaw(angle);
-        double v_x = v_lin*sin(yaw);
-        double v_y = v_lin*cos(yaw);
+        double v_x = v_lin*cos(yaw);
+        double v_y = v_lin*sin(yaw);
 
 
         double d_x = v_x * d_t;
