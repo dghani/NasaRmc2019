@@ -2,6 +2,7 @@
 
 #include <rqt_gui_cpp/plugin.h>
 #include <tfr_mission_control/ui_mission_control.h>
+#include "tfr_mission_control/joy_constants.h"
 
 #include <ros/ros.h>
 #include <ros/console.h>
@@ -9,6 +10,7 @@
 #include <actionlib/client/terminal_state.h>
 #include <std_srvs/SetBool.h>
 #include <std_srvs/Empty.h>
+#include <sensor_msgs/Joy.h>
 
 #include <tfr_msgs/SystemStatus.h>
 #include <tfr_msgs/DurationSrv.h>
@@ -20,8 +22,8 @@
 #include <tfr_utilities/teleop_code.h>
 #include <tfr_utilities/status_code.h>
 
-
-#include <cstdint>
+#include <cstddef>
+#include <mutex>
 
 #include <QWidget>
 #include <QObject>
@@ -36,10 +38,6 @@ namespace tfr_mission_control {
     /* Main entry point for the qt application, contains all of state, business
      * logic, and only has one screen. Uses the associated .ui file for layout
      * and design.
-     *
-     * Much of the code having to do with settings here has been generated from
-     * the "catkin_create_rqt" package. We don't have any settings to implement,
-     * but I am scared to delete it.
      * */
     class MissionControl : public rqt_gui_cpp::Plugin{
 
@@ -61,16 +59,6 @@ namespace tfr_mission_control {
             void initPlugin(qt_gui_cpp::PluginContext& context) override;
 
             void shutdownPlugin() override;
-
-            /* ======================================================================== */
-            /* Settings                                                                 */
-            /* ======================================================================== */
-
-            void saveSettings(qt_gui_cpp::Settings& plugin_settings,
-                    qt_gui_cpp::Settings& instance_settings) const override;
-
-            void restoreSettings(const qt_gui_cpp::Settings& plugin_settings,
-                    const qt_gui_cpp::Settings& instance_settings) override;
 
         private:
 
@@ -94,20 +82,50 @@ namespace tfr_mission_control {
             QWidget* widget;
             //the mission timer
             QTimer* countdownClock;
-            //The watchdog for the motors
-            QTimer* motorKill;
 
-            ros::NodeHandle nh;
+            // Timer for reading the keyboard/joystick state variables
+            // to run teleop commands.
+            ros::Timer inputReadTimer;
+            const double INPUT_READ_RATE = 0.1;
+
             //The action servers
             actionlib::SimpleActionClient<tfr_msgs::EmptyAction> autonomy;
             actionlib::SimpleActionClient<tfr_msgs::TeleopAction> teleop;
             actionlib::SimpleActionClient<tfr_msgs::ArmMoveAction> arm_client;
- 
-            //our message subscriber
-            ros::Subscriber com;
 
-            //Whether teleop commands should be accepted
-            bool teleopEnabled;
+            // Subscribes to our custom status messages.
+            ros::Subscriber com;
+      	    // For subscribing to joy messages for joystick input.
+            // Constants for joy array indices are defined in joy_indices.h.
+      	    ros::Subscriber joySub;
+
+            // Flag for accepting teleop commands.
+            std::atomic<bool> teleopEnabled;
+
+
+            // These could be atomic, but if a value is checked twice, there
+            // is a risk of the atomic bool flipping in the middle of it.
+            // Instead, we can use normal bools and keep a mutex for locks.
+            bool    controlDriveForward = false,        // driving
+                    controlDriveBackward = false,
+                    controlDriveLeft = false,
+                    controlDriveRight = false,
+                    controlDriveStop = false,
+                    controlLowerArmExtend = false,      // lower arm
+                    controlLowerArmRetract = false,
+                    controlUpperArmExtend = false,      // upper arm
+                    controlUpperArmRetract = false,
+                    controlScoopExtend = false,         // scoop
+                    controlScoopRetract = false,
+                    controlCtrclockwise = false,        // turntable
+                    controlClockwise = false,
+                    controlDump = false,                // dumping
+                    controlResetDumping = false;
+
+            // Functions can lock this to temporarily "claim" the control
+            // bools. Make sure every function using these bools locks
+            // the mutex!
+            std::mutex controlMutex;
 
             /* ======================================================================== */
             /* Methods                                                                  */
@@ -122,8 +140,11 @@ namespace tfr_mission_control {
             //sets control system to output commands
             void setControl(bool value);
 
+            void setJoystick(bool value);
+
+
             //sets control system to output commands
-            
+
             void setArmPID(bool value);
 
             void resetTurntable();
@@ -131,16 +152,24 @@ namespace tfr_mission_control {
             /* ======================================================================== */
             /* Events                                                                   */
             /* ======================================================================== */
-            //debounces and processes keyboard
-            bool eventFilter(QObject *obj, QEvent *event);
 
+            // Updates keyboard state variables every time a key event occurs.
+            bool eventFilter(QObject *obj, QEvent *event);
+            bool processKey(const Qt::Key key, const bool keyPress);
 
             /* ======================================================================== */
             /* Callbacks                                                                */
             /* ======================================================================== */
+
             //triggered by incoming status message, and cascades other signals into thread
             //safe gui update
             void updateStatus(const tfr_msgs::SystemStatusConstPtr &status);
+
+            // Responds to joystick messages.
+            void joyCallback(const sensor_msgs::Joy::ConstPtr& joy);
+
+            // Periodically processes input control variables for teleop.
+            void inputReadTimerCallback(const ros::TimerEvent& event);
 
             protected slots:
 
@@ -152,7 +181,7 @@ namespace tfr_mission_control {
                 virtual void startMission();    //starts clock and autonomy
                 virtual void startManual();     //starts clock and teleop
                 virtual void startTimeService();
-                
+
                 //MODE STATE CHANGES
                 virtual void goAutonomousMode();
                 virtual void goTeleopMode();
@@ -160,17 +189,22 @@ namespace tfr_mission_control {
                 //GUI
                 virtual void renderClock();
                 virtual void renderStatus();
-    
+
                 //MISC
-                virtual void performTeleop(tfr_utilities::TeleopCode code);
+                virtual void performTeleop(const tfr_utilities::TeleopCode& code);
                 virtual void toggleControl(bool state);    //e-stop and start
+
+
+                // virtual void toggleJoystick(bool state);
+
+
                 virtual void toggleMotors(bool state);    //e-stop and start
-    
+
             signals:
                 /* ======================================================================== */
                 /* Signals                                                                  */
                 /* ======================================================================== */
-    
+
                 //used to make cascade work for status update
                 void emitStatus(QString status);
     };

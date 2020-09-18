@@ -39,6 +39,7 @@ enum class SubSystem: uint16_t
  * Don't forget to also add a message for any newly added status codes in
  * status_code.cpp.
  */
+
 enum class StatusCode : uint16_t
 {
     //System Status Codes
