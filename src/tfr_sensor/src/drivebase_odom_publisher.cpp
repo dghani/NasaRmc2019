@@ -290,7 +290,7 @@ class DrivebaseOdometryPublisher
         tf2::Quaternion q_0{q.x, q.y, q.z, q.w};
         tf2::Quaternion q_1{};
         q_1.setRPY(0, 0, yaw);
-        q_0 *= q_1;
+        q_0 += q_1;
         q.x = q_0.getX();
         q.y = q_0.getY();
         q.z = q_0.getZ();
