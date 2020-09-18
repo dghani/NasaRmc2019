@@ -138,8 +138,8 @@ class DrivebaseOdometryPublisher
         msg.header.frame_id = parent_frame;
         msg.child_frame_id = child_frame;
           //Drivebase odometry should not be reporting position to our kalman filter to reduce error. This information can be extrapolated from the velocities.  
-         // msg.pose.pose.position.x = x;
-         // msg.pose.pose.position.y = y;
+          msg.pose.pose.position.x = x;
+          msg.pose.pose.position.y = y;
           msg.pose.pose.position.z = 0;
           msg.pose.pose.orientation = angle;
         msg.pose.covariance = { 
