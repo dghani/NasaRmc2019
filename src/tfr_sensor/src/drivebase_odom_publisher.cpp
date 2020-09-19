@@ -124,7 +124,7 @@ class DrivebaseOdometryPublisher
         double v_x = v_lin*cos(yaw);
         double v_y = v_lin*sin(yaw);
 
-
+ 
         double d_x = v_x * d_t;
         x += d_x;
 
@@ -141,7 +141,7 @@ class DrivebaseOdometryPublisher
           msg.pose.pose.position.x = x;
           msg.pose.pose.position.y = y;
           msg.pose.pose.position.z = 0;
-          msg.pose.pose.orientation = angle;
+          msg.pose.pose.orientation  = angle;
         msg.pose.covariance = { 
             1e-1, 0,    0,    0,    0,    0,
             0, 1e-1,    0,    0,    0,    0,
