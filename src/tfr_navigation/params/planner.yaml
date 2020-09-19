@@ -10,7 +10,7 @@ TrajectoryPlannerROS:
     oscillation reset dist: 0.2
 
     acc_lim_theta: 0.5
-    acc_lim_x: 0.1
+    acc_lim_x: 0.2
 
     sim_granulairity: 0.1
 
