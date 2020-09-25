@@ -10,8 +10,8 @@
         type="robot_state_publisher" respawn="false" />
 
     <node name="drivebase" pkg="tfr_control" type="drivebase" output="screen">
-        <param name="wheel_span"  value="0.71"/> 
-        <param name="wheel_radius" value="0.15"/> 
+        <param name="wheel_span"  value="0.71"/>
+        <param name="wheel_radius" value="0.15"/>
     </node>
 
     <!-- Load the controller manager plugin for the drivebase -->
@@ -21,7 +21,7 @@
         </rosparam>
     </node>
 	<rosparam file="$(find tfr_control)/config/encoder_limits.yaml" command="load" />
-	
+
     <!-- Spawn the controllers -->
     <node name="controller_spawner" pkg="controller_manager" type="spawner"
         args="joint_state_controller
@@ -30,13 +30,11 @@
         bin_position_controller
         arm_controller
         arm_end_controller"/>
-	
+
 	<param name="left_tread_scale" value="1" type="int"/>
 	<param name="right_tread_scale" value="1" type="int"/>
 	<param name="/write_arm_values" value="false" type="bool"/>
 
     <!-- Launch all the MoveIt! nodes -->
     <include file="$(find tfr_moveit)/launch/move_group.launch"/>
-    
-    <node name="arm_action_server" pkg="tfr_control" type="arm_action_server" output="screen"/>
 </launch>
