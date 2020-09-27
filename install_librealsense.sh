@@ -9,5 +9,5 @@ sudo apt-get install libgtk-3-dev libglfw3-dev libgl1-mesa-dev libglu1-mesa-dev 
 sudo apt-get install qtcreator -y
 sudo apt-get install -y python3 python3-dev
 
-./buildLibrealsense.sh
+yes | ./buildLibrealsense.sh
 
