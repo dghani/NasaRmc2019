@@ -11,10 +11,6 @@
 	path = src/timesync
 	url = https://github.com/larics/timesync.git
 	branch = master
-[submodule "src/lpms_imu"]
-	path = src/lpms_imu
-	url = https://github.com/larics/lpms_imu.git
-	branch = master
 [submodule "src/openzenros"]
 	path = src/openzenros
 	url = https://bitbucket.org/lpresearch/openzenros.git
