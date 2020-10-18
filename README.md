@@ -4,8 +4,8 @@ This is the primary codebase for all of the TrickFire Robotics Nasa RMC 2019 com
 
 
 # Prereqs
-Currently running Ubuntu 16.04 LTS.
-ROS Kinetic.
+Currently running Ubuntu 18.04 LTS.
+ROS Melodic.
 
 
 # Clone the repo
@@ -20,7 +20,7 @@ git submodule update --init --recursive
 ./apt_install_dependencies.sh
 ./install_opencv_and_contrib.sh
 ./install_librealsense.sh
-source /opt/ros/kinetic/setup.bash
+source /opt/ros/melodic/setup.bash
 ./build_all.sh
 ```
 
