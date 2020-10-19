@@ -1,6 +1,6 @@
 #!/bin/bash
 export ROS_MASTER_URI=http://127.0.0.1:11311
-export ROS_HOSTNAME=$(hostname -I | tr -d "[:space:]")
+export ROS_HOSTNAME=192.168.0.1
 echo "Attempting to bring down CAN interfaces"
 ./shutdownCAN.sh
 echo "Attempting to bring up CAN interfaces"
