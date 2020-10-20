@@ -17,7 +17,7 @@
     <!-- Load the controller manager plugin for the drivebase -->
     <node name="control" pkg="tfr_control" type="control" output="screen">
         <rosparam>
-            rate: 4 <!-- Keep this rate low, or zeros will sneak into drivebase commands-->
+            rate: 16 <!-- Keep this rate low, or zeros will sneak into drivebase commands-->
         </rosparam>
     </node>
 	
