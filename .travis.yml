@@ -28,7 +28,6 @@ before_install:
   - sudo rosdep init
   - rosdep update
   - source /opt/ros/$ROS_DISTRO/setup.bash
-  - ./install_lpms_imu_driver.sh
 
 install:
   - bash ./build_all.sh
