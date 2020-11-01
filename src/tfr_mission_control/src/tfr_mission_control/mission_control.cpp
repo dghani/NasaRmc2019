@@ -18,7 +18,8 @@ namespace tfr_mission_control {
         autonomy{"autonomous_action_server",true},
         teleop{"teleop_action_server",true},
         arm_client{"move_arm", true},
-        teleopEnabled{false}
+        teleopEnabled{false},
+        teleopActive{false}
     {
         setObjectName("MissionControl");
     }
@@ -335,68 +336,72 @@ namespace tfr_mission_control {
     // allow the filter to consume or pass on a key event.
     bool MissionControl::processKey(const Qt::Key key, const bool keyPress)
     {
-        // Lock the mutex to "claim" the control bools.
-        std::lock_guard<std::mutex> controlLock(controlMutex);
+        TeleopCommand command;
         // It might look tedious, but a switch statement for this few keys
         // is more efficient than using an STL data structure to track keys.
         switch (key)
         {
             // driving controls
             case (Qt::Key_W):
-                controlDriveForward = keyPress;
+                command = driveForward;
                 break;
             case (Qt::Key_S):
-                controlDriveBackward = keyPress;
+                command = driveBackward;
                 break;
             case (Qt::Key_A):
-                controlDriveLeft = keyPress;
+                command = driveLeft;
                 break;
             case (Qt::Key_D):
-                controlDriveRight = keyPress;
+                command = driveRight;
                 break;
             case (Qt::Key_Shift):
-                controlDriveStop = keyPress;
+                command = driveStop;
                 break;
             // lower arm controls
             case (Qt::Key_U):
-                controlLowerArmExtend = keyPress;
+                command = lowerArmExtend;
                 break;
             case (Qt::Key_J):
-                controlLowerArmRetract = keyPress;
+                command = lowerArmRetract;
                 break;
             // upper arm controls
             case (Qt::Key_I):
-                controlUpperArmExtend = keyPress;
+                command = upperArmExtend;
                 break;
             case (Qt::Key_K):
-                controlUpperArmRetract = keyPress;
+                command = upperArmRetract;
                 break;
             // scoop controls
             case (Qt::Key_O):
-                controlScoopExtend = keyPress;
+                command = scoopExtend;
                 break;
             case (Qt::Key_L):
-                controlScoopRetract = keyPress;
+                command = scoopRetract;
                 break;
             // turntable controls
             case (Qt::Key_P):
-                controlClockwise = keyPress;
+                command = clockwise;
                 break;
             case (Qt::Key_Semicolon):
-                controlCtrclockwise = keyPress;
+                command = ctrClockwise;
                 break;
             // dumping controls
             case (Qt::Key_Y):
-                controlDump = keyPress;
+                command = dump;
                 break;
             case (Qt::Key_H):
-                controlResetDumping = keyPress;
+                command = resetDumping;
                 break;
 
             default:
                 // If we aren't using a key, don't consume its event.
                 return false;
         }
+
+        // Lock the mutex to "claim" the control bools.
+        std::lock_guard<std::mutex> controlLock(teleopStateMutex);
+        teleopState[command] = keyPress;
+
         // Consume the key event, so nothing else can use it.
         return true;
     } // MissionControl::processKey()
@@ -438,34 +443,34 @@ namespace tfr_mission_control {
             return;
         }
         // Lock the mutex to "claim" the control bools.
-        std::lock_guard<std::mutex> controlLock(controlMutex);
+        std::lock_guard<std::mutex> controlLock(teleopStateMutex);
 
         // Driving
-        controlDriveStop = joy->buttons[BUTTON_LB];
-        controlDriveForward = joy->axes[AXIS_DPAD_Y] > MIN_DPAD;
-        controlDriveBackward = joy->axes[AXIS_DPAD_Y] < -1 * MIN_DPAD;
-        controlDriveLeft = joy->axes[AXIS_DPAD_X] > MIN_DPAD;
-        controlDriveRight = joy->axes[AXIS_DPAD_X] < -1 * MIN_DPAD;
+        teleopState[driveStop] = joy->buttons[BUTTON_LB];
+        teleopState[driveForward] = joy->axes[AXIS_DPAD_Y] > MIN_DPAD;
+        teleopState[driveBackward] = joy->axes[AXIS_DPAD_Y] < -1 * MIN_DPAD;
+        teleopState[driveLeft] = joy->axes[AXIS_DPAD_X] > MIN_DPAD;
+        teleopState[driveRight] = joy->axes[AXIS_DPAD_X] < -1 * MIN_DPAD;
 
         // Lower arm
-        controlLowerArmExtend = joy->axes[AXIS_RIGHT_Y] < -1 * MIN_RIGHT;
-        controlLowerArmRetract = joy->axes[AXIS_RIGHT_Y] > MIN_RIGHT;
+        teleopState[lowerArmExtend] = joy->axes[AXIS_RIGHT_Y] < -1 * MIN_RIGHT;
+        teleopState[lowerArmRetract] = joy->axes[AXIS_RIGHT_Y] > MIN_RIGHT;
 
         // Upper arm
-        controlUpperArmExtend = joy->axes[AXIS_LEFT_Y] > MIN_LEFT;
-        controlUpperArmRetract = joy->axes[AXIS_LEFT_Y] < -1 * MIN_LEFT;
+        teleopState[upperArmExtend] = joy->axes[AXIS_LEFT_Y] > MIN_LEFT;
+        teleopState[upperArmRetract] = joy->axes[AXIS_LEFT_Y] < -1 * MIN_LEFT;
 
         // Scoop
-        controlScoopExtend = joy->axes[AXIS_RIGHT_X] < -1 * MIN_RIGHT;
-        controlScoopRetract = joy->axes[AXIS_RIGHT_X] > MIN_RIGHT;
+        teleopState[scoopExtend] = joy->axes[AXIS_RIGHT_X] < -1 * MIN_RIGHT;
+        teleopState[scoopRetract] = joy->axes[AXIS_RIGHT_X] > MIN_RIGHT;
 
         // Turntable
-        controlCtrclockwise = joy->axes[AXIS_LEFT_X] > MIN_LEFT;
-        controlClockwise = joy->axes[AXIS_LEFT_X] < -1 * MIN_LEFT;
+        teleopState[ctrClockwise] = joy->axes[AXIS_LEFT_X] > MIN_LEFT;
+        teleopState[clockwise] = joy->axes[AXIS_LEFT_X] < -1 * MIN_LEFT;
 
         // Dumping
-        controlDump = joy->buttons[BUTTON_X];
-        controlResetDumping = joy->buttons[BUTTON_Y];
+        teleopState[dump] = joy->buttons[BUTTON_X];
+        teleopState[resetDumping] = joy->buttons[BUTTON_Y];
     }
 
     /*
@@ -483,7 +488,7 @@ namespace tfr_mission_control {
         // Using unique_lock instead of lock_guard so we can control when
         // to unlock, because we want to unlock the booleans before
         // performing teleop.
-        std::unique_lock<std::mutex> controlLock(controlMutex);
+        std::unique_lock<std::mutex> controlLock(teleopStateMutex);
 
 
         // Using the inequality operator != is like doing A XOR B, so that
@@ -491,61 +496,76 @@ namespace tfr_mission_control {
         // and backward at the same time, this results in no action.
 
         // These if blocks are organized by highest to lowest priority.
-        if(controlDriveStop)
+        if(teleopState[driveStop])
         {
             code = tfr_utilities::TeleopCode::STOP_DRIVEBASE;
         }
-        else if(controlLowerArmExtend != controlLowerArmRetract)
+        else if(teleopState[lowerArmExtend] != teleopState[lowerArmRetract])
         {
             // Ternary operators are sometimes cleaner than if/else blocks.
-            code = controlLowerArmExtend
+            code = teleopState[lowerArmExtend]
                 ? tfr_utilities::TeleopCode::LOWER_ARM_EXTEND
                 : tfr_utilities::TeleopCode::LOWER_ARM_RETRACT;
         }
-        else if(controlUpperArmExtend != controlUpperArmRetract)
+        else if(teleopState[upperArmExtend] != teleopState[upperArmRetract])
         {
-            code = controlUpperArmExtend
+            code = teleopState[upperArmExtend]
                 ? tfr_utilities::TeleopCode::UPPER_ARM_EXTEND
                 : tfr_utilities::TeleopCode::UPPER_ARM_RETRACT;
         }
-        else if(controlScoopExtend != controlScoopRetract)
+        else if(teleopState[scoopExtend] != teleopState[scoopRetract])
         {
-            code = controlScoopExtend
+            code = teleopState[scoopExtend]
                 ? tfr_utilities::TeleopCode::SCOOP_EXTEND
                 : tfr_utilities::TeleopCode::SCOOP_RETRACT;
         }
-        else if(controlClockwise != controlCtrclockwise)
+        else if(teleopState[clockwise] != teleopState[ctrClockwise])
         {
-            code = controlClockwise
+            code = teleopState[clockwise]
                 ? tfr_utilities::TeleopCode::CLOCKWISE
                 : tfr_utilities::TeleopCode::COUNTERCLOCKWISE;
         }
-        else if(controlDump != controlResetDumping)
+        else if(teleopState[dump] != teleopState[resetDumping])
         {
-            code = controlDump
+            code = teleopState[dump]
                 ? tfr_utilities::TeleopCode::DUMP
                 : tfr_utilities::TeleopCode::RESET_DUMPING;
         }
-        else if(controlDriveLeft != controlDriveRight)
+        else if(teleopState[driveLeft] != teleopState[driveRight])
         {
-            code = controlDriveLeft
+            code = teleopState[driveLeft]
                 ? tfr_utilities::TeleopCode::LEFT
                 : tfr_utilities::TeleopCode::RIGHT;
         }
-        else if(controlDriveForward != controlDriveBackward)
+        else if(teleopState[driveForward] != teleopState[driveBackward])
         {
-            code = controlDriveForward
+            code = teleopState[driveForward]
                 ? tfr_utilities::TeleopCode::FORWARD
                 : tfr_utilities::TeleopCode::BACKWARD;
         }
+        else if(teleopActive)
+        {
+            // Teleop was active, but there is no command to send.
+            // Render it inactive and stop the drivebase, because
+            // a key/joystick was released.
+            controlLock.unlock();
+            teleopActive = false;
+            performTeleop(tfr_utilities::TeleopCode::STOP_DRIVEBASE);
+            return;
+        }
         else
         {
-            // If there is no action, leave early. The unique_lock
-            // is unlocked when it gets destroyed (upon function return).
+            // If there is no action and teleop is inactive, leave early.
             return;
         }
 
         controlLock.unlock();
+
+        if(code != tfr_utilities::TeleopCode::STOP_DRIVEBASE)
+        {
+            teleopActive = true;
+        }
+
         performTeleop(code);
     } // inputReadTimerCallback()
 
