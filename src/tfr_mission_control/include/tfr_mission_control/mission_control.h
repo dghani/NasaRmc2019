@@ -102,30 +102,33 @@ namespace tfr_mission_control {
             // Flag for accepting teleop commands.
             std::atomic<bool> teleopEnabled;
 
+            // Flag for ongoing teleop activity, like any keys being held.
+            // Helps teleop send a "stop" command if this flag is false.
+            std::atomic<bool> teleopActive;
 
-            // These could be atomic, but if a value is checked twice, there
-            // is a risk of the atomic bool flipping in the middle of it.
-            // Instead, we can use normal bools and keep a mutex for locks.
-            bool    controlDriveForward = false,        // driving
-                    controlDriveBackward = false,
-                    controlDriveLeft = false,
-                    controlDriveRight = false,
-                    controlDriveStop = false,
-                    controlLowerArmExtend = false,      // lower arm
-                    controlLowerArmRetract = false,
-                    controlUpperArmExtend = false,      // upper arm
-                    controlUpperArmRetract = false,
-                    controlScoopExtend = false,         // scoop
-                    controlScoopRetract = false,
-                    controlCtrclockwise = false,        // turntable
-                    controlClockwise = false,
-                    controlDump = false,                // dumping
-                    controlResetDumping = false;
+            enum TeleopCommand
+            {
+                // Driving
+                driveForward = 0, driveBackward,
+                driveLeft, driveRight,
+                driveStop,
+                // Lower arm
+                lowerArmExtend, lowerArmRetract,
+                // Upper arm
+                upperArmExtend, upperArmRetract,
+                // Scoop
+                scoopExtend, scoopRetract,
+                // Turntable
+                ctrClockwise, clockwise,
+                // Dumping
+                dump, resetDumping
+            };
 
-            // Functions can lock this to temporarily "claim" the control
-            // bools. Make sure every function using these bools locks
-            // the mutex!
-            std::mutex controlMutex;
+            // Idiom to "zero-initialize": to initialize all bools as false.
+            bool teleopState[15] = { 0 };
+            // This mutex should be locked to claim control over teleopState
+            // between different threads.
+            std::mutex teleopStateMutex;
 
             /* ======================================================================== */
             /* Methods                                                                  */
