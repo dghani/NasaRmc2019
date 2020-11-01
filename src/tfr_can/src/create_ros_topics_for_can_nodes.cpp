@@ -295,6 +295,8 @@ int main(int argc, char* argv[]) {
     		auto iopub_8_1_5 = std::make_shared<kaco::EntryPublisher>(device, "qry_blcntr/qry_blcntr_1");
     		bridge.add_publisher(iopub_8_1_5, loop_rate);
 			
+            auto iopub_8_1_6 = std::make_shared<kaco::EntryPublisher>(device, "qry_abcntr/channel_1");
+    		bridge.add_publisher(iopub_8_1_6, loop_rate);
 			
 			auto iosub_8_2_1 = std::make_shared<kaco::EntrySubscriber>(device, "cmd_cango/cmd_cango_2");
     		bridge.add_subscriber(iosub_8_2_1);
@@ -310,6 +312,9 @@ int main(int argc, char* argv[]) {
     		
     		auto iopub_8_2_5 = std::make_shared<kaco::EntryPublisher>(device, "qry_blcntr/qry_blcntr_2");
     		bridge.add_publisher(iopub_8_2_5, loop_rate);
+
+            auto iopub_8_2_6 = std::make_shared<kaco::EntryPublisher>(device, "qry_abcntr/channel_2");
+    		bridge.add_publisher(iopub_8_2_6, loop_rate);
 			
 		}
 		
