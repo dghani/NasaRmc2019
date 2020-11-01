@@ -18,7 +18,8 @@ namespace tfr_mission_control {
         autonomy{"autonomous_action_server",true},
         teleop{"teleop_action_server",true},
         arm_client{"move_arm", true},
-        teleopEnabled{false}
+        teleopEnabled{false},
+        teleopActive{false}
     {
         setObjectName("MissionControl");
     }
@@ -542,14 +543,29 @@ namespace tfr_mission_control {
                 ? tfr_utilities::TeleopCode::FORWARD
                 : tfr_utilities::TeleopCode::BACKWARD;
         }
+        else if(teleopActive)
+        {
+            // Teleop was active, but there is no command to send.
+            // Render it inactive and stop the drivebase, because
+            // a key/joystick was released.
+            controlLock.unlock();
+            teleopActive = false;
+            performTeleop(tfr_utilities::TeleopCode::STOP_DRIVEBASE);
+            return;
+        }
         else
         {
-            // If there is no action, leave early. The unique_lock
-            // is unlocked when it gets destroyed (upon function return).
+            // If there is no action and teleop is inactive, leave early.
             return;
         }
 
         controlLock.unlock();
+
+        if(code != tfr_utilities::TeleopCode::STOP_DRIVEBASE)
+        {
+            teleopActive = true;
+        }
+
         performTeleop(code);
     } // inputReadTimerCallback()
 

@@ -102,6 +102,10 @@ namespace tfr_mission_control {
             // Flag for accepting teleop commands.
             std::atomic<bool> teleopEnabled;
 
+            // Flag for ongoing teleop activity, like any keys being held.
+            // Helps teleop send a "stop" command if this flag is false.
+            std::atomic<bool> teleopActive;
+
             enum TeleopCommand
             {
                 // Driving
