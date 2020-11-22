@@ -160,7 +160,7 @@ class FiducialOdom
                 //    {
                 //        ros::service::call("/set_drivebase_odometry", odom_req);
                 //    }
-                }
+               // }
 
             }
         }
