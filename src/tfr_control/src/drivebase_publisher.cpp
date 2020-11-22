@@ -27,7 +27,7 @@ namespace tfr_control
         ros::param::getCached("~wheel_span", wheel_span);
         //ROS_INFO("Wheel Span: %f", wheel_span);
 
-         double left_velocity = msg->linear.x - (wheel_span * msg->angular.z) / 2;
+         double left_velocity = msg->linear.x + (wheel_span * msg->angular.z) / 2;
         double right_velocity = msg->linear.x + (wheel_span * msg->angular.z) / 2;
         
         if (msg->linear.x == 0 && msg->angular.z == 0 && msg->linear.y){
