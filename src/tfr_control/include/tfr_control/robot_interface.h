@@ -189,7 +189,7 @@ namespace tfr_control {
        // ros::Publisher left_tread_publisher_pid_debug_command;
         
         
-        const int32_t brushless_encoder_count_per_revolution = 3200;
+        const int32_t brushless_encoder_count_per_revolution = 12800;
         double brushlessEncoderCountToRadians(int32_t encoder_count);
         double brushlessEncoderCountToRevolutions(int32_t encoder_count);
         double encoderDeltaToLinearSpeed(int32_t encoder_delta, ros::Duration time_delta);
