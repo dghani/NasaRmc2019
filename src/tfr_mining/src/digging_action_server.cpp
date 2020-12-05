@@ -118,37 +118,43 @@ private:
         server.setSucceeded(result);
     }
 
+    bool check_file_exists(const std::string& name)
+    {
+        struct stat buffer;   
+        return (stat (name.c_str(), &buffer) == 0); 
+    }
+
+    void loadDiggingQueueFromFile(const std_msgs::String::ConstPtr& theStringPtr)
+    {
+        std::string digging_queue_filename = theStringPtr->data;
+
+        std::string absolute_file_path = ros::package::getPath("tfr_mining") + "/data/" + digging_queue_filename;
+        
+        if (!check_file_exists(absolute_file_path))
+        {
+            ROS_ERROR_STREAM("Couldn't find new digging queue to load. Is this the right file path?: '" << absolute_file_path << "'. You should only pass in the file name itself, e.g. test_queue.yaml.");
+            return;
+        }
+
+        std::string command = "rosparam load " + absolute_file_path + " /digging_action_server";
+        std::system(command.c_str()); // Load the YAML file into the ROS parameter server.
+
+        // Replace the current DiggingQueue object in this process with a new queue that uses the latest "positions" from parameter server.
+	tfr_mining::DiggingQueue new_queue{priv_nh};
+        queue = new_queue;
+
+        ROS_INFO_STREAM("Loaded digging queue " << digging_queue_filename << ".");
+    }
+
     ros::NodeHandle &priv_nh;
     ros::Publisher drivebase_publisher;
  
     ArmManipulator arm_manipulator;
     tfr_mining::DiggingQueue queue;
     Server server;
+
+    ros::Subscriber newDiggingQueueSubscriber = priv_nh.subscribe<std_msgs::String>("load_digging_queue_from_file", 1, &DiggingActionServer::loadDiggingQueueFromFile, this);
 };
-
-bool check_file_exists(const std::string& name)
-{
-    struct stat buffer;   
-    return (stat (name.c_str(), &buffer) == 0); 
-}
-
-void loadDiggingQueueFromFile(const std_msgs::String::ConstPtr& theStringPtr)
-{
-    std::string digging_queue_filename = theStringPtr->data;
-
-    std::string absolute_file_path = ros::package::getPath("tfr_mining") + "/data/" + digging_queue_filename;
-    
-    if (!check_file_exists(absolute_file_path))
-    {
-        ROS_ERROR_STREAM("Couldn't find new digging queue to load. Is this the right file path?: '" << absolute_file_path << "'. You should only pass in the file name itself, e.g. test_queue.yaml.");
-        return;
-    }
-
-    std::string command = "rosparam load " + absolute_file_path + " /digging_action_server";
-    std::system(command.c_str());
-
-    ROS_INFO_STREAM("Loaded digging queue " << digging_queue_filename << ".");
-}
 
 int main(int argc, char** argv)
 {
@@ -158,8 +164,6 @@ int main(int argc, char** argv)
 
     DiggingActionServer server(n, p_n);
     
-    ros::Subscriber newDiggingQueueSubscriber = p_n.subscribe<std_msgs::String>("load_digging_queue_from_file", 1, loadDiggingQueueFromFile);
-
     ros::spin();
     return 0;
 }
