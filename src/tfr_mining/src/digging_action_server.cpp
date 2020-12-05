@@ -25,6 +25,12 @@
 #include <tfr_utilities/teleop_code.h>
 #include <actionlib/client/simple_action_client.h>
 #include "digging_queue.h"
+#include <ros/package.h> // getPath()
+#include <std_msgs/String.h>
+#include <sys/stat.h>
+#include <fstream>
+#include <sstream> // std::stringstream
+#include <boost/bind.hpp> // boost::bind
 
 typedef actionlib::SimpleActionServer<tfr_msgs::DiggingAction> Server;
 typedef actionlib::SimpleActionClient<tfr_msgs::ArmMoveAction> Client;
@@ -120,6 +126,30 @@ private:
     Server server;
 };
 
+bool check_file_exists(const std::string& name)
+{
+    struct stat buffer;   
+    return (stat (name.c_str(), &buffer) == 0); 
+}
+
+void loadDiggingQueueFromFile(const std_msgs::String::ConstPtr& theStringPtr)
+{
+    std::string digging_queue_filename = theStringPtr->data;
+
+    std::string absolute_file_path = ros::package::getPath("tfr_mining") + "/data/" + digging_queue_filename;
+    
+    if (!check_file_exists(absolute_file_path))
+    {
+        ROS_ERROR_STREAM("Couldn't find new digging queue to load. Is this the right file path?: '" << absolute_file_path << "'. You should only pass in the file name itself, e.g. test_queue.yaml.");
+        return;
+    }
+
+    std::string command = "rosparam load " + absolute_file_path + " /digging_action_server";
+    std::system(command.c_str());
+
+    ROS_INFO_STREAM("Loaded digging queue " << digging_queue_filename << ".");
+}
+
 int main(int argc, char** argv)
 {
     ros::init(argc, argv, "digging_server");
@@ -127,6 +157,9 @@ int main(int argc, char** argv)
     ros::NodeHandle p_n("~");
 
     DiggingActionServer server(n, p_n);
+    
+    ros::Subscriber newDiggingQueueSubscriber = p_n.subscribe<std_msgs::String>("load_digging_queue_from_file", 1, loadDiggingQueueFromFile);
+
     ros::spin();
     return 0;
 }
