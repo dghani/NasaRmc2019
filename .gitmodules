@@ -12,6 +12,3 @@
 	path = src/openzenros
 	url = https://bitbucket.org/lpresearch/openzenros.git
 	branch = yolo_hall
-[submodule "src/kacanopen"]
-	path = src/kacanopen
-	url = https://github.com/TrickfireRobotics/kacanopen
