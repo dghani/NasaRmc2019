@@ -1,5 +1,5 @@
 #This is the frequency in Hz, this outputs a position estimate.
-frequency: 4
+frequency: 8
 
 #These are all map variable definations for the kalman filter.
 #stock settings for robots without gps and no big hills
@@ -66,7 +66,7 @@ odom1_config: [false, false,  false,
                false,  false,  true,
                false,  false,  false]
 odom1_differential: false 
-odom1_relative: false
+odom1_relative: true
 odom1_queue_size: 32
 odom1_nodelay: false
 use_control: true
