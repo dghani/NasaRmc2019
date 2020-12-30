@@ -70,7 +70,7 @@ class TFR_Aruco {
             // the image is stored at imageHolder->image
             cv_bridge::CvImagePtr imageHolder;
             try {
-                imageHolder = cv_bridge::toCvCopy(goal->image, sensor_msgs::image_encodings::8UC1);
+                imageHolder = cv_bridge::toCvCopy(goal->image, sensor_msgs::image_encodings::MONO8);
             } catch (cv_bridge::Exception& e) {
                 ROS_ERROR("cv_bridge exception: %s", e.what());
                 return;
@@ -84,7 +84,7 @@ class TFR_Aruco {
             cv::aruco::detectMarkers(imageHolder->image, dictionary, markerCorners, markerIds, params);
             
             #ifdef DRAW_MARKERS
-            cv_bridge::CvImagePtr drawnImageHolder = cv_bridge::toCvCopy(goal->image, sensor_msgs::image_encodings::8UC1);
+            cv_bridge::CvImagePtr drawnImageHolder = cv_bridge::toCvCopy(goal->image, sensor_msgs::image_encodings::MONO8);
             cv::aruco::drawDetectedMarkers(drawnImageHolder->image, markerCorners, markerIds);
             drawnMarkerPublisher.publish(drawnImageHolder->toImageMsg());
             #endif
