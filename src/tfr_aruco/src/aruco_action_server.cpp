@@ -73,10 +73,10 @@ class TFR_Aruco {
                 imageHolder = cv_bridge::toCvCopy(goal->image, sensor_msgs::image_encodings::MONO8);
             } 
             
-            /*catch (cv_bridge::Exception& e) {
+            catch (cv_bridge::Exception& e) {
                 ROS_ERROR("cv_bridge exception: %s", e.what());
                 return;
-            }*/ 
+            } 
 
 
             // detect fiducial markers
