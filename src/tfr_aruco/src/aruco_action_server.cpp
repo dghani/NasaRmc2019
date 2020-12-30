@@ -70,14 +70,13 @@ class TFR_Aruco {
             // the image is stored at imageHolder->image
             cv_bridge::CvImagePtr imageHolder;
             try {
-                    image.width = w;///2;
-                    image.height = h;///2;
-                    image.step = w*3;
                 imageHolder = cv_bridge::toCvCopy(goal->image, sensor_msgs::image_encodings::MONO8);
-            } catch (cv_bridge::Exception& e) {
+            } 
+            
+            /*catch (cv_bridge::Exception& e) {
                 ROS_ERROR("cv_bridge exception: %s", e.what());
                 return;
-            }
+            }*/ 
 
 
             // detect fiducial markers
