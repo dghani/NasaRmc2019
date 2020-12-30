@@ -70,7 +70,7 @@ class TFR_Aruco {
             // the image is stored at imageHolder->image
             cv_bridge::CvImagePtr imageHolder;
             try {
-                imageHolder = cv_bridge::toCvCopy(goal->image, sensor_msgs::image_encodings::MONO8);
+                imageHolder = cv_bridge::toCvShare(goal->image, sensor_msgs::image_encodings::BGR8);
             } 
             
             catch (cv_bridge::Exception& e) {
@@ -86,7 +86,7 @@ class TFR_Aruco {
             cv::aruco::detectMarkers(imageHolder->image, dictionary, markerCorners, markerIds, params);
             
             #ifdef DRAW_MARKERS
-            cv_bridge::CvImagePtr drawnImageHolder = cv_bridge::toCvCopy(goal->image, sensor_msgs::image_encodings::MONO8);
+            cv_bridge::CvImagePtr drawnImageHolder = cv_bridge::toCvShare(goal->image, sensor_msgs::image_encodings::BGR8);
             cv::aruco::drawDetectedMarkers(drawnImageHolder->image, markerCorners, markerIds);
             drawnMarkerPublisher.publish(drawnImageHolder->toImageMsg());
             #endif
