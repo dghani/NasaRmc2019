@@ -16,8 +16,8 @@ TrajectoryPlannerROS:
 
     sim_granulairity: 0.05
 
-    yaw_goal_tolerance: 0.2
+    yaw_goal_tolerance: 1.0
     latch_xy_goal_tolerance: false
-    xy_goal_tolerance: 0.3
+    xy_goal_tolerance: 0.5
     meter_scoring: false
     heading_scoring: false
