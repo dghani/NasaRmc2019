@@ -61,7 +61,7 @@ odom0_queue_size: 5
 #This is also measuring the change in yaw over time to counteract error. 
 odom1: /drivebase_odom
 odom1_config: [true, true,  false,
-               false, false,  false,
+               false, false,  true,
                true, false, false,
                false,  false,  false,
                false,  false,  false]
