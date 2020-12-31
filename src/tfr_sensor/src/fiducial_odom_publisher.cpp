@@ -85,10 +85,10 @@ class FiducialOdom
             tfr_msgs::WrappedImage image_wrapper{};
 
             //grab an image
-            if (rear_cam_client.call(image_wrapper))
+            if (front_cam_client.call(image_wrapper))
                 result = sendAruco(image_wrapper);
 
-            if ((result == nullptr || result->number_found == 0) && front_cam_client.call(image_wrapper))
+            if ((result == nullptr || result->number_found == 0) && rear_cam_client.call(image_wrapper))
                 result = sendAruco(image_wrapper);
 
             if (result != nullptr && result->number_found !=0)
