@@ -4,7 +4,7 @@
     <include file="$(find realsense2_camera)/launch/rs_camera.launch">
         <arg name="align_depth" value="true"/>
         <arg name="enable_infra1" value="false"/>
-        <arg name="infra_fps"     value="30"/>
+        <arg name="infra_fps"     value="15"/>
         <arg name="enable_infra2" value="false"/>
         <arg name="initial_reset" value="true"/>
         <arg name="depth_fps"     value="15"/>
