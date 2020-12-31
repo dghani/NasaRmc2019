@@ -3,7 +3,7 @@
         args="0.48 0.076 0.139 0 0 0 1 base_link front_cam_link"/>
     <node name="front_cam" pkg="cv_camera" type="cv_camera_node" output="screen">
         <rosparam>
-            file: "nvarguscamerasrc sensor-id=2 ! video/x-raw(memory:NVMM), width=(int)1920, height=(int)1080,format=(string)NV12, framerate=(fraction)30/1 ! nvvidconv ! video/x-raw, format=(string)BGRx ! videoconvert ! appsink"
+            file: "nvarguscamerasrc sensor-id=2 ! video/x-raw(memory:NVMM), width=(int)1920, height=(int)1080,format=(string)NV12, framerate=(fraction)30/1 ! nvvidconv ! video/x-raw, format=(string)BGRx ! videoconvert n-threads=2 ! appsink"
             frame_id: front_cam_link
             rate: 30
         </rosparam>
