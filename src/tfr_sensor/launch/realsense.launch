@@ -14,5 +14,7 @@
         <arg name="enable_color"  value="true"/>
         <arg name="color_fps"  value="15"/>
         <arg name="filters" value="pointcloud"/>
+        <arg name="gyro"  value="0"/>
+        <arg name="accel"  value="0"/>
     </include>
 </launch>
