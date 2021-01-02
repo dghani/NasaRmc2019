@@ -200,8 +200,8 @@ class Localizer
                 result = sendAruco(image_wrapper);
             ROS_INFO("Localization Action Server: rearcam %d", result->number_found);
 
-            //front camera Jon Touched This
-            if (/*result != nullptr && result->number_found == 0 &&*/ front_cam_client.call(image_wrapper))
+            //front camera 
+            if (result != nullptr && result->number_found == 0 &&*/ front_cam_client.call(image_wrapper))
                 result = sendAruco(image_wrapper);
             ROS_INFO("Localization Action Server: frontcam %d", result->number_found);
             return result;
