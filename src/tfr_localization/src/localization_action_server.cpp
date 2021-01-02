@@ -241,7 +241,7 @@ int main(int argc, char** argv)
     if (turn_velocity == 0.0 || turn_duration == 0.0)
         ROS_WARN("Localization Action Server: Uninitialized Parameters");
     Localizer localizer(n, turn_velocity, turn_duration, threshold);
-    ros::Rate rate(10);
+    ros::Rate rate(30);
     while(ros::ok()){
         ros::spinOnce();
         rate.sleep();
