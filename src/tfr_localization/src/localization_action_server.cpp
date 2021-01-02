@@ -172,14 +172,15 @@ class Localizer
                 ROS_INFO("Localization Action Server: turning");
 
                 geometry_msgs::Twist cmd;
-                cmd.angular.z = turn_velocity;
-                cmd_publisher.publish(cmd);
-                ros::Duration(turn_duration).sleep();
-                ROS_INFO("Localization Action Server: stopping");
+                cmd.angular.z = turn_velocity; 
+                cmd_publisher.publish(cmd); 
+                //Removed the below to try and continuously spin until we localize
+              //  ros::Duration(turn_duration).sleep(); 
+              //  ROS_INFO("Localization Action Server: stopping");
 
-                cmd.angular.z = 0;
-                cmd_publisher.publish(cmd);
-                ros::Duration(turn_duration).sleep();
+               // cmd.angular.z = 0;
+                //cmd_publisher.publish(cmd);
+                //ros::Duration(0.5).sleep(); //This pause seems way too long so I shortened it
             }
 
             if (success)
@@ -241,7 +242,7 @@ int main(int argc, char** argv)
     if (turn_velocity == 0.0 || turn_duration == 0.0)
         ROS_WARN("Localization Action Server: Uninitialized Parameters");
     Localizer localizer(n, turn_velocity, turn_duration, threshold);
-    ros::Rate rate(30);
+    ros::Rate rate(10);
     while(ros::ok()){
         ros::spinOnce();
         rate.sleep();
