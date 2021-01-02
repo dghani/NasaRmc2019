@@ -4,11 +4,10 @@ camera_name: front_cam_link
 camera_matrix:
   rows: 3
   cols: 3
-  data: 
+  data:
 [1102.645351, 0.000000, 711.049341,
 0.000000, 1104.607228, 360.518016,
-0.000000, 0.000000, 1.000000
-]
+0.000000, 0.000000, 1.000000]
 distortion_model: plumb_bob
 distortion_coefficients:
   rows: 1
