@@ -148,7 +148,7 @@ class FiducialOdom
                 publisher.publish(odom);
 
                 //control error propagation in the drivebase odometry publisher removed for debugging
-                tfr_msgs::SetOdometry odom_req{};
+               /* tfr_msgs::SetOdometry odom_req{};
                 odom_req.request.pose = odom.pose.pose;
                 if (!reset)
                 {
@@ -159,10 +159,10 @@ class FiducialOdom
                     for (int i = 1; i < 100; i += 1)
                     {
                         ros::service::call("/set_drivebase_odometry", odom_req);
-                    }
-                }
+                    } 
+                } */
 
-            }
+            }  
         }
 
     private:
