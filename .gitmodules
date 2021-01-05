@@ -12,3 +12,6 @@
 [submodule "src/kacanopen"]
 	path = src/kacanopen
 	url = https://github.com/TrickfireRobotics/kacanopen
+[submodule "src/cv_camera"]
+	path = src/cv_camera
+	url = https://github.com/TrickfireRobotics/cv_camera
