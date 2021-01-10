@@ -11,6 +11,7 @@
 #include <std_srvs/SetBool.h>
 #include <std_srvs/Empty.h>
 #include <sensor_msgs/Joy.h>
+#include <std_msgs/Int16.h>
 
 #include <tfr_msgs/SystemStatus.h>
 #include <tfr_msgs/DurationSrv.h>
@@ -98,6 +99,8 @@ namespace tfr_mission_control {
       	    // For subscribing to joy messages for joystick input.
             // Constants for joy array indices are defined in joy_indices.h.
       	    ros::Subscriber joySub;
+	    // Subscribes to battery voltage output from motorcontroller
+	    ros::Subscriber voltage;
 
             // Flag for accepting teleop commands.
             std::atomic<bool> teleopEnabled;
@@ -173,6 +176,9 @@ namespace tfr_mission_control {
 
             // Periodically processes input control variables for teleop.
             void inputReadTimerCallback(const ros::TimerEvent& event);
+	    
+ 	    // Recieves the voltage the battery is outputting
+	    void voltageCallback(const std_msgs::Int16& voltageMessage);
 
             protected slots:
 
