@@ -317,7 +317,7 @@ int main(int argc, char* argv[]) {
     		bridge.add_publisher(iopub_8_2_6, loop_rate);
 		
 		//Reads battery voltage	
-		auto iopub_8 = std::make_shared<kaco::EntryPublisher>(device, "qry_volts");
+		auto iopub_8 = std::make_shared<kaco::EntryPublisher>(device, "qry_volts/v_bat");
     		bridge.add_publisher(iopub_8, loop_rate);
 
 		}
