@@ -11,7 +11,7 @@
 #include <std_srvs/SetBool.h>
 #include <std_srvs/Empty.h>
 #include <sensor_msgs/Joy.h>
-#include <std_msgs/Int16.h>
+#include <std_msgs/UInt16.h>
 
 #include <tfr_msgs/SystemStatus.h>
 #include <tfr_msgs/DurationSrv.h>
@@ -178,7 +178,7 @@ namespace tfr_mission_control {
             void inputReadTimerCallback(const ros::TimerEvent& event);
 	    
  	    // Recieves the voltage the battery is outputting
-	    void voltageCallback(const std_msgs::Int16& voltageMessage);
+	    void voltageCallback(const std_msgs::UInt16& voltageMessage);
 
             protected slots:
 
