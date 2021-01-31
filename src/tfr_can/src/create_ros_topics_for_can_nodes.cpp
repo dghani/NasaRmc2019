@@ -141,7 +141,10 @@ void setupMaxonDevice(kaco::Device& device, kaco::Bridge& bridge, std::string& e
 
     auto iopub_2 = std::make_shared<kaco::EntryPublisher>(device, "torque_actual_values/torque_actual_value_averaged");
     bridge.add_publisher(iopub_2, loop_rate);
-    
+
+    auto iopub_3 = std::make_shared<kaco::EntryPublisher>(device, "velocity_actual_values/velocity_actual_value_averaged");
+    bridge.add_publisher(iopub_3, loop_rate);
+
 }
 
 // Usage: e.g. intToHexString(10) == "A"
