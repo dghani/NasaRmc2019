@@ -103,6 +103,16 @@ void setupServoCylinderDevice(kaco::Device& device, kaco::Bridge& bridge, std::s
     
     auto iosub_7 = std::make_shared<kaco::EntrySubscriber>(device, "profile_deceleration");
     bridge.add_subscriber(iosub_7);
+
+    auto iopub_8 = std::make_shared<kaco::EntryPublisher>(device, "position_demand");
+    bridge.add_publisher(iopub_8, slow_loop_rate);
+
+    auto iopub_9 = std::make_shared<kaco::EntryPublisher>(device, "positioning_option_code");
+    bridge.add_publisher(iopub_9, slow_loop_rate);
+    
+    auto iosub_9 = std::make_shared<kaco::EntrySubscriber>(device, "positioning_option_code");
+    bridge.add_subscriber(iosub_9);
+    positioning_option_code
 }
 
 void setupMaxonDevice(kaco::Device& device, kaco::Bridge& bridge, std::string& eds_files_path)
