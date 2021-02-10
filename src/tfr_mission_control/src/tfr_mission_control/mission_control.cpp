@@ -572,10 +572,9 @@ namespace tfr_mission_control {
         performTeleop(code);
     } // inputReadTimerCallback()
 
-    // Recieves the voltage the battery is outputting
+    // Outputs the voltage of the battery to the terminal
     void MissionControl::voltageCallback(const std_msgs::UInt16& voltageMessage) {
-        int voltage = voltageMessage.data;
-	ROS_INFO_STREAM("The voltage reading is: " << voltage << std::endl);
+	ROS_INFO("The voltage reading is: %d\n", voltageMessage.data);
     }
 
     /* ========================================================================== */
