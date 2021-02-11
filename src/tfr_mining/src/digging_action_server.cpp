@@ -1,9 +1,9 @@
 /****************************************************************************************
  * File:    digging_action_server.cpp
  * Node:    digging_server
- * 
+ *
  * Purpose: This is an action server that handles all of the digging subsystem.
- * 
+ *
  *          This file includes <tfr_msgs/DiggingAction.h>, which is one of seven headers
  *          built by catkin from `tfr_msgs/action/Digging.action`:
  *              devel/include/tfr_msgs/DiggingAction.h
@@ -13,11 +13,11 @@
  *              devel/include/tfr_msgs/DiggingFeedback.h
  *              devel/include/tfr_msgs/DiggingGoal.h
  *              devel/include/tfr_msgs/DiggingResult.h
- * 
+ *
  ***************************************************************************************/
 
 #include <actionlib/server/simple_action_server.h>
-#include <actionlib/client/simple_action_client.h>  
+#include <actionlib/client/simple_action_client.h>
 #include <tfr_msgs/DiggingAction.h>  // Note: "Action" is appended
 #include <tfr_msgs/ArmMoveAction.h>  // Note: "Action" is appended
 #include <tfr_utilities/arm_manipulator.h>
@@ -33,19 +33,18 @@ typedef actionlib::SimpleActionClient<tfr_msgs::ArmMoveAction> Client;
 class DiggingActionServer {
 public:
     DiggingActionServer(ros::NodeHandle &nh, ros::NodeHandle &p_nh) :
-        priv_nh{p_nh}, queue{priv_nh}, 
+        priv_nh{p_nh}, queue{priv_nh},
         drivebase_publisher{nh.advertise<geometry_msgs::Twist>("cmd_vel", 5)},
 
-        turnTableSubscriber{nh.subscribe("/device1/velocity_actual_value", 5, turnTableVelocityCallback, this)},
-    
-        lowerArmSubscriber{nh.subscribe("/device23/velocity_actual_value", 5, lowerArmVelocityCallback, this)},
+        turnTableSubscriber{nh.subscribe("/device1/velocity_actual_value", 5, &DiggingActionServer::turnTableVelocityCallback, this)},
 
-        upperArmSubscriber{nh.subscribe("/device45/velocity_actual_value", 5, upperArmVelocityCallback, this)},
+        lowerArmSubscriber{nh.subscribe("/device23/velocity_actual_value", 5, &DiggingActionServer::lowerArmVelocityCallback, this)},
 
-        scoopSubscriber{nh.subscribe("/device56/velocity_actual_value", 5, scoopVelocityCallback, this)},
+        upperArmSubscriber{nh.subscribe("/device45/velocity_actual_value", 5, &DiggingActionServer::upperArmVelocityCallback, this)},
 
-        server{nh, "dig", boost::bind(&DiggingActionServer::execute, this, _1),
-            false},
+        scoopSubscriber{nh.subscribe("/device56/velocity_actual_value", 5, &DiggingActionServer::scoopVelocityCallback, this)},
+
+        server{nh, "dig", boost::bind(&DiggingActionServer::execute, this, _1), false},
         arm_manipulator{nh}
 
     {
@@ -56,27 +55,27 @@ private:
 
 	/*
 	 * Description:
-     * 
-     * When the digging action server receives a goal, it executes one 
-     * iteration of the digging queue. 
-     * 
-	 * Currently the digging action server receives the number of seconds 
+     *
+     * When the digging action server receives a goal, it executes one
+     * iteration of the digging queue.
+     *
+	 * Currently the digging action server receives the number of seconds
      * it is allowed to spend on digging in the goal message. This is not
      * currently used, but in the future (TODO) it can be used to control the
      * time spent digging autonomously.
-	 * 
-	 * Pre: There must be accurate measurements of the position of the 
-     * arm. Digging can start while the arm is turned off-center, but 
-     * ROS must be aware of this. In other words, as long as the 
+	 *
+	 * Pre: There must be accurate measurements of the position of the
+     * arm. Digging can start while the arm is turned off-center, but
+     * ROS must be aware of this. In other words, as long as the
      * position of the arm is not miscalibrated, it's ok.
-	 * 
-	 * Post: The arm will be in the position specified at the end of the 
-     * digging queue, OR in an intermediate state if pre-empted (i.e. the 
+	 *
+	 * Post: The arm will be in the position specified at the end of the
+     * digging queue, OR in an intermediate state if pre-empted (i.e. the
      * goal is cancelled, another goal is sent, or ROS is shutting down).
-	 * 
-	 * Notes: ROS actionlib seemed to have a bug, and it would take 
+	 *
+	 * Notes: ROS actionlib seemed to have a bug, and it would take
      * as much as 10 seconds to cancel a digging goal.
-	 * 
+	 *
 	 */
     void execute(const tfr_msgs::DiggingGoalConstPtr& goal)
     {
@@ -91,18 +90,22 @@ private:
             ros::Time now = ros::Time::now();
 
             ROS_INFO("Starting digging set");
-            
+
             std::queue<std::vector<double> > current_set{set.states};
 
             while (!current_set.empty())
             {
                 std::vector<double> state = current_set.front();
                 current_set.pop();
-                
+
                 // Use arm_manipulator, and NOT MoveIt, to send commands to the arm. The actuators will just move to each of the points in the digging queue, there is no trajectory or other points being generated. There is also no collision checking, so be careful.
-                ROS_INFO("Moving arm to position: %.2f %.2f %.2f %.2f", state[0], state[1], state[2], state[3]);
-                arm_manipulator.moveArmWithoutPlanningOrLimits(state[0], state[1], state[2], state[3]);
-                ros::Duration(1.25).sleep();
+                while (turnTableVelocityCallback == 0 && lowerArmVelocityCallback == 0 && upperArmVelocityCallback == 0 && scoopVelocityCallback == 0) {
+                  ROS_INFO("Moving arm to position: %.2f %.2f %.2f %.2f", state[0], state[1], state[2], state[3]);
+                  arm_manipulator.moveArmWithoutPlanningOrLimits(state[0], state[1], state[2], state[3]);
+                }
+
+
+                //ros::Duration(1.25).sleep();
 
                 ros::Rate rate(10.0);
 
@@ -129,22 +132,41 @@ private:
     ros::Subscriber upperArmSubscriber;
     ros::Subscriber scoopSubscriber;
 
-    void turnTableVelocityCallback(const std_msgs::Float32& turnTableVelocity) {
-	ROS_INFO("this is the turn table velocity: %f\n", turnTableVelocity.data);
+    bool turnTableVelocityCallback(const std_msgs::Float32& turnTableVelocity) {
+	     if (turnTableVelocity.data != 0.0000) {
+         return 0;
+       }
+       else {
+         return 1;
+       }
+    }
+    bool lowerArmVelocityCallback(const std_msgs::Float32& lowerArmVelocity) {
+      if (lowerArmVelocity.data != 0.0000) {
+        return 0;
+      }
+      else {
+        return 1;
+      }
     }
 
-    void lowerArmVelocityCallback(const std_msgs::Float32& lowerArmVelocity) {
-	ROS_INFO("this is the lower arm velocity: %f\n", lowerArmVelocity.data);
+    bool upperArmVelocityCallback(const std_msgs::Float32& upperArmVelocity) {
+      if (upperArmVelocity.data != 0.0000) {
+        return 0;
+      }
+      else {
+        return 1;
+      }
     }
 
-    void upperArmVelocityCallback(const std_msgs::Float32& upperArmVelocity) {
-	ROS_INFO("this is the upper arm velocity: %f\n", upperArmVelocity.data);
+    bool scoopVelocityCallback(const std_msgs::Float32& scoopVelocity) {
+      if (scoopVelocity.data != 0.0000) {
+        return 0;
+      }
+      else {
+        return 1;
+      }
     }
 
-    void scoopVelocityCallback(const std_msgs::Float32& scoopVelocity) {
-	ROS_INFO("this is the scoop velocity: %f\n", scoopVelocity.data);
-    }
- 
     ArmManipulator arm_manipulator;
     tfr_mining::DiggingQueue queue;
     Server server;
