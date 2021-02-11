@@ -25,6 +25,7 @@
 #include <tfr_utilities/teleop_code.h>
 #include <actionlib/client/simple_action_client.h>
 #include "digging_queue.h"
+#include <std_msgs/Float32.h>
 
 typedef actionlib::SimpleActionServer<tfr_msgs::DiggingAction> Server;
 typedef actionlib::SimpleActionClient<tfr_msgs::ArmMoveAction> Client;
@@ -34,6 +35,15 @@ public:
     DiggingActionServer(ros::NodeHandle &nh, ros::NodeHandle &p_nh) :
         priv_nh{p_nh}, queue{priv_nh}, 
         drivebase_publisher{nh.advertise<geometry_msgs::Twist>("cmd_vel", 5)},
+
+        turnTableSubscriber{nh.subscribe("/device1/velocity_actual_value", 5, turnTableVelocityCallback, this)},
+    
+        lowerArmSubscriber{nh.subscribe("/device23/velocity_actual_value", 5, lowerArmVelocityCallback, this)},
+
+        upperArmSubscriber{nh.subscribe("/device45/velocity_actual_value", 5, upperArmVelocityCallback, this)},
+
+        scoopSubscriber{nh.subscribe("/device56/velocity_actual_value", 5, scoopVelocityCallback, this)},
+
         server{nh, "dig", boost::bind(&DiggingActionServer::execute, this, _1),
             false},
         arm_manipulator{nh}
@@ -114,6 +124,26 @@ private:
 
     ros::NodeHandle &priv_nh;
     ros::Publisher drivebase_publisher;
+    ros::Subscriber turnTableSubscriber;
+    ros::Subscriber lowerArmSubscriber;
+    ros::Subscriber upperArmSubscriber;
+    ros::Subscriber scoopSubscriber;
+
+    void turnTableVelocityCallback(const std_msgs::Float32& turnTableVelocity) {
+	ROS_INFO("this is the turn table velocity: %f\n", turnTableVelocity.data);
+    }
+
+    void lowerArmVelocityCallback(const std_msgs::Float32& lowerArmVelocity) {
+	ROS_INFO("this is the lower arm velocity: %f\n", lowerArmVelocity.data);
+    }
+
+    void upperArmVelocityCallback(const std_msgs::Float32& upperArmVelocity) {
+	ROS_INFO("this is the upper arm velocity: %f\n", upperArmVelocity.data);
+    }
+
+    void scoopVelocityCallback(const std_msgs::Float32& scoopVelocity) {
+	ROS_INFO("this is the scoop velocity: %f\n", scoopVelocity.data);
+    }
  
     ArmManipulator arm_manipulator;
     tfr_mining::DiggingQueue queue;
