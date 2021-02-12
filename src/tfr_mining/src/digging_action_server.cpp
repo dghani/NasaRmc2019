@@ -35,13 +35,10 @@ public:
     DiggingActionServer(ros::NodeHandle &nh, ros::NodeHandle &p_nh) :
         priv_nh{p_nh}, queue{priv_nh},
         drivebase_publisher{nh.advertise<geometry_msgs::Twist>("cmd_vel", 5)},
-
+	      // subscribers of the 3 arm actuators and turn table
         turnTableSubscriber{nh.subscribe("/device1/velocity_actual_value", 5, &DiggingActionServer::turnTableVelocityCallback, this)},
-
         lowerArmSubscriber{nh.subscribe("/device23/velocity_actual_value", 5, &DiggingActionServer::lowerArmVelocityCallback, this)},
-
         upperArmSubscriber{nh.subscribe("/device45/velocity_actual_value", 5, &DiggingActionServer::upperArmVelocityCallback, this)},
-
         scoopSubscriber{nh.subscribe("/device56/velocity_actual_value", 5, &DiggingActionServer::scoopVelocityCallback, this)},
 
         server{nh, "dig", boost::bind(&DiggingActionServer::execute, this, _1), false},
@@ -98,19 +95,16 @@ private:
                 std::vector<double> state = current_set.front();
                 current_set.pop();
 
-                //<todo> add short buffer that robot waits when new positions are first called so that the robot doesn't mistakenly think it's donw moving instantly because it will be starting with velocities at 0
-
-                // Use arm_manipulator, and NOT MoveIt, to send commands to the arm. The actuators will just move to each of the points in the digging queue, there is no trajectory or other points being generated. There is also no collision checking, so be careful.
-                while (turnTableVelocityStatus == 0 && lowerArmVelocityStatus == 0 && upperArmVelocityStatus == 0 && scoopVelocityStatus == 0) {
+                //Use arm_manipulator, and NOT MoveIt, to send commands to the arm. The actuators will just move to each of the points in the digging queue, there is no trajectory or other points being generated. There is also no collision checking, so be careful.
+		            // This loop checks for the actuators and turn table to be done moving. Will keep looping until they are done moving.
+                while (turnTableVelocityStatus == 1 && lowerArmVelocityStatus == 1 && upperArmVelocityStatus == 1 && scoopVelocityStatus == 1) {
                   ROS_INFO("Moving arm to position: %.2f %.2f %.2f %.2f", state[0], state[1], state[2], state[3]);
                   arm_manipulator.moveArmWithoutPlanningOrLimits(state[0], state[1], state[2], state[3]);
+                  //Short buffer (0.2 seconds) that robot waits when new positions are first called. Ensures robot doesn't mistakenly think it's done moving instantly because the starting velocities are 0
+                  for (int i = 0; i < 1; i++) {
+                    ros::Duration(0.20).sleep();
+                  }
                 }
-
-                //reseting the status of the velocities to 0, so that the robot doesn't think it's done moving for the next set of positions
-                turnTableVelocityStatus = 0;
-                lowerArmVelocityStatus = 0;
-                upperArmVelocityStatus = 0;
-                scoopVelocityStatus = 0;
 
                 //ros::Duration(1.25).sleep();
 
@@ -139,45 +133,45 @@ private:
     ros::Subscriber upperArmSubscriber;
     ros::Subscriber scoopSubscriber;
 
-    //used to indicate whether the actuators and turn table are moving or not
-    bool turnTableVelocityStatus;
-    bool lowerArmVelocityStatus;
-    bool upperArmVelocityStatus;
-    bool scoopVelocityStatus;
+    //0 indicates actuators or turn table are not moving, 1 indicates they are moving
+    bool turnTableVelocityStatus = 0;
+    bool lowerArmVelocityStatus = 0;
+    bool upperArmVelocityStatus = 0;
+    bool scoopVelocityStatus = 0;
 
     //callback functions for subscribers, these are called when the subsribers recieve a message from the publishers
     void turnTableVelocityCallback(const std_msgs::Float32& turnTableVelocity) {
-	     if (turnTableVelocity.data == 0.0000) {
-         turnTableVelocityStatus = 1;
-       }
-       else {
-         turnTableVelocityStatus = 0;
-       }
+      if (turnTableVelocity.data == 0.0000) {
+        turnTableVelocityStatus = 0;
+      }
+      else {
+        turnTableVelocityStatus = 1;
+      }
     }
     void lowerArmVelocityCallback(const std_msgs::Float32& lowerArmVelocity) {
       if (lowerArmVelocity.data == 0.0000) {
-         lowerArmVelocityStatus = 1;
+        lowerArmVelocityStatus = 0;
       }
       else {
-        lowerArmVelocityStatus = 0;
+        lowerArmVelocityStatus = 1;
       }
     }
 
     void upperArmVelocityCallback(const std_msgs::Float32& upperArmVelocity) {
-      if (upperArmVelocity.data == 0.0000) {
-        upperArmVelocityStatus = 1;
+       if (upperArmVelocity.data == 0.0000) {
+        upperArmVelocityStatus = 0;
       }
       else {
-         upperArmVelocityStatus = 0;
+         upperArmVelocityStatus = 1;
       }
     }
 
     void scoopVelocityCallback(const std_msgs::Float32& scoopVelocity) {
       if (scoopVelocity.data == 0.0000) {
-        scoopVelocityStatus = 1;
+        scoopVelocityStatus = 0;
       }
       else {
-        scoopVelocityStatus = 0;
+        scoopVelocityStatus = 1;
       }
     }
 
