@@ -96,13 +96,19 @@ private:
                 current_set.pop();
 
                 //Use arm_manipulator, and NOT MoveIt, to send commands to the arm. The actuators will just move to each of the points in the digging queue, there is no trajectory or other points being generated. There is also no collision checking, so be careful.
-		            // This loop checks for the actuators and turn table to be done moving. Will keep looping until they are done moving.
-                while (turnTableVelocityStatus == 1 && lowerArmVelocityStatus == 1 && upperArmVelocityStatus == 1 && scoopVelocityStatus == 1) {
-                  ROS_INFO("Moving arm to position: %.2f %.2f %.2f %.2f", state[0], state[1], state[2], state[3]);
-                  arm_manipulator.moveArmWithoutPlanningOrLimits(state[0], state[1], state[2], state[3]);
-                  //Short buffer (0.2 seconds) that robot waits when new positions are first called. Ensures robot doesn't mistakenly think it's done moving instantly because the starting velocities are 0
-                  for (int i = 0; i < 1; i++) {
-                    ros::Duration(0.20).sleep();
+
+
+                ROS_INFO("Moving arm to position: %.2f %.2f %.2f %.2f", state[0], state[1], state[2], state[3]);
+                arm_manipulator.moveArmWithoutPlanningOrLimits(state[0], state[1], state[2], state[3]);
+                //Short buffer (0.1 seconds) that robot waits when new positions are first called. Ensures robot doesn't mistakenly think it's done moving instantly because the starting velocities are 0
+                for (int i = 0; i < 1; i++) {
+                  ros::Duration(0.10).sleep();
+                }
+
+                //This loop checks for the actuators and turn table to be done moving. Will keep looping until they are done moving.
+                while (true) {
+                  if (turnTableVelocityStatus == 0 && lowerArmVelocityStatus == 0 && upperArmVelocityStatus == 0 && scoopVelocityStatus == 0) {
+                    break;
                   }
                 }
 
@@ -141,7 +147,11 @@ private:
 
     //callback functions for subscribers, these are called when the subsribers recieve a message from the publishers
     void turnTableVelocityCallback(const std_msgs::Float32& turnTableVelocity) {
-      if (turnTableVelocity.data == 0.0000) {
+      //Outputting velocity for tests
+      //ROS_INFO("Turn Table velocity: %f\n", turnTableVelocity.data);
+
+      //flipping status of movement to not moving if within the velocity range
+      if (turnTableVelocity.data < 0.1000 && turnTableVelocity.data > -0.1000) {
         turnTableVelocityStatus = 0;
       }
       else {
@@ -149,25 +159,35 @@ private:
       }
     }
     void lowerArmVelocityCallback(const std_msgs::Float32& lowerArmVelocity) {
-      if (lowerArmVelocity.data == 0.0000) {
+      //Outputting velocity for tests
+      //ROS_INFO("Lower arm velocity: %f\n", lowerArmVelocity.data);
+
+      //flipping status of movement to not moving if within the velocity range
+      if (lowerArmVelocity.data < 0.1000 && lowerArmVelocity.data > -0.1000) {
         lowerArmVelocityStatus = 0;
       }
       else {
         lowerArmVelocityStatus = 1;
       }
     }
-
     void upperArmVelocityCallback(const std_msgs::Float32& upperArmVelocity) {
-       if (upperArmVelocity.data == 0.0000) {
+      //Outputting velocity for tests
+      //ROS_INFO("Upper arm velocity: %f\n", upperArmVelocity.data);
+
+      //flipping status of movement to not moving if within the velocity range
+      if (upperArmVelocity.data < 0.1000 && upperArmVelocity.data > -0.1000) {
         upperArmVelocityStatus = 0;
       }
       else {
          upperArmVelocityStatus = 1;
       }
     }
-
     void scoopVelocityCallback(const std_msgs::Float32& scoopVelocity) {
-      if (scoopVelocity.data == 0.0000) {
+      //Outputting velocity for tests
+      //ROS_INFO("Scoop velocity: %f\n", scoopVelocity.data);
+      
+      //flipping status of movement to not moving if within the velocity range
+      if (scoopVelocity.data < 0.1000 && scoopVelocity.data > -0.1000) {
         scoopVelocityStatus = 0;
       }
       else {
