@@ -78,9 +78,6 @@ namespace tfr_mission_control {
         inputReadTimer = getMTNodeHandle().createTimer(ros::Duration(0.1),
             &MissionControl::inputReadTimerCallback, this);
 
-	voltage = getMTNodeHandle().subscribe("/device8/get_qry_volts/v_bat", 5,
-	    &MissionControl::voltageCallback, this);
-
         /* Sets up all the signal/slot connections.
          *
          * For those unfamilair with qt this is the backbone of event driven
@@ -571,11 +568,6 @@ namespace tfr_mission_control {
 
         performTeleop(code);
     } // inputReadTimerCallback()
-
-    // Outputs the voltage of the battery to the terminal
-    void MissionControl::voltageCallback(const std_msgs::UInt16& voltageMessage) {
-	ROS_INFO("The voltage reading is: %d\n", voltageMessage.data);
-    }
 
     /* ========================================================================== */
     /* Slots                                                                      */

@@ -27,6 +27,9 @@
 #include "digging_queue.h"
 #include <std_msgs/Float32.h>
 
+//test for battery voltage
+#include <std_msgs/UInt16.h>
+
 typedef actionlib::SimpleActionServer<tfr_msgs::DiggingAction> Server;
 typedef actionlib::SimpleActionClient<tfr_msgs::ArmMoveAction> Client;
 
@@ -40,6 +43,10 @@ public:
         lowerArmSubscriber{nh.subscribe("/device23/velocity_actual_value", 5, &DiggingActionServer::lowerArmVelocityCallback, this)},
         upperArmSubscriber{nh.subscribe("/device45/velocity_actual_value", 5, &DiggingActionServer::upperArmVelocityCallback, this)},
         scoopSubscriber{nh.subscribe("/device56/velocity_actual_value", 5, &DiggingActionServer::scoopVelocityCallback, this)},
+
+        //battery voltage test
+        batteryVoltageSubscriber{nh.subscribe("/device8/get_qry_volts/v_bat", 5, &DiggingActionServer::batteryVoltageCallback, this)},
+
 
         server{nh, "dig", boost::bind(&DiggingActionServer::execute, this, _1), false},
         arm_manipulator{nh}
@@ -139,6 +146,18 @@ private:
     ros::Subscriber upperArmSubscriber;
     ros::Subscriber scoopSubscriber;
 
+    //batery voltage test
+    ros::Subscriber batteryVoltageSubscriber;
+
+    void batteryVoltageCallback(const std_msgs::UInt16& batteryVoltage) {
+      //Roboteq controller sends voltage * 10 back i.e. if 150 is reported than it is 15 volts
+      int batteryVolt = batteryVoltage.data / 10;
+      //if battery voltage is below 30 than it needs to be charged
+      if (batteryVolt < 30) {
+        ROS_ERROR("BATTERY LOW! CHARGE NOW! (%d volts)\n", batteryVolt);
+      }
+    }
+
     //0 indicates actuators or turn table are not moving, 1 indicates they are moving
     bool turnTableVelocityStatus = 0;
     bool lowerArmVelocityStatus = 0;
@@ -185,7 +204,7 @@ private:
     void scoopVelocityCallback(const std_msgs::Float32& scoopVelocity) {
       //Outputting velocity for tests
       //ROS_INFO("Scoop velocity: %f\n", scoopVelocity.data);
-      
+
       //flipping status of movement to not moving if within the velocity range
       if (scoopVelocity.data < 0.1000 && scoopVelocity.data > -0.1000) {
         scoopVelocityStatus = 0;
