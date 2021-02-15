@@ -44,6 +44,7 @@ public:
         upperArmSubscriber{nh.subscribe("/device45/velocity_actual_value", 5, &DiggingActionServer::upperArmVelocityCallback, this)},
         scoopSubscriber{nh.subscribe("/device56/velocity_actual_value", 5, &DiggingActionServer::scoopVelocityCallback, this)},
 
+
         //battery voltage test
         batteryVoltageSubscriber{nh.subscribe("/device8/get_qry_volts/v_bat", 5, &DiggingActionServer::batteryVoltageCallback, this)},
 
@@ -59,26 +60,33 @@ private:
 
 	/*
 	 * Description:
-     *
-     * When the digging action server receives a goal, it executes one
-     * iteration of the digging queue.
-     *
+   *
+   * When the digging action server receives a goal, it executes one
+   * iteration of the digging queue.
+   *
 	 * Currently the digging action server receives the number of seconds
-     * it is allowed to spend on digging in the goal message. This is not
-     * currently used, but in the future (TODO) it can be used to control the
-     * time spent digging autonomously.
+   * it is allowed to spend on digging in the goal message. This is not
+   * currently used, but in the future (TODO) it can be used to control the
+   * time spent digging autonomously.
 	 *
 	 * Pre: There must be accurate measurements of the position of the
-     * arm. Digging can start while the arm is turned off-center, but
-     * ROS must be aware of this. In other words, as long as the
-     * position of the arm is not miscalibrated, it's ok.
+   * arm. Digging can start while the arm is turned off-center, but
+   * ROS must be aware of this. In other words, as long as the
+   * position of the arm is not miscalibrated, it's ok.
 	 *
+   * During: First set of positions (one for each of the 3 actuators and
+   * the turn table) is called. Velocity of the 3 actuators and turn table
+   * is monitored and when all are within -0.1 to 0.2 the next set of
+   * positions is called. 0.1 seconds is waited after a set of positions is
+   * first called to avoid instantly moving to the next set since the
+   * velocities will start within -0.1 to 0.1 when a new set is called.
+   *
 	 * Post: The arm will be in the position specified at the end of the
-     * digging queue, OR in an intermediate state if pre-empted (i.e. the
-     * goal is cancelled, another goal is sent, or ROS is shutting down).
+   * digging queue, OR in an intermediate state if pre-empted (i.e. the
+   * goal is cancelled, another goal is sent, or ROS is shutting down).
 	 *
 	 * Notes: ROS actionlib seemed to have a bug, and it would take
-     * as much as 10 seconds to cancel a digging goal.
+   * as much as 10 seconds to cancel a digging goal.
 	 *
 	 */
     void execute(const tfr_msgs::DiggingGoalConstPtr& goal)
@@ -103,14 +111,11 @@ private:
                 current_set.pop();
 
                 //Use arm_manipulator, and NOT MoveIt, to send commands to the arm. The actuators will just move to each of the points in the digging queue, there is no trajectory or other points being generated. There is also no collision checking, so be careful.
-
-
                 ROS_INFO("Moving arm to position: %.2f %.2f %.2f %.2f", state[0], state[1], state[2], state[3]);
                 arm_manipulator.moveArmWithoutPlanningOrLimits(state[0], state[1], state[2], state[3]);
-                //Short buffer (0.1 seconds) that robot waits when new positions are first called. Ensures robot doesn't mistakenly think it's done moving instantly because the starting velocities are 0
-                for (int i = 0; i < 1; i++) {
-                  ros::Duration(0.10).sleep();
-                }
+
+                //Short buffer (0.2 seconds) that robot waits when new positions are first called. Ensures robot doesn't mistakenly think it's done moving instantly because the starting velocities are 0
+                ros::Duration(0.20).sleep();
 
                 //This loop checks for the actuators and turn table to be done moving. Will keep looping until they are done moving.
                 while (true) {
