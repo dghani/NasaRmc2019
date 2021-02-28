@@ -30,17 +30,17 @@ const int SERVO_CYLINDER_LOWER_ARM = 23;
 const int SERVO_CYLINDER_UPPER_ARM = 45;
 const int SERVO_CYLINDER_SCOOP = 56;
 const int TURNTABLE = 1;
-const int SERVO_CYLINDER_BIN_LEFT = 77; 
-const int SERVO_CYLINDER_BIN_RIGHT = 88; 
+const int SERVO_CYLINDER_BIN_LEFT = 77;
+const int SERVO_CYLINDER_BIN_RIGHT = 88;
 
-// initialize the topics for any Servo Cylinder actuator 
+// initialize the topics for any Servo Cylinder actuator
 void setupServoCylinderDevice(kaco::Device& device, kaco::Bridge& bridge, std::string& eds_files_path)
 {
-    
+
     device.load_dictionary_from_library();
-    
+
     device.load_dictionary_from_eds(eds_files_path + "SC_MC630R11_v_0_7_OD.eds");
-    
+
     PRINT("Set position mode");
     device.set_entry("modes_of_operation", device.get_constant("profile_position_mode"));
 
@@ -48,59 +48,59 @@ void setupServoCylinderDevice(kaco::Device& device, kaco::Bridge& bridge, std::s
     device.execute("enable_operation");
 
 
-	// min: 0 -> 0, 
+	// min: 0 -> 0,
 	// max: 47104 -> 6.28==2pi
-    auto jspub = std::make_shared<kaco::JointStatePublisher>(device, 0, 47104); 
+    auto jspub = std::make_shared<kaco::JointStatePublisher>(device, 0, 47104);
     bridge.add_publisher(jspub, loop_rate);
-    
+
     auto jssub = std::make_shared<kaco::JointStateSubscriber>(device, 0, 47104);
     bridge.add_subscriber(jssub);
-    
+
     // read the current torque value
     auto iopub_1 = std::make_shared<kaco::EntryPublisher>(device, "torque_actual_value");
     bridge.add_publisher(iopub_1, loop_rate);
-    
+
     auto iosub_1 = std::make_shared<kaco::EntrySubscriber>(device, "torque_actual_value");
     bridge.add_subscriber(iosub_1);
-    
+
     // read/write the max allowed torque value
     auto iopub_2 = std::make_shared<kaco::EntryPublisher>(device, "max_torque");
     bridge.add_publisher(iopub_2, slow_loop_rate);
-    
+
     auto iosub_2 = std::make_shared<kaco::EntrySubscriber>(device, "max_torque");
     bridge.add_subscriber(iosub_2);
-    
-    
+
+
     // read the current velocity value
     auto iopub_3 = std::make_shared<kaco::EntryPublisher>(device, "velocity_actual_value");
     bridge.add_publisher(iopub_3, loop_rate);
-    
+
     // read/write max speed
     auto iopub_4 = std::make_shared<kaco::EntryPublisher>(device, "profile_velocity");
     bridge.add_publisher(iopub_4, slow_loop_rate);
-    
+
     auto iosub_4 = std::make_shared<kaco::EntrySubscriber>(device, "profile_velocity");
     bridge.add_subscriber(iosub_4);
 
     // read/write heartbeat time interval in milliseconds
     auto iopub_5 = std::make_shared<kaco::EntryPublisher>(device, "producer_heartbeat_time");
     bridge.add_publisher(iopub_5, slow_loop_rate);
-    
+
     auto iosub_5 = std::make_shared<kaco::EntrySubscriber>(device, "producer_heartbeat_time");
     bridge.add_subscriber(iosub_5);
-    
+
     // profile_acceleration
     auto iopub_6 = std::make_shared<kaco::EntryPublisher>(device, "profile_acceleration");
     bridge.add_publisher(iopub_6, slow_loop_rate);
-    
+
     auto iosub_6 = std::make_shared<kaco::EntrySubscriber>(device, "profile_acceleration");
     bridge.add_subscriber(iosub_6);
-    
-    
+
+
     // profile_deceleration
     auto iopub_7 = std::make_shared<kaco::EntryPublisher>(device, "profile_deceleration");
     bridge.add_publisher(iopub_7, slow_loop_rate);
-    
+
     auto iosub_7 = std::make_shared<kaco::EntrySubscriber>(device, "profile_deceleration");
     bridge.add_subscriber(iosub_7);
 
@@ -109,19 +109,19 @@ void setupServoCylinderDevice(kaco::Device& device, kaco::Bridge& bridge, std::s
 
     auto iopub_9 = std::make_shared<kaco::EntryPublisher>(device, "positioning_option_code");
     bridge.add_publisher(iopub_9, slow_loop_rate);
-    
+
     auto iosub_9 = std::make_shared<kaco::EntrySubscriber>(device, "positioning_option_code");
     bridge.add_subscriber(iosub_9);
-    positioning_option_code
+    //positioning_option_code
 }
 
 void setupMaxonDevice(kaco::Device& device, kaco::Bridge& bridge, std::string& eds_files_path)
 {
-    
+
     device.load_dictionary_from_library();
-    
+
     device.load_dictionary_from_eds(eds_files_path + "tfr_epos4_config.dcf");
-    
+
     PRINT("Set position mode");
     device.set_entry("modes_of_operation", device.get_constant("profile_position_mode"));
 
@@ -129,21 +129,21 @@ void setupMaxonDevice(kaco::Device& device, kaco::Bridge& bridge, std::string& e
     device.execute("enable_operation");
 
 
-    // min: 0 -> 0, 
-    // max: 1024 encoder clicks * 4.3 Maxon gear * 70 worm gear = 308224   
-    auto jspub = std::make_shared<kaco::JointStatePublisher>(device, -308224, 308224); 
+    // min: 0 -> 0,
+    // max: 1024 encoder clicks * 4.3 Maxon gear * 70 worm gear = 308224
+    auto jspub = std::make_shared<kaco::JointStatePublisher>(device, -308224, 308224);
     bridge.add_publisher(jspub, loop_rate);
-    
-    auto jssub = std::make_shared<kaco::JointStateSubscriber>(device, -308224, 308224); 
-    bridge.add_subscriber(jssub);		
+
+    auto jssub = std::make_shared<kaco::JointStateSubscriber>(device, -308224, 308224);
+    bridge.add_subscriber(jssub);
 
     // Read the "statusword" from the CANopen device.
     // The statusword is available on all CANopen DS402 (motion control) devices.
     // It's call statusword because it tells you about the status of the device, and "word" because the data takes up 1 word (2 bytes).
-    // 
+    //
     // Here is a link (from some company that uses CANopen) explaining what is included in the statusword. This is standard across CANopen DS402 devices. search "Bit 10 (Target Reached)" near top of page.
     // https://us.nanotec.com/products/manual/PD4C_CAN_EN/modes%252Fprofile_position.html/
-    // 
+    //
     // The reason for reading the statusword is to check when the motor reaches the target position.
     // This way, the digging queue can wait until the arm is in the expected position before moving to the next one.
     auto iopub_1 = std::make_shared<kaco::EntryPublisher>(device, "statusword");
@@ -168,8 +168,8 @@ std::string intToHexString(int n)
 }
 
 void resetCanopenNode(std::string busname, int node_id)
-{ 
-    // For reference on the "reset node" message, see: 
+{
+    // For reference on the "reset node" message, see:
     //  https://en.wikipedia.org/wiki/CANopen#Network_management_(NMT)_protocols
     const std::string nmt_command_reset_node = "81";
     const std::string nmt_command_reset_communication = "82";
@@ -177,14 +177,14 @@ void resetCanopenNode(std::string busname, int node_id)
     std::string node_id_hex = intToHexString(node_id);
 
     std::system(("cansend " + busname + " 000#" + nmt_command_reset_node + node_id_hex).c_str());
-    
+
     return;
 }
 
 
 int main(int argc, char* argv[]) {
 
-	
+
 	kaco::Master master;
 	if (!master.start(busname, baudrate)) {
 		ERROR("Starting master failed.");
@@ -192,20 +192,20 @@ int main(int argc, char* argv[]) {
 	}
 
     std::this_thread::sleep_for(std::chrono::seconds(1));
-	
+
     // send the CANopen "reset node" message to each of the servo cylinder actuators. This is done because the actuators send out one heartbeart message when they are powered on or reset. We send the messages here so that Kacanopen will see the heartbeat from  each actuators and realize that they are there.
     resetCanopenNode(busname, SERVO_CYLINDER_SCOOP);
     std::this_thread::sleep_for(std::chrono::milliseconds(250));
 
     resetCanopenNode(busname, SERVO_CYLINDER_UPPER_ARM);
     std::this_thread::sleep_for(std::chrono::milliseconds(250));
-	
+
     resetCanopenNode(busname, SERVO_CYLINDER_LOWER_ARM);
     std::this_thread::sleep_for(std::chrono::milliseconds(250));
-	
+
    resetCanopenNode(busname, SERVO_CYLINDER_BIN_LEFT);
    std::this_thread::sleep_for(std::chrono::milliseconds(250));
-	
+
     resetCanopenNode(busname, SERVO_CYLINDER_BIN_RIGHT);
     std::this_thread::sleep_for(std::chrono::milliseconds(250));
 
@@ -213,17 +213,17 @@ int main(int argc, char* argv[]) {
     // There is a bug which occurs during normal operation, where once the robot is connected to power, the turntable motor controller gets into an error state. It's said that this has something to do with the Xavier booting up.
     // There was also previously a bug with calling resetCanopenNode() when the node is a value less than 16 (because it doesn't end up getting padded to 2 digits. This was fixed in another branch and could be merged.
     // In the meantime we will just write out the message for resetting the turntable here.
-    
+
     std::system(("cansend " + busname + " 000#0215").c_str()); // Go to 'stopped' state
     std::this_thread::sleep_for(std::chrono::milliseconds(250));
-    
+
     std::system(("cansend " + busname + " 000#8015").c_str()); // Go to 'pre-operational' state
     std::this_thread::sleep_for(std::chrono::milliseconds(250));
-    
+
     std::system(("cansend " + busname + " 000#8115").c_str()); // Go to 'reset node' state
     std::this_thread::sleep_for(std::chrono::milliseconds(250));
-    
-  // std::system(("cansend " + busname + " 000#8115").c_str()); Doesn't work in error state.  Need to figure out a better way. 
+
+  // std::system(("cansend " + busname + " 000#8115").c_str()); Doesn't work in error state.  Need to figure out a better way.
   //  PRINT("The turntable reset message just got sent in spot 1");
 //	std::this_thread::sleep_for(std::chrono::seconds(10));
 //	PRINT("The 10 second wait is over");
@@ -250,24 +250,24 @@ int main(int argc, char* argv[]) {
 		} else {
 		    ERROR("tfr_can could not find the private parameter 'eds_files_path'. Make sure this parameter is getting set in the launch file for tfr_can.");
 		}
-		
+
 		int deviceId = device.get_node_id();
 
         if (deviceId == SERVO_CYLINDER_LOWER_ARM)
         {
             setupServoCylinderDevice(device, bridge, eds_files_path);
         }
-		
+
 		if (deviceId == SERVO_CYLINDER_UPPER_ARM)
         {
             setupServoCylinderDevice(device, bridge, eds_files_path);
         }
-		
+
 		if (deviceId == SERVO_CYLINDER_SCOOP)
         {
             setupServoCylinderDevice(device, bridge, eds_files_path);
         }
-		
+
 		if (deviceId == SERVO_CYLINDER_BIN_LEFT)
        {
             setupServoCylinderDevice(device, bridge, eds_files_path);
@@ -277,20 +277,20 @@ int main(int argc, char* argv[]) {
         {
             setupServoCylinderDevice(device, bridge, eds_files_path);
         }
-		
+
 		if (deviceId == TURNTABLE) //THIS IS WHERE WE LOAD THE EDS LIBRARY
 	{
 	    setupMaxonDevice(device, bridge, eds_files_path);
 	}
-		
-		
-		
+
+
+
 		else if (deviceId == 8) //Drivetrain Motor controller
 		{
 			device.load_dictionary_from_eds(eds_files_path + "roboteq_motor_controllers_v60.eds");
-			
+
 		//	ROS_DEBUG_STREAM("tfr_can: case: Device 8" << std::endl);
-			
+
 			// Roboteq SBL2360.
 
 			auto iosub_8_1_1 = std::make_shared<kaco::EntrySubscriber>(device, "cmd_cango/cmd_cango_1");
@@ -301,16 +301,16 @@ int main(int argc, char* argv[]) {
 
 			auto iopub_8_1_3 = std::make_shared<kaco::EntryPublisher>(device, "qry_motamps/channel_1");
     		bridge.add_publisher(iopub_8_1_3, loop_rate);
-			
+
 			//auto iopub_8_1_4 = std::make_shared<kaco::EntryPublisher>(device, "qry_blrspeed/channel_1");
     		//bridge.add_publisher(iopub_8_1_4, loop_rate);
-    		
+
     		auto iopub_8_1_5 = std::make_shared<kaco::EntryPublisher>(device, "qry_blcntr/qry_blcntr_1");
     		bridge.add_publisher(iopub_8_1_5, loop_rate);
-			
+
             auto iopub_8_1_6 = std::make_shared<kaco::EntryPublisher>(device, "qry_abcntr/channel_1");
     		bridge.add_publisher(iopub_8_1_6, loop_rate);
-			
+
 			auto iosub_8_2_1 = std::make_shared<kaco::EntrySubscriber>(device, "cmd_cango/cmd_cango_2");
     		bridge.add_subscriber(iosub_8_2_1);
 
@@ -319,25 +319,25 @@ int main(int argc, char* argv[]) {
 
 			auto iopub_8_2_3 = std::make_shared<kaco::EntryPublisher>(device, "qry_motamps/channel_2");
     		bridge.add_publisher(iopub_8_2_3, loop_rate);
-			
+
 			//auto iopub_8_2_4 = std::make_shared<kaco::EntryPublisher>(device, "qry_blrspeed/channel_2");
     		//bridge.add_publisher(iopub_8_2_4, loop_rate);
-    		
+
     		auto iopub_8_2_5 = std::make_shared<kaco::EntryPublisher>(device, "qry_blcntr/qry_blcntr_2");
     		bridge.add_publisher(iopub_8_2_5, loop_rate);
 
             auto iopub_8_2_6 = std::make_shared<kaco::EntryPublisher>(device, "qry_abcntr/channel_2");
     		bridge.add_publisher(iopub_8_2_6, loop_rate);
-			
+
 		}
-		
-		
+
+
 
 	}
 	PRINT("About to call bridge.run()");
 	bridge.run();
-	
+
     master.stop();
-    
+
 	return EXIT_SUCCESS;
 }
