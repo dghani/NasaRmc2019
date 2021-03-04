@@ -77,6 +77,7 @@ public:
   scoop_torque_sub{n.subscribe("/device56/get_torque_actual_value", 5, &TeleopExecutive::getScoopTorque, this)},
   motor_amp_ch1_sub{n.subscribe("qry_motamps/channel_1", 5 , &TeleopExecutive::getMotorAmpCh1 , this)},
   motor_amp_ch2_sub{n.subscribe("qry_motamps/channel_2", 5 , &TeleopExecutive::getMotorAmpCh2, this)},
+  turntable_position_sub{n.subscribe("/device1/set_joint_state", 5, &TeleopExecutive::getTurntablePosition, this)},
   drivebase_publisher{n.advertise<geometry_msgs::Twist>("cmd_vel", 5)},
   arm_manipulator{n},
   bin_publisher{n.advertise<std_msgs::Float64>("/bin_position_controller/command", 5)},
@@ -159,6 +160,7 @@ private:
   void processCommand(const tfr_msgs::TeleopGoalConstPtr& goal)
   {
     geometry_msgs::Twist move_cmd{};
+
     auto code = static_cast<tfr_utilities::TeleopCode>(goal->code);
     switch(code)
     {
@@ -208,21 +210,21 @@ private:
       case (tfr_utilities::TeleopCode::CLOCKWISE):
       {
         ROS_INFO("Teleop Action Server: Command Recieved, CLOCKWISE");
-        arm_manipulator.moveTurntablePosition(0.01); // Move arm from back to front
+        arm_manipulator.moveTurntablePosition(turntablePosition + 0.01); // Move arm CLOCKWISE
         break;
       }
 
       case (tfr_utilities::TeleopCode::COUNTERCLOCKWISE):
       {
         ROS_INFO("Teleop Action Server: Command Recieved, COUNTERCLOCKWISE");
-        arm_manipulator.moveTurntablePosition(3.14); // Move arm from front to back
+        arm_manipulator.moveTurntablePosition(turntablePosition - 0.01); // Move arm COUNTERCLOCKWISE
         break;
       }
 
       case (tfr_utilities::TeleopCode::RESET_ENCODER_COUNTS_TO_START):
       {
         ROS_INFO("Teleop Action Server: Command Recieved, RESET_ENCODER_COUNTS_TO_START");
-        arm_manipulator.moveTurntablePosition(0.0); // Move arm from front to back
+        //arm_manipulator.resetTurntableEncoder(); // Change turntable encoder to 0
         break;
       }
 
@@ -299,7 +301,6 @@ private:
 
       case (tfr_utilities::TeleopCode::DUMP):
       {
-
         //TODO: Match the rate to avoid torquing the bin.
         ROS_INFO("Teleop Action Server: Command Recieved, DUMP");
         arm_manipulator.moveLeftBinPosition(5.0); // Extend left bin actuator
@@ -325,6 +326,7 @@ private:
         ROS_INFO("Teleop Action Server: arm reset finished");
         break;
       }
+
       case (tfr_utilities::TeleopCode::DRIVING_POSITION):
       {
         ROS_INFO("Teleop Action Server: Command Recieved, DRIVING_POSITION");
@@ -332,6 +334,7 @@ private:
         ROS_INFO("Teleop Action Server: arm raise finished");
         break;
       }
+
       case (tfr_utilities::TeleopCode::RAISE_ARM):
       {
         ROS_INFO("Teleop Action Server: Command Recieved, RAISE_ARM");
@@ -345,7 +348,6 @@ private:
         ROS_INFO("Teleop Action Server: arm raise finished");
         break;
       }
-
 
       default:
       {
@@ -364,19 +366,19 @@ private:
   * */
   void getLowerArmTorque(const std_msgs::Int16 &msg)
   {
-    //lower_arm_torque = msg.data;
+    lower_arm_torque = msg.data;
     bag.write("lowerArmTorque", ros::Time::now(), msg);
   }
 
   void getUpperArmTorque(const std_msgs::Int16 &msg)
   {
-    //upper_arm_torque = msg.data;
+    upper_arm_torque = msg.data;
     bag.write("upperArmTorque", ros::Time::now(), msg);
   }
 
   void getScoopTorque(const std_msgs::Int16 &msg)
   {
-    //scoop_torque = msg.data;
+    scoop_torque = msg.data;
     bag.write("scoopTorque", ros::Time::now(), msg);
   }
 
@@ -386,6 +388,10 @@ private:
 
   void getMotorAmpCh2(const std_msgs::Int16 &msg){
     bag.write("motorAmpCh2", ros::Time::now(), msg);
+  }
+
+  void getTurntablePosition(const sensor_msgs::JointState &msg) {
+    turntablePosition = msg.position[0];
   }
 
   actionlib::SimpleActionServer<tfr_msgs::TeleopAction> server;
@@ -400,6 +406,7 @@ private:
   int16_t scoop_torque;
   ros::Subscriber motor_amp_ch1_sub;
   ros::Subscriber motor_amp_ch2_sub;
+  ros::Subscriber turntable_position_sub;
   ros::Publisher right_bin_pub;
   ros::Publisher left_bin_pub;
   ros::Publisher turntable_pub;
@@ -419,6 +426,7 @@ private:
   //how often to check for preemption
   ros::Duration frequency;
   bool use_digging;
+  float turntablePosition;
 
 };
 

@@ -6,16 +6,15 @@ ArmManipulator::ArmManipulator(ros::NodeHandle &n, bool init_joints):
             upper_arm_publisher{n.advertise<sensor_msgs::JointState>("/device45/set_joint_state", 5)},
             scoop_publisher{n.advertise<sensor_msgs::JointState>("/device56/set_joint_state", 5)},
             left_bin_publisher{n.advertise<sensor_msgs::JointState>("/device77/set_joint_state", 5)},
-            right_bin_publisher{n.advertise<sensor_msgs::JointState>("/device88/set_joint_state", 5)},
-            turntable_statusword_subscriber{n.subscribe("/device1/statusword", 5, &ArmManipulator::updateTurntableTargetPosition, this)}
+            right_bin_publisher{n.advertise<sensor_msgs::JointState>("/device88/set_joint_state", 5)}
 {
   ROS_INFO("Initializing Arm Manipulator");
 }
 
 void ArmManipulator::moveArm(const double& turntable, const double& lower_arm ,const double& upper_arm,  const double& scoop )
 {
-    ROS_INFO_STREAM("Arm manipulator moveArm() called by: " << 
-    ros::this_node::getName() << ". Parameters: " 
+    ROS_INFO_STREAM("Arm manipulator moveArm() called by: " <<
+    ros::this_node::getName() << ". Parameters: "
 << turntable << ", " << lower_arm << ", " << upper_arm << ", " << scoop << std::endl);
     ROS_INFO_STREAM("ArmManipulator::moveArm() deprecated. Replace calls to moveArm()." << std::endl);
 
@@ -28,7 +27,7 @@ void ArmManipulator::moveTurntablePosition(double turntable)
 
     turntable_joint_state.header.stamp = ros::Time::now();
     turntable_joint_state.position.push_back(turntable);
-    
+
     turntable_publisher.publish(turntable_joint_state);
 }
 
@@ -67,7 +66,7 @@ void ArmManipulator::moveLeftBinPosition(double leftBin)
 
     left_bin_joint_state.header.stamp = ros::Time::now();
     left_bin_joint_state.position.push_back(leftBin);
-    
+
     left_bin_publisher.publish(left_bin_joint_state);
 }
 
@@ -77,7 +76,7 @@ void ArmManipulator::moveRightBinPosition(double rightBin)
 
     right_bin_joint_state.header.stamp = ros::Time::now();
     right_bin_joint_state.position.push_back(rightBin);
-    
+
     right_bin_publisher.publish(right_bin_joint_state);
 }
 
@@ -104,7 +103,7 @@ void ArmManipulator::moveArmWithoutPlanningOrLimits(
 }
 
 // return true if all the arm actuators have reached the positions they were asked to move to.
-bool ArmManipulator::isArmTargetPositionReached() 
+bool ArmManipulator::isArmTargetPositionReached()
 {
     // TODO add lower arm, upper arm, and scoop.
     return turntable_target_position_reached;
