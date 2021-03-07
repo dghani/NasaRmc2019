@@ -175,7 +175,7 @@ private:
       //ROS_INFO("Turn Table velocity: %f\n", turnTableVelocity.data);
 
       //flipping status of movement to not moving if within the velocity range
-      if (turnTableVelocity.data < 0.1000 && turnTableVelocity.data > -0.1000) {
+      if (turnTableVelocity.data < 0.0010 && turnTableVelocity.data > -0.0010) {
         turnTableVelocityStatus = 0;
       }
       else {
@@ -187,7 +187,7 @@ private:
       //ROS_INFO("Lower arm velocity: %f\n", lowerArmVelocity.data);
 
       //flipping status of movement to not moving if within the velocity range
-      if (lowerArmVelocity.data < 0.1000 && lowerArmVelocity.data > -0.1000) {
+      if (lowerArmVelocity.data < 0.0010 && lowerArmVelocity.data > -0.0010) {
         lowerArmVelocityStatus = 0;
       }
       else {
@@ -199,7 +199,7 @@ private:
       //ROS_INFO("Upper arm velocity: %f\n", upperArmVelocity.data);
 
       //flipping status of movement to not moving if within the velocity range
-      if (upperArmVelocity.data < 0.1000 && upperArmVelocity.data > -0.1000) {
+      if (upperArmVelocity.data < 0.0010 && upperArmVelocity.data > -0.0010) {
         upperArmVelocityStatus = 0;
       }
       else {
@@ -211,7 +211,7 @@ private:
       //ROS_INFO("Scoop velocity: %f\n", scoopVelocity.data);
 
       //flipping status of movement to not moving if within the velocity range
-      if (scoopVelocity.data < 0.1000 && scoopVelocity.data > -0.1000) {
+      if (scoopVelocity.data < 0.0010 && scoopVelocity.data > -0.0010) {
         scoopVelocityStatus = 0;
       }
       else {
