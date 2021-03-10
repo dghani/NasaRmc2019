@@ -210,20 +210,22 @@ private:
       case (tfr_utilities::TeleopCode::CLOCKWISE):
       {
         ROS_INFO("Teleop Action Server: Command Recieved, CLOCKWISE");
-        arm_manipulator.moveTurntablePosition(turntablePosition + 0.2617); // Move arm CLOCKWISE
+        arm_manipulator.moveTurntablePosition(turntablePosition + offsetPosition + 0.2617); // Move arm CLOCKWISE
         break;
       }
 
       case (tfr_utilities::TeleopCode::COUNTERCLOCKWISE):
       {
         ROS_INFO("Teleop Action Server: Command Recieved, COUNTERCLOCKWISE");
-        arm_manipulator.moveTurntablePosition(turntablePosition - 0.2617); // Move arm COUNTERCLOCKWISE
+        arm_manipulator.moveTurntablePosition(turntablePosition + offsetPosition - 0.2617); // Move arm COUNTERCLOCKWISE
         break;
       }
 
       case (tfr_utilities::TeleopCode::RESET_ENCODER_COUNTS_TO_START):
       {
         ROS_INFO("Teleop Action Server: Command Recieved, RESET_ENCODER_COUNTS_TO_START");
+        offsetPosition = turntablePosition;
+        turntablePosition = 0;
         //arm_manipulator.resetTurntableEncoder(); // Change turntable encoder to 0
         break;
       }
@@ -427,6 +429,7 @@ private:
   ros::Duration frequency;
   bool use_digging;
   float turntablePosition;
+  float offsetPosition = 0.0;
 
 };
 
