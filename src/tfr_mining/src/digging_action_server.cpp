@@ -158,7 +158,7 @@ private:
       //Roboteq controller sends voltage * 10 back i.e. if 150 is reported than it is 15 volts
       int batteryVolt = batteryVoltage.data / 10;
       //if battery voltage is below 30 than it needs to be charged
-      if (batteryVolt < 30) {
+      if (batteryVolt < 37) {
         ROS_ERROR("BATTERY LOW! CHARGE NOW! (%d volts)\n", batteryVolt);
       }
     }
