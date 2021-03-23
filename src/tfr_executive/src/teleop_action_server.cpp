@@ -226,6 +226,7 @@ private:
         ROS_INFO("Teleop Action Server: Command Recieved, RESET_ENCODER_COUNTS_TO_START");
         offsetPosition = turntablePosition;
         turntablePosition = 0;
+        //endoer = 0;
         //arm_manipulator.resetTurntableEncoder(); // Change turntable encoder to 0
         break;
       }
