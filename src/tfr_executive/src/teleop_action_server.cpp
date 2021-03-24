@@ -210,14 +210,14 @@ private:
       case (tfr_utilities::TeleopCode::CLOCKWISE):
       {
         ROS_INFO("Teleop Action Server: Command Recieved, CLOCKWISE");
-        arm_manipulator.moveTurntablePosition(turntablePosition - offsetPosition + 0.2617); // Move arm CLOCKWISE
+        arm_manipulator.moveTurntablePosition(turntablePosition + 0.2617); // Move arm CLOCKWISE
         break;
       }
 
       case (tfr_utilities::TeleopCode::COUNTERCLOCKWISE):
       {
         ROS_INFO("Teleop Action Server: Command Recieved, COUNTERCLOCKWISE");
-        arm_manipulator.moveTurntablePosition(turntablePosition - offsetPosition - 0.2617); // Move arm COUNTERCLOCKWISE
+        arm_manipulator.moveTurntablePosition(turntablePosition - 0.2617); // Move arm COUNTERCLOCKWISE
         break;
       }
 
