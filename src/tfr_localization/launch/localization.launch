@@ -4,7 +4,7 @@
         <rosparam>
             turn_velocity: 0.6
             turn_duration: 1.0
-            yaw_threshold: 0.1
+            yaw_threshold: 0.05
         </rosparam>
     </node>
     <include file="$(find tfr_localization)/launch/bin_broadcaster.launch"/>
