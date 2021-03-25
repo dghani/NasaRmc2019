@@ -1,5 +1,5 @@
-image_width: 1920
-image_height: 1080
+image_width: 3840
+image_height: 2160
 camera_name: rear_cam_link
 camera_matrix:
   rows: 3
