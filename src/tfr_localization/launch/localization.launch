@@ -3,8 +3,8 @@
     <node name="localization_action_server" pkg="tfr_localization" output="screen" type="localization_action_server">
         <rosparam>
             turn_velocity: 0.6
-            turn_duration: 1.5
-            yaw_threshold: 0.05
+            turn_duration: 3.0
+            yaw_threshold: 0.4
         </rosparam>
     </node>
     <include file="$(find tfr_localization)/launch/bin_broadcaster.launch"/>
