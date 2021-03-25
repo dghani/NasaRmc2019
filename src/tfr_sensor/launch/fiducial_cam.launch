@@ -4,7 +4,7 @@
     <node name="front_cam" pkg="cv_camera" type="cv_camera_node" output="screen">
         <rosparam>
             # using GRAY8 in the pipeline below reduces the total size of the images, improving efficiency
-            file: "nvarguscamerasrc sensor-id=2 ! video/x-raw(memory:NVMM), width=(int)1348, height=(int)750,format=(string)NV12, framerate=(fraction)120/1 ! nvvidconv flip-method=2 ! video/x-raw(ANY), format=(string)GRAY8 ! appsink"
+            file: "nvarguscamerasrc sensor-id=2 ! video/x-raw(memory:NVMM), width=(int)1348, height=(int)750,format=(string)NV12, framerate=(fraction)120/1 ! nvvidconv flip-method=0 ! video/x-raw(ANY), format=(string)GRAY8 ! appsink"
             frame_id: front_cam_link
             rate: 120
         </rosparam>
