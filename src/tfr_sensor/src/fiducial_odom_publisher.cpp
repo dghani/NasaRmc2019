@@ -156,7 +156,7 @@ class FiducialOdom
                 }
                 else
                {
-                    for (int i = 1; i < 100; i += 1)
+                    for (int i = 1; i < 10; i += 1)
                     {
                         ros::service::call("/set_drivebase_odometry", odom_req);
                     } 
