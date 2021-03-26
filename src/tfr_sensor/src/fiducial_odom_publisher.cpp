@@ -48,7 +48,7 @@ class FiducialOdom
             reset_service{n.advertiseService("/reset_fusion", &FiducialOdom::resetFusion, this)}
         {
             rear_cam_client = n.serviceClient<tfr_msgs::WrappedImage>("/on_demand/rear_cam/image_raw");
-            front_cam_client = n.serviceClient<tfr_msgs::WrappedImage>("/sensors/camera/color/image_raw");
+            front_cam_client = n.serviceClient<tfr_msgs::WrappedImage>("/on_demand/front_cam/image_raw");
             publisher = n.advertise<nav_msgs::Odometry>("fiducial_odom", 10 );
             ROS_INFO("Fiducial Odom Publisher Connecting to Server");
             aruco.waitForServer();
