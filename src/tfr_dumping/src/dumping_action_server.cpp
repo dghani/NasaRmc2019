@@ -126,6 +126,39 @@
        Moves backwards 0.5 meters, then stops
        Then extends and retracts the actuator bin
        */
+  
+     /*
+       * back up slowwwwly we can see now
+       */
+       void moveNotBlind()
+       {
+         ROS_INFO("Dumping Action Server: Command Recieved, BACKWARD");
+         move_cmd.linear.x = -.1;
+         drivebase_publisher.publish(move_cmd);
+         // wait until the the robot has moved the same distance the fiducial odometry originally read
+         ROS_INFO("Original Tread Distance starting at %f", originalTreadDistance);
+         ROS_INFO("Original Fiducial Distance starting at %f", originalFiducialDistance);
+         ROS_INFO("Original Current Tread Distance Starting at %f", currentTreadDistance);
+         ROS_INFO("Is tread first: %d", isTreadFirst);
+         while(((originalTreadDistance-currentTreadDistance)) < originalFiducialDistance) {}
+         ROS_INFO("Original Tread Distance Finished at %f", originalTreadDistance);
+         ROS_INFO("Original Fiducial Distance Finished at %f", originalFiducialDistance);
+         ROS_INFO("Original Current Tread Distance Finished at %f", currentTreadDistance);
+         ROS_INFO("Dumping Action Server: BACKWARD finsihed");
+       }
+
+       /*
+       *  Stop Moving
+       */
+       void stopMoving()
+       {
+         ROS_INFO("Dumping Action Server: Command Recieved, STOP");
+         move_cmd.linear.x = 0;
+         drivebase_publisher.publish(move_cmd);
+         ROS_INFO("Dumping Action Server: STOP finshed");
+       }
+  
+  
        void dumpBinContents(const tfr_msgs::EmptyGoalConstPtr &goal)
        {
          ros::Duration(4.0).sleep();
@@ -156,36 +189,6 @@
          arm_manipulator.moveLeftBinPosition(1.0); // Retract left bin actuator
          arm_manipulator.moveRightBinPosition(1.0); // Retract right bin actuator
          ROS_INFO("Dumping Action Server: DUMPING_RESET finished");
-       }
-
-       /*
-       * back up slowwwwly we can see now
-       */
-       void moveNotBlind()
-       {
-         ROS_INFO("Dumping Action Server: Command Recieved, BACKWARD");
-         move_cmd.linear.x = -.1;
-         drivebase_publisher.publish(move_cmd);
-         // wait until the the robot has moved the same distance the fiducial odometry originally read
-         ROS_INFO("Original Tread Distance starting at %f", originalTreadDistance);
-         ROS_INFO("Original Fiducial Distance starting at %f", originalFiducialDistance);
-         ROS_INFO("Original Current Tread Distance Starting at %f", currentTreadDistance);
-         while(((originalTreadDistance-currentTreadDistance)) < originalFiducialDistance) {}
-         ROS_INFO("Original Tread Distance Finished at %f", originalTreadDistance);
-         ROS_INFO("Original Fiducial Distance Finished at %f", originalFiducialDistance);
-         ROS_INFO("Original Current Tread Distance Finished at %f", currentTreadDistance);
-         ROS_INFO("Dumping Action Server: BACKWARD finsihed");
-       }
-
-       /*
-       *  Stop Moving
-       */
-       void stopMoving()
-       {
-         ROS_INFO("Dumping Action Server: Command Recieved, STOP");
-         move_cmd.linear.x = 0;
-         drivebase_publisher.publish(move_cmd);
-         ROS_INFO("Dumping Action Server: STOP finshed");
        }
 
      };
