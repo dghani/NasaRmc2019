@@ -125,7 +125,6 @@
          ROS_INFO("Original Tread Distance starting at %f", originalTreadDistance);
          ROS_INFO("Original Fiducial Distance starting at %f", originalFiducialDistance);
          ROS_INFO("Original Current Tread Distance Starting at %f", currentTreadDistance);
-         ROS_INFO("Is tread first: %d", isTreadFirst);
          while(((originalTreadDistance-currentTreadDistance)) < originalFiducialDistance) {}
          ROS_INFO("Original Tread Distance Finished at %f", originalTreadDistance);
          ROS_INFO("Original Fiducial Distance Finished at %f", originalFiducialDistance);
