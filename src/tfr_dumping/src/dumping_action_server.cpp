@@ -113,8 +113,9 @@
          if (!detector.getState().isDone() && true) {
            originalTreadDistance = treadDistance.pose.pose.position.x;
            ROS_INFO("yeet");
+           isTreadFirst++;
          }
-         isTreadFirst++;
+         
          currentTreadDistance = treadDistance.pose.pose.position.x;
        }
 
