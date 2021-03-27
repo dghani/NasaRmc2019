@@ -26,11 +26,11 @@ print_diagnostics: true
 #This is messaging the change in yaw over time.
 imu0: /sensors/imu
 imu0_config: [false, false, false,
-              false, false, false,
+              false, false, true,
               false, false, false,
               false, false, true,
               true, false, false]
-imu0_differential: false
+imu0_differential: true
 imu0_nodelay: false
 imu0_relative: true
 #outputs at ~200 hz so want to average a lot of values
