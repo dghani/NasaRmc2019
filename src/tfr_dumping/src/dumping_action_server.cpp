@@ -98,7 +98,7 @@
        float currentTreadDistance;
        // keeps track if the first time through the callback function of the fiducialOdom and treadDistance
        bool isFiducialFirst = 0;
-       bool isTreadFirst = 0;
+       int isTreadFirst = 0;
 
        void fiducialOdomCallback(const nav_msgs::Odometry& dumpDistance) {
          // if first time through this callback will set original position
@@ -110,11 +110,11 @@
 
        void drivebaseOdomCallback(const nav_msgs::Odometry& treadDistance) {
          // if first time through this callback will set original position
-         if (isTreadFirst == 0) {
+         if (isTreadFirst < 2) {
            originalTreadDistance = treadDistance.pose.pose.position.x;
           ROS_INFO("yeet");
          }
-         isTreadFirst = 1;
+         isTreadFirst++;
          currentTreadDistance = treadDistance.pose.pose.position.x;
        }
 
