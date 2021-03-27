@@ -90,14 +90,17 @@
        ros::Subscriber fiducialOdomSubscriber;
        ros::Subscriber drivebaseOdomSubscriber;
        // distances
+       float currentFiducialDistance;
        float originalFiducialDistance;
-       float originalTreadDistance;
        float currentTreadDistance;
+       float originalTreadDistance;
+       
+    
        // keeps track if the first time through the callback function of the fiducialOdom
        bool isFiducialFirst = 0;
 
        void fiducialOdomCallback(const nav_msgs::Odometry& dumpDistance) {
-           originalFiducialDistance = dumpDistance.pose.pose.position.x;
+           currentFiducialDistance = dumpDistance.pose.pose.position.x;
        }
 
        void drivebaseOdomCallback(const nav_msgs::Odometry& treadDistance) {
@@ -149,7 +152,7 @@
          // make sure robot is still
          ros::Duration(4.0).sleep();
          
-         originalFiducialDistance = currentTreadDistance;
+         originalFiducialDistance = currentFiducialDistance;
          originalTreadDistance = currentTreadDistance;
         
          moveNotBlind();
