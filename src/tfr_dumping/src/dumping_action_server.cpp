@@ -110,7 +110,7 @@
 
        void drivebaseOdomCallback(const nav_msgs::Odometry& treadDistance) {
          // if first time through this callback will set original position
-         if (!detector.getState().isDone() && true) {
+         if (!detector.getState().isDone()) {
            originalTreadDistance = treadDistance.pose.pose.position.x;
            ROS_INFO("yeet");
            isTreadFirst++;
