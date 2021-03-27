@@ -1,6 +1,6 @@
 <launch>
     <node name="front_cam_tf_broadcaster" pkg="tf2_ros" type="static_transform_publisher"
-        args="0.52 0.06 0.005 0 0 0 1 base_link front_cam_link"/>
+        args="0.52 -0.06 0.005 0 0 0 1 base_link front_cam_link"/>
     <node name="front_cam" pkg="cv_camera" type="cv_camera_node" output="screen">
         <rosparam>
             # using GRAY8 in the pipeline below reduces the total size of the images, improving efficiency
