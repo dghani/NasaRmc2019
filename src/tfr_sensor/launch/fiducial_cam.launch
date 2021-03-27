@@ -1,9 +1,18 @@
 <launch>
     <node name="front_cam_tf_broadcaster" pkg="tf2_ros" type="static_transform_publisher"
         args="0.52 0.06 0.115 0 0 0 1 base_link front_cam_link"/>
+    <node name="front_cam" pkg="cv_camera" type="cv_camera_node" output="screen">
+        <rosparam>
+            # using GRAY8 in the pipeline below reduces the total size of the images, improving efficiency
+            file: "nvarguscamerasrc sensor-id=2 ! video/x-raw(memory:NVMM), width=(int)1920, height=(int)1080,format=(string)NV12, framerate=(fraction)30/1 ! nvvidconv flip-method=0 ! video/x-raw(ANY), format=(string)GRAY8 ! appsink"
+            frame_id: front_cam_link
+            rate: 30
+        </rosparam>
+        <param name="camera_info_url" value="file://$(find tfr_sensor)/calib/front_4056x3040.yaml"/>
+    </node>
     <node name="front_cam_wrapper" pkg="tfr_sensor" type="image_topic_wrapper">
         <rosparam>
-            camera_topic: /sensors/camera/color/image_raw
+            camera_topic: /sensors/front_cam/image_raw
             service_name: /on_demand/front_cam/image_raw
         </rosparam>
     </node>
