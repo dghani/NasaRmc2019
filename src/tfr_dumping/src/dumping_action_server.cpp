@@ -84,38 +84,23 @@
      private:
        actionlib::SimpleActionServer<tfr_msgs::EmptyAction> server;
        actionlib::SimpleActionClient<tfr_msgs::EmptyAction> detector;
-       // all them publishers
+       // publishers
        ros::Publisher drivebase_publisher;
-
+       // subscribers
        ros::Subscriber fiducialOdomSubscriber;
-
        ros::Subscriber drivebaseOdomSubscriber;
-
+       // distances
        float originalFiducialDistance;
-
        float originalTreadDistance;
-
        float currentTreadDistance;
-       // keeps track if the first time through the callback function of the fiducialOdom and treadDistance
+       // keeps track if the first time through the callback function of the fiducialOdom
        bool isFiducialFirst = 0;
-       int isTreadFirst = 0;
 
        void fiducialOdomCallback(const nav_msgs::Odometry& dumpDistance) {
-         // if first time through this callback will set original position
-         if (isFiducialFirst == 0) {
            originalFiducialDistance = dumpDistance.pose.pose.position.x;
-         }
-         isFiducialFirst = 1;
        }
 
        void drivebaseOdomCallback(const nav_msgs::Odometry& treadDistance) {
-         // if first time through this callback will set original position
-         if (server.Goal() != null) {
-           originalTreadDistance = treadDistance.pose.pose.position.x;
-           ROS_INFO("yeet");
-           isTreadFirst++;
-         }
-         
          currentTreadDistance = treadDistance.pose.pose.position.x;
        }
 
@@ -162,7 +147,11 @@
   
        void dumpBinContents(const tfr_msgs::EmptyGoalConstPtr &goal)
        {
+         // make sure robot is still
          ros::Duration(4.0).sleep();
+         
+         originalFiducialDistance = currentTreadDistance;
+         originalTreadDistance = currentTreadDistance;
         
          moveNotBlind();
 
