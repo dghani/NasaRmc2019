@@ -128,15 +128,16 @@ class Localizer
 
                     while(true) {
                         if (checkPreempt(output, success)) {break;} 
-                        if(ros::service::call("/localize_bin", request, response)) {
+                       /* Removed this for debugging localization setting odometry
+                            if(ros::service::call("/localize_bin", request, response)) {
                             ROS_INFO("localized");
                             tfr_msgs::LocalizationResult result;
                             odometry = false;
                             set = true;
-                            break;
+                            break; 
                         } else {
                             ROS_INFO("Localization Action Server: retrying to localize movable point");
-                        }
+                        }*/
                     }
 
                     auto siny = +2.0 * 
