@@ -387,9 +387,9 @@ class AutonomousExecutive
             {
 
                 ROS_INFO("Autonomous Action Server: stabilized odometry");
-                //std_srvs::Empty empty;
-                //Commented out reset_fusion because it hurts my soul 
-                //ros::service::call("/reset_fusion", empty);
+                std_srvs::Empty empty;
+                Commented out reset_fusion because it hurts my soul 
+                ros::service::call("/reset_fusion", empty);
            }
             ROS_INFO("Autonomous Action Server: forward localization");
             geometry_msgs::Twist vel;
