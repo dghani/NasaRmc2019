@@ -127,13 +127,13 @@ class Localizer
                     
 
                     while(true) {
-                        if (checkPreempt(output, success)) {break;}
-                            if(ros::service::call("/localize_bin", request, response)) {
+                        if (checkPreempt(output, success)) {break;} 
+                        if(ros::service::call("/localize_bin", request, response)) {
                             ROS_INFO("localized");
                             tfr_msgs::LocalizationResult result;
                             odometry = false;
                             set = true;
-                            break; 
+                            break;
                         } else {
                             ROS_INFO("Localization Action Server: retrying to localize movable point");
                         }
@@ -249,3 +249,4 @@ int main(int argc, char** argv)
     }
     return 0;
 }
+© 2021 GitHub, Inc.
