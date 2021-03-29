@@ -7,7 +7,7 @@
             service_name: localize_bin
             hz: 16
             #rear camera height adjustment
-            height: 0.16 
+            height: -0.33 
         </rosparam>
     </node>
 </launch>
