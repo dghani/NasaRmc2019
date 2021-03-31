@@ -115,7 +115,7 @@ catkin_package(
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 include_directories(
-  include/${PROJECT_NAME}
+  include/tfr_monitoring
   ${catkin_INCLUDE_DIRS}
   ${GTEST_INCLUDE_DIRS}
 )
@@ -133,7 +133,7 @@ include_directories(
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
-add_executable(tfr_monitoring_node src/tfr_monitoring_node.cpp)
+add_executable(monitoring_battery src/monitoring_battery.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -143,10 +143,10 @@ add_executable(tfr_monitoring_node src/tfr_monitoring_node.cpp)
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
-add_dependencies(tfr_monitoring_node ${catkin_EXPORTED_TARGETS})
+add_dependencies(monitoring_battery ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
-target_link_libraries(tfr_monitoring_node ${catkin_LIBRARIES})
+target_link_libraries(monitoring_battery ${catkin_LIBRARIES})
 
 #############
 ## Install ##
