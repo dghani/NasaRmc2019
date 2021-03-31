@@ -31,7 +31,7 @@ int main(int argc, char **argv)
 	ros::NodeHandle n;
     
 	ros::Subscriber batteryVoltageSubscriber = n.subscribe("/device8/get_qry_volts/v_bat", 
-		5, batteryVoltageCallback, this);
+		5, batteryVoltageCallback);
 	
 	ros::spin();
 	return 1;
