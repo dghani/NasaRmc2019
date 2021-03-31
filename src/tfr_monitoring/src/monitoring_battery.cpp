@@ -1,13 +1,13 @@
 /****************************************************************************************
  * File:    monitoring_battery.cpp
  * Node:    monitoring_battery
- * 
- * Purpose: This is a subscriber that will listen to the voltage output of the battery. When the 
- *	    battery is outputting		
- *			
- *			
  *
- *	TO_DO: not finished yet, might not use for this years compition 
+ * Purpose: This is a subscriber that will listen to the voltage output of the battery. When the
+ *	    battery is outputting
+ *
+ *
+ *
+ *	TO_DO: not finished yet, might not use for this years compition
  ****************************************************************************************/
 
 #include "ros/ros.h"
@@ -29,11 +29,11 @@ int main(int argc, char **argv)
 {
 	ros::init(argc, argv, "monitoring_battery");
 	ros::NodeHandle n;
-    
-	ros::Subscriber batteryVoltageSubscriber = n.subscribe("/device8/get_qry_volts/v_bat", 
+
+	ros::Subscriber batteryVoltageSubscriber = n.subscribe("/device8/get_qry_volts/v_bat",
 		5, batteryVoltageCallback);
-	
+
 	ros::spin();
 	return 1;
-		
+
 }
