@@ -94,10 +94,8 @@
        float originalFiducialDistance;
        float currentTreadDistance;
        float originalTreadDistance;
-       
-    
-       // keeps track if the first time through the callback function of the fiducialOdom
-       bool isFiducialFirst = 0;
+       //add 0.45 to make up for measuring from the center of the robot, robot is 1 meter.
+       float movedDistance = (originalTreadDistance-currentTreadDistance) + 0.45;
 
        void fiducialOdomCallback(const nav_msgs::Odometry& dumpDistance) {
            currentFiducialDistance = dumpDistance.pose.pose.position.x;
@@ -128,7 +126,7 @@
          ROS_INFO("Original Tread Distance starting at %f", originalTreadDistance);
          ROS_INFO("Original Fiducial Distance starting at %f", originalFiducialDistance);
          ROS_INFO("Original Current Tread Distance Starting at %f", currentTreadDistance);
-         while(((originalTreadDistance-currentTreadDistance)) < originalFiducialDistance) {}
+         while(movedDistance < originalFiducialDistance) {}
          ROS_INFO("Original Tread Distance Finished at %f", originalTreadDistance);
          ROS_INFO("Original Fiducial Distance Finished at %f", originalFiducialDistance);
          ROS_INFO("Original Current Tread Distance Finished at %f", currentTreadDistance);
@@ -152,6 +150,8 @@
          // make sure robot is still
          ros::Duration(4.0).sleep();
          
+         odom = bin_footprint;
+        
          originalFiducialDistance = currentFiducialDistance;
          originalTreadDistance = currentTreadDistance;
         
