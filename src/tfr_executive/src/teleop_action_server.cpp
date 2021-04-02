@@ -345,6 +345,8 @@ private:
       case (tfr_utilities::TeleopCode::RESET_ENCODER_COUNTS_TO_START):
       {
         ROS_INFO("Teleop Action Server: Command Recieved, RESET_ENCODER_COUNTS_TO_START");
+        std_srvs::Empty::Request req;
+        std_srvs::Empty::Response res;
         ros::service::call("/zero_turntable", req, res);
         break;
       }
