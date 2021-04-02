@@ -97,7 +97,7 @@
        float currentTreadDistance;
        float originalTreadDistance;
        //add 0.45 to make up for measuring from the center of the robot, robot is 1 meter.
-       float movedDistance = (originalTreadDistance-currentTreadDistance) + 0.45;
+       float movedDistance = 0;
 
        void fiducialOdomCallback(const nav_msgs::Odometry& dumpDistance) {
            currentFiducialDistance = dumpDistance.pose.pose.position.x;
