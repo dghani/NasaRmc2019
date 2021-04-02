@@ -105,7 +105,7 @@
 
        void drivebaseOdomCallback(const nav_msgs::Odometry& treadDistance) {
          currentTreadDistance = treadDistance.pose.pose.position.x;
-         ROS_INFO("Current Tread Distance: %f", currentTreadDistance);
+         ROS_INFO("Moved Distance: %f", movedDistance);
        }
 
        geometry_msgs::Twist move_cmd{};
