@@ -16,7 +16,7 @@
             localization_from: true
             navigation_from: true
             localization_finish: true
-            dumping: false 
+            dumping: true 
         </rosparam>
     </node>
     <node name="teleop_action_server" pkg="tfr_executive" type="teleop_action_server" output="screen">
