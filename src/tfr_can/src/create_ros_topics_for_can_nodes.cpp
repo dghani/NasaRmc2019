@@ -20,7 +20,7 @@ const std::string busname = "can1";
 // "1M", "500K", "125K", "100K", "50K", "20K", "10K" and "5K".
 const std::string baudrate = "250K";
 
-const size_t num_devices_required = 5;
+const size_t num_devices_required = 4;
 
 const double loop_rate = 32; // 32 Hz
 const int slow_loop_rate = 1; // 1 Hz
@@ -327,7 +327,11 @@ int main(int argc, char* argv[]) {
 
             auto iopub_8_2_6 = std::make_shared<kaco::EntryPublisher>(device, "qry_abcntr/channel_2");
     		bridge.add_publisher(iopub_8_2_6, loop_rate);
-			
+		
+		//Reads battery voltage	
+		auto iopub_8 = std::make_shared<kaco::EntryPublisher>(device, "qry_volts/v_bat");
+    		bridge.add_publisher(iopub_8, loop_rate);
+
 		}
 		
 		

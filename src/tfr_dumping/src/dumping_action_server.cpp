@@ -148,8 +148,8 @@
   
   
        void dumpBinContents(const tfr_msgs::EmptyGoalConstPtr &goal)
-       { 
-         // make sure robot is still
+       {
+         // make sure robot is not moving so fiducial odom is accurate as possible when original fiducial distance is defined
          ros::Duration(4.0).sleep();
             
          originalFiducialDistance = currentFiducialDistance;
