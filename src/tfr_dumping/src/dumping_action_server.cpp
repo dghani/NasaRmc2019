@@ -1,3 +1,4 @@
+#include <math.h>
 #include <ros/ros.h>
 #include <geometry_msgs/Twist.h>
 #include <nav_msgs/Odometry.h>
@@ -94,8 +95,12 @@
        // distances
        float currentFiducialDistance;
        float originalFiducialDistance;
-       float currentTreadDistance;
-       float originalTreadDistance;
+       float currentTreadDistanceX;
+       float currentTreadDistanceY;
+       float actualCurrentTreadDistance;
+       float originalTreadDistanceX;
+       float originalTreadDistanceY;
+       float actualOriginalTreadDistance;
        //add 0.45 to make up for measuring from the center of the robot, robot is 1 meter.
        float movedDistance = 0;
 
@@ -104,7 +109,9 @@
        }
 
        void drivebaseOdomCallback(const nav_msgs::Odometry& treadDistance) {
-         currentTreadDistance = treadDistance.pose.pose.position.x;
+         currentTreadDistanceX = treadDistance.pose.pose.position.x;
+         currentTreadDistanceY = treadDistance.pose.pose.position.x;
+         float actualCurrentTreadDistance = sqrt((currentTreadDistanceX * currentTreadDistanceX) + (currentTreadDistanceY * currentTreadDistanceY))
          ROS_INFO("Moved Distance: %f", movedDistance);
        }
 
@@ -129,7 +136,7 @@
          ROS_INFO("Original Tread Distance starting at %f", originalTreadDistance);
          ROS_INFO("Original Fiducial Distance starting at %f", originalFiducialDistance);
          ROS_INFO("Original Current Tread Distance Starting at %f", currentTreadDistance);
-         while(movedDistance < originalFiducialDistance) {movedDistance = (originalTreadDistance-currentTreadDistance) + 0.45;}
+         while(movedDistance < originalFiducialDistance) {movedDistance = (actualOriginalTreadDistance-actualCurrentTreadDistance) + 0.45;}
          ROS_INFO("Original Tread Distance Finished at %f", originalTreadDistance);
          ROS_INFO("Original Fiducial Distance Finished at %f", originalFiducialDistance);
          ROS_INFO("Original Current Tread Distance Finished at %f", currentTreadDistance);
@@ -154,7 +161,7 @@
          ros::Duration(4.0).sleep();
             
          originalFiducialDistance = currentFiducialDistance;
-         originalTreadDistance = currentTreadDistance;
+         actualOriginalTreadDistance = sqrt((currentTreadDistanceX * currentTreadDistanceX) + (currentTreadDistanceY * currentTreadDistanceY))
         
          moveNotBlind();
 
