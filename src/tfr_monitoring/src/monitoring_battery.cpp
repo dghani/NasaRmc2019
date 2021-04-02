@@ -11,12 +11,9 @@
 #include <std_msgs/UInt16.h>
 
 
-
 void batteryVoltageCallback(const std_msgs::UInt16& batteryVoltage) {
 	//Roboteq controller sends voltage * 10 back i.e. if 150 is reported than it is 15 volts.
-	//What is reported is diveded by 10 to get the actual voltage.
         int batteryVolt = batteryVoltage.data / 10;
-        //if battery voltage is below 37 than it needs to be charged
         if (batteryVolt < 37) {
         	ROS_ERROR("BATTERY LOW! CHARGE NOW! (%d volts)\n", batteryVolt);
         }
@@ -30,5 +27,4 @@ int main(int argc, char **argv)
 		5, batteryVoltageCallback);
 	ros::spin();
 	return 1;
-
 }
