@@ -57,10 +57,11 @@
 class AutonomousExecutive
 {
     public:
-        AutonomousExecutive(ros::NodeHandle &n,double f):
+        AutonomousExecutive(ros::NodeHandle &n,double f):        
             server{n, "autonomous_action_server", 
                 boost::bind(&AutonomousExecutive::autonomousMission, this, _1),
                 false},
+           
             localizationClient{n, "localize", true},
             navigationClient{n, "navigate", true},
             diggingClient{n, "dig", true},
@@ -156,6 +157,8 @@ class AutonomousExecutive
          * Upon successfully completing the goal sever will be set to succeed.
          * Upon failure server will be set to aborted
          */ 
+    
+    
         void autonomousMission(const tfr_msgs::EmptyGoalConstPtr &goal)
         {
             
