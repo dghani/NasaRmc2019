@@ -13,6 +13,8 @@
 #include <image_transport/image_transport.h>
 #include <actionlib/server/simple_action_server.h>
 #include <actionlib/client/simple_action_client.h>
+#include <tf2_ros/transform_broadcaster.h>
+
 /*
  *
  * Its first step is to make sure it can see the aruco board, it will abort the
