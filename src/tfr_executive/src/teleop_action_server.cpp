@@ -220,60 +220,8 @@ private:
         arm_manipulator.moveTurntablePosition(turntablePosition - 0.2617); // Move arm COUNTERCLOCKWISE
         break;
       }
-
-      case (tfr_utilities::TeleopCode::RESET_ENCODER_COUNTS_TO_START):
-      {
-        ROS_INFO("Teleop Action Server: Command Recieved, RESET_ENCODER_COUNTS_TO_START");
-        offsetPosition = turntablePosition;
-        turntablePosition = 0;
-        //endoer = 0;
-        //arm_manipulator.resetTurntableEncoder(); // Change turntable encoder to 0
-        break;
-      }
-
-      case (tfr_utilities::TeleopCode::LOWER_ARM_EXTEND):
-      {
-        ROS_INFO("Teleop Action Server: Command Recieved, LOWER_ARM_EXTEND");
-        arm_manipulator.moveLowerArmPosition(1.6); // Move lower arm to a low position
-        break;
-      }
-
-      case (tfr_utilities::TeleopCode::LOWER_ARM_RETRACT):
-      {
-        ROS_INFO("Teleop Action Server: Command Recieved, LOWER_ARM_RETRACT");
-        arm_manipulator.moveLowerArmPosition(4.8); // Move lower arm to a high position
-        break;
-      }
-
-      case (tfr_utilities::TeleopCode::UPPER_ARM_EXTEND):
-      {
-        ROS_INFO("Teleop Action Server: Command Recieved, UPPER_ARM_EXTEND");
-        arm_manipulator.moveUpperArmPosition(1.1); // Extend upper arm
-        break;
-      }
-
-      case (tfr_utilities::TeleopCode::UPPER_ARM_RETRACT):
-      {
-        ROS_INFO("Teleop Action Server: Command Recieved, UPPER_ARM_RETRACT");
-        arm_manipulator.moveUpperArmPosition(4.5); // Retract upper arm
-        break;
-      }
-
-      case (tfr_utilities::TeleopCode::SCOOP_EXTEND):
-      {
-        ROS_INFO("Teleop Action Server: Command Recieved, SCOOP_EXTEND");
-        arm_manipulator.moveScoopPosition(0.3); // Extend scoop
-        break;
-      }
-
-      case (tfr_utilities::TeleopCode::SCOOP_RETRACT):
-      {
-        ROS_INFO("Teleop Action Server: Command Recieved, SCOOP_RETRACT");
-        arm_manipulator.moveScoopPosition(1.7);// Retract scoop
-        break;
-      }
-
-      case (tfr_utilities::TeleopCode::DIG):
+        
+        case (tfr_utilities::TeleopCode::DIG):
       {
         ROS_INFO("Teleop Action Server: commencing digging");
 
@@ -301,7 +249,7 @@ private:
         ROS_INFO("Teleop Action Server: digging finished");
         break;
       }
-
+      
       case (tfr_utilities::TeleopCode::DUMP):
       {
         //TODO: Match the rate to avoid torquing the bin.
@@ -349,6 +297,58 @@ private:
         //arm_manipulator.moveArm(query.response.states[0], 0.10, 1.07, 1.6);
         ros::Duration(5.0).sleep();
         ROS_INFO("Teleop Action Server: arm raise finished");
+        break;
+      }      
+
+      case (tfr_utilities::TeleopCode::LOWER_ARM_EXTEND):
+      {
+        ROS_INFO("Teleop Action Server: Command Recieved, LOWER_ARM_EXTEND");
+        arm_manipulator.moveLowerArmPosition(1.6); // Move lower arm to a low position
+        break;
+      }
+
+      case (tfr_utilities::TeleopCode::LOWER_ARM_RETRACT):
+      {
+        ROS_INFO("Teleop Action Server: Command Recieved, LOWER_ARM_RETRACT");
+        arm_manipulator.moveLowerArmPosition(4.8); // Move lower arm to a high position
+        break;
+      }
+
+      case (tfr_utilities::TeleopCode::UPPER_ARM_EXTEND):
+      {
+        ROS_INFO("Teleop Action Server: Command Recieved, UPPER_ARM_EXTEND");
+        arm_manipulator.moveUpperArmPosition(1.1); // Extend upper arm
+        break;
+      }
+
+      case (tfr_utilities::TeleopCode::UPPER_ARM_RETRACT):
+      {
+        ROS_INFO("Teleop Action Server: Command Recieved, UPPER_ARM_RETRACT");
+        arm_manipulator.moveUpperArmPosition(4.5); // Retract upper arm
+        break;
+      }
+
+      case (tfr_utilities::TeleopCode::SCOOP_EXTEND):
+      {
+        ROS_INFO("Teleop Action Server: Command Recieved, SCOOP_EXTEND");
+        arm_manipulator.moveScoopPosition(0.3); // Extend scoop
+        break;
+      }
+
+      case (tfr_utilities::TeleopCode::SCOOP_RETRACT):
+      {
+        ROS_INFO("Teleop Action Server: Command Recieved, SCOOP_RETRACT");
+        arm_manipulator.moveScoopPosition(1.7);// Retract scoop
+        break;
+      }
+      
+      case (tfr_utilities::TeleopCode::RESET_ENCODER_COUNTS_TO_START):
+      {
+        ROS_INFO("Teleop Action Server: Command Recieved, RESET_ENCODER_COUNTS_TO_START");
+        offsetPosition = turntablePosition;
+        turntablePosition = 0;
+        //endoer = 0;
+        //arm_manipulator.resetTurntableEncoder(); // Change turntable encoder to 0
         break;
       }
 
