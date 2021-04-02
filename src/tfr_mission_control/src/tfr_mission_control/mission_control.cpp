@@ -101,6 +101,7 @@ namespace tfr_mission_control {
         connect(ui.clock_button, &QPushButton::clicked,this, &MissionControl::startManual);
         connect(ui.autonomy_button, &QPushButton::clicked, this,  &MissionControl::goAutonomousMode);
         connect(ui.teleop_button, &QPushButton::clicked, this,  &MissionControl::goTeleopMode);
+	connect(ui.set_encoders, &QPushButton::clicked, this,  &MissionControl::resetTurntable);
 
         //Control
         connect(ui.control_enable_button,&QPushButton::clicked, [this] () {toggleControl(true);});
@@ -166,8 +167,8 @@ namespace tfr_mission_control {
         connect(ui.ccw_button,&QPushButton::clicked,
                 [this] () {performTeleop(tfr_utilities::TeleopCode::COUNTERCLOCKWISE);});
         //reset encoders
-        connect(ui.set_encoders,&QPushButton::clicked,
-                [this] () {performTeleop(tfr_utilities::TeleopCode::RESET_ENCODER_COUNTS_TO_START);});
+        //connect(ui.set_encoders,&QPushButton::clicked,
+        //       [this] () {performTeleop(tfr_utilities::TeleopCode::RESET_ENCODER_COUNTS_TO_START);});
         //drivebase
         //forward
         connect(ui.forward_button,&QPushButton::pressed,
