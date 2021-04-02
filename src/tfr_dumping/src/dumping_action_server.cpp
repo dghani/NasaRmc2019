@@ -161,7 +161,7 @@
          ros::Duration(4.0).sleep();
             
          originalFiducialDistance = currentFiducialDistance;
-         actualOriginalTreadDistance = sqrt((currentTreadDistanceX * currentTreadDistanceX) + (currentTreadDistanceY * currentTreadDistanceY))
+         actualOriginalTreadDistance = sqrt((currentTreadDistanceX * currentTreadDistanceX) + (currentTreadDistanceY * currentTreadDistanceY));
         
          moveNotBlind();
 
