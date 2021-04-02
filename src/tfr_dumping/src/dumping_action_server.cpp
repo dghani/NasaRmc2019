@@ -133,13 +133,13 @@
          move_cmd.linear.x = -.1;
          drivebase_publisher.publish(move_cmd);
          // wait until the the robot has moved the same distance the fiducial odometry originally read
-         ROS_INFO("Original Tread Distance starting at %f", originalTreadDistance);
+         ROS_INFO("Original Tread Distance starting at %f", actualOriginalTreadDistance);
          ROS_INFO("Original Fiducial Distance starting at %f", originalFiducialDistance);
-         ROS_INFO("Original Current Tread Distance Starting at %f", currentTreadDistance);
+         ROS_INFO("Original Current Tread Distance Starting at %f", actualCurrentTreadDistance);
          while(movedDistance < originalFiducialDistance) {movedDistance = (actualOriginalTreadDistance-actualCurrentTreadDistance) + 0.45;}
-         ROS_INFO("Original Tread Distance Finished at %f", originalTreadDistance);
+         ROS_INFO("Original Tread Distance Finished at %f", actualOriginalTreadDistance);
          ROS_INFO("Original Fiducial Distance Finished at %f", originalFiducialDistance);
-         ROS_INFO("Original Current Tread Distance Finished at %f", currentTreadDistance);
+         ROS_INFO("Original Current Tread Distance Finished at %f", actualCurrentTreadDistance);
          ROS_INFO("Dumping Action Server: BACKWARD finsihed");
        }
 
