@@ -531,8 +531,7 @@ namespace tfr_control
         position_values[static_cast<int>(tfr_utilities::Joint::TURNTABLE)] = 0;
         
         // Read encoder count on hardware and write to shared memory
-        turntable_subscriber_encoder{n.subscribe("/device1/get_joint_state", 5,
-                &RobotInterface::readTurntableEncoder, this)};
+        RobotInterface::readTurntableEncoder("/device1/get_joint_state");
     }
     
 
