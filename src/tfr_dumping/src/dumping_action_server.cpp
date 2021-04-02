@@ -150,7 +150,7 @@
          // make sure robot is still
          ros::Duration(4.0).sleep();
          
-         transform.odom = transform.bin_footprint;
+         transform.transform.odom = transform.transform.bin_footprint;
         
          originalFiducialDistance = currentFiducialDistance;
          originalTreadDistance = currentTreadDistance;
