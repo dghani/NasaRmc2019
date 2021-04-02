@@ -148,12 +148,10 @@
   
   
        void dumpBinContents(const tfr_msgs::EmptyGoalConstPtr &goal)
-       {
+       { 
          // make sure robot is still
          ros::Duration(4.0).sleep();
-         
-         transform.transform.frame_id.odom = transform.transform.frame_id.bin_footprint;
-        
+            
          originalFiducialDistance = currentFiducialDistance;
          originalTreadDistance = currentTreadDistance;
         
