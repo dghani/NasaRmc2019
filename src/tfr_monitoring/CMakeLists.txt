@@ -1,3 +1,7 @@
+# If you're having trouble getting your things to build, visit the ROS
+# tutorials at <http://wiki.ros.org/ROS/Tutorials> and also read the ROS
+# CMake documentation at <http://wiki.ros.org/catkin/CMakeLists.txt>.
+
 cmake_minimum_required(VERSION 2.8.3)
 project(tfr_monitoring)
 
