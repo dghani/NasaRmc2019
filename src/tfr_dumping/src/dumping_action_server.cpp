@@ -112,7 +112,6 @@
          currentTreadDistanceX = treadDistance.pose.pose.position.x;
          currentTreadDistanceY = treadDistance.pose.pose.position.x;
          actualCurrentTreadDistance = sqrt((currentTreadDistanceX * currentTreadDistanceX) + (currentTreadDistanceY * currentTreadDistanceY));
-         ROS_INFO("Moved Distance: %f", movedDistance);
        }
 
        geometry_msgs::Twist move_cmd{};
