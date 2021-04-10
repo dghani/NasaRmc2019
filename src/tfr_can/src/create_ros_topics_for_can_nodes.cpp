@@ -156,6 +156,13 @@ void setupMaxonDevice(kaco::Device& device, kaco::Bridge& bridge, std::string& e
     auto iopub_3 = std::make_shared<kaco::EntryPublisher>(device, "velocity_actual_values/velocity_actual_value_averaged");
     bridge.add_publisher(iopub_3, loop_rate);
 
+    // Publisher and subscriber since it is a read/write.
+    auto iopub_4 = std::make_shared<kaco::EntryPublisher>(device, "digital_incremental_encoder_1/digital_incremental_encoder_1_number_of_pulses");
+    bridge.add_publisher(iopub_4, loop_rate);
+    
+    auto iosub5 = std::make_shared<kaco::EntrySubscriber>(device, "digital_incremental_encoder_1/digital_incremental_encoder_1_number_of_pulses");
+    bridge.add_subscriber(iosub_4);
+    
 }
 
 // Usage: e.g. intToHexString(10) == "A"
