@@ -6,8 +6,8 @@
 #
 # Purpose: This subscribes to the velocities of the actuators to determine when they
 #          are done moving. This also publishes a bool for each actuator depending on
-#          whether they are moving or not dependent on the tolerances set in the launch
-#          file.
+#          whether they are moving or not, which is dependent on the tolerances set in
+#          the launch file.
 #
 ##########################################################################################
 
