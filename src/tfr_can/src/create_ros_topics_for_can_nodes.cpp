@@ -161,7 +161,7 @@ void setupMaxonDevice(kaco::Device& device, kaco::Bridge& bridge, std::string& e
     bridge.add_publisher(iopub_4, loop_rate);
     
     auto iosub_5 = std::make_shared<kaco::EntrySubscriber>(device, "digital_incremental_encoder_1/digital_incremental_encoder_1_number_of_pulses");
-    bridge.add_subscriber(iosub_4);
+    bridge.add_subscriber(iosub_5);
     
 }
 
