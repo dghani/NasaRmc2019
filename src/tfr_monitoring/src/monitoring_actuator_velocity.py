@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 ##########################################################################################
 # File:    monitoring_actuator_velocity.py
 # Node:    monitoring_actuator_velocity
@@ -8,3 +10,17 @@
 #          file.
 #
 ##########################################################################################
+
+import rospy
+from std_msgs.msg import Float32
+
+def turnTableCallback(turnTableVelocity):
+    if turnTableVelocity < turnTableTolerance
+
+if __name__ == '__main__':
+    while True:
+        try:
+            rospy.init_node("monitoring_actuator_velocity")
+            turnTableSub = rospy.Subscriber("/device1/velocity_actual_value", Float32, turnTableCallback, queue_size=5)
+        except rospy.ROSInterruptException:
+            pass
