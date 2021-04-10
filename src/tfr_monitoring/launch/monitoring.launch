@@ -1,6 +1,6 @@
 <launch>
     <node name="monitoring_battery" pkg="tfr_monitoring" type="monitoring_battery" output="screen"/>
-    <node name="monitoring_actuator_velocity" pkg="tfr_monitoring" type="monitoring_actuator_velocity.py" output="screen">
+    <node name="monitoring_actuator_velocity" pkg="tfr_monitoring" type="monitoring_actuator_velocity" output="screen">
         <rosparam>
             turnTableTolerance: 0.00
             lowerArmTolerance: 0.00
