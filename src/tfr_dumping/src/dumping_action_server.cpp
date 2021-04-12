@@ -126,8 +126,7 @@ private:
     ROS_INFO("Dumping Action Server: Command Recieved, BACKWARD");
     move_cmd.linear.x = -.1;
     drivebase_publisher.publish(move_cmd);
-    // wait until the the robot has moved the same distance the fiducial
-    // odometry originally read
+
     ROS_INFO("Original Tread Distance starting at %f",
              actualOriginalTreadDistance);
     ROS_INFO("Original Fiducial Distance starting at %f",
@@ -148,14 +147,25 @@ private:
     ROS_INFO("Dumping Action Server: BACKWARD finsihed");
   }
 
-  /*
-   *  Stop Moving
-   */
   void stopMoving() {
     ROS_INFO("Dumping Action Server: Command Recieved, STOP");
     move_cmd.linear.x = 0;
     drivebase_publisher.publish(move_cmd);
     ROS_INFO("Dumping Action Server: STOP finshed");
+  }
+
+  void extendBin() {
+    ROS_INFO("Dumping Action Server: Command Recieved, DUMP");
+    arm_manipulator.moveLeftBinPosition(5.0);  // Extend left bin actuator
+    arm_manipulator.moveRightBinPosition(5.0); // Extend right bin actuator
+    ROS_INFO("Dumping Action Server: DUMP finished");
+  }
+
+  void retractBin() {
+    ROS_INFO("Dumping Action Server: Command Recieved, RESET_DUMPING");
+    arm_manipulator.moveLeftBinPosition(1.0);  // Retract left bin actuator
+    arm_manipulator.moveRightBinPosition(1.0); // Retract right bin actuator
+    ROS_INFO("Dumping Action Server: DUMPING_RESET finished");
   }
 
   void dumpBinContents(const tfr_msgs::EmptyGoalConstPtr &goal) {
@@ -176,20 +186,6 @@ private:
 
     retractBin();
     ros::Duration(10.0).sleep();
-  }
-
-  void extendBin() {
-    ROS_INFO("Dumping Action Server: Command Recieved, DUMP");
-    arm_manipulator.moveLeftBinPosition(5.0);  // Extend left bin actuator
-    arm_manipulator.moveRightBinPosition(5.0); // Extend right bin actuator
-    ROS_INFO("Dumping Action Server: DUMP finished");
-  }
-
-  void retractBin() {
-    ROS_INFO("Dumping Action Server: Command Recieved, RESET_DUMPING");
-    arm_manipulator.moveLeftBinPosition(1.0);  // Retract left bin actuator
-    arm_manipulator.moveRightBinPosition(1.0); // Retract right bin actuator
-    ROS_INFO("Dumping Action Server: DUMPING_RESET finished");
   }
 };
 
