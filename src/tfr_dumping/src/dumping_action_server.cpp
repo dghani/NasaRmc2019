@@ -87,31 +87,27 @@
      private:
        actionlib::SimpleActionServer<tfr_msgs::EmptyAction> server;
        actionlib::SimpleActionClient<tfr_msgs::EmptyAction> detector;
-       // publishers
+       
        ros::Publisher drivebase_publisher;
-       // subscribers
+       
        ros::Subscriber fiducialOdomSubscriber;
        ros::Subscriber drivebaseOdomSubscriber;
-       // distances
-       float currentFiducialDistance;
-       float originalFiducialDistance;
-       float currentTreadDistanceX;
-       float currentTreadDistanceY;
-       float actualCurrentTreadDistance;
-       float originalTreadDistanceX;
-       float originalTreadDistanceY;
-       float actualOriginalTreadDistance;
+       
+       float currentFiducialDistance, originalFiducialDistance;
+       float currentTreadDistanceX, currentTreadDistanceY, actualCurrentTreadDistance;
+       float originalTreadDistanceX, originalTreadDistanceY, actualOriginalTreadDistance;
        //add 0.45 to make up for measuring from the center of the robot, robot is 1 meter.
        float movedDistance = 0;
+       float half_robot_length, adjust_distance;
 
        void fiducialOdomCallback(const nav_msgs::Odometry& dumpDistance) {
            currentFiducialDistance = dumpDistance.pose.pose.position.x;
        }
 
        void drivebaseOdomCallback(const nav_msgs::Odometry& treadDistance) {
-         currentTreadDistanceX = treadDistance.pose.pose.position.x;
-         currentTreadDistanceY = treadDistance.pose.pose.position.x;
-         actualCurrentTreadDistance = sqrt((currentTreadDistanceX * currentTreadDistanceX) + (currentTreadDistanceY * currentTreadDistanceY));
+           currentTreadDistanceX = treadDistance.pose.pose.position.x;
+           currentTreadDistanceY = treadDistance.pose.pose.position.x;
+           actualCurrentTreadDistance = sqrt((currentTreadDistanceX * currentTreadDistanceX) + (currentTreadDistanceY * currentTreadDistanceY));
        }
 
        geometry_msgs::Twist move_cmd{};
