@@ -112,10 +112,12 @@ private:
 
   ArmManipulator arm_manipulator;
 
-  /*
-  Moves backwards 0.5 meters, then stops
-  Then extends and retracts the actuator bin
-  */
+  float setActualOriginalTreadDistance() {
+    actualOriginalTreadDistance =
+        sqrt((currentTreadDistanceX * currentTreadDistanceX) +
+             (currentTreadDistanceY * currentTreadDistanceY));
+    return actualOriginalTreadDistance;
+  }
 
   /*
    * back up slowwwwly we can see now
@@ -162,9 +164,7 @@ private:
     ros::Duration(4.0).sleep();
 
     originalFiducialDistance = currentFiducialDistance;
-    actualOriginalTreadDistance =
-        sqrt((currentTreadDistanceX * currentTreadDistanceX) +
-             (currentTreadDistanceY * currentTreadDistanceY));
+    setActualOriginalTreadDistance();
 
     moveNotBlind();
 
