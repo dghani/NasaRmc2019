@@ -2,7 +2,7 @@
     <node name="monitoring_battery" pkg="tfr_monitoring" type="monitoring_battery" output="screen"/>
     <node name="monitoring_actuator_velocity" pkg="tfr_monitoring" type="monitoring_actuator_velocity.py" output="screen">
         <rosparam>
-            turnTableTolerance: 0.0001
+            turnTableTolerance: 5.0
             lowerArmTolerance: 0.00
             upperArmTolerance: 0.00
             scoopTolerance: 0.00
