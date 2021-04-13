@@ -45,10 +45,10 @@ public:
     double min_lin_vel, max_lin_vel, min_ang_vel, max_ang_vel, ang_tolerance;
 
   public:
-    DumpingConstraints(double min_lin, double max_lin, double min_ang,
-                       double max_ang, double ang_tol)
-        : min_lin_vel(min_lin), max_lin_vel(max_lin), min_ang_vel(min_ang),
-          max_ang_vel(max_ang), ang_tolerance(ang_tol) {}
+    DumpingConstraints(double min_lin, double max_lin, double min_ang, double max_ang, double ang_tol):
+        min_lin_vel(min_lin), max_lin_vel(max_lin), min_ang_vel(min_ang),
+        max_ang_vel(max_ang), ang_tolerance(ang_tol) {}
+
     double getMinLinVel() const { return min_lin_vel; }
     double getMaxLinVel() const { return max_lin_vel; }
     double getMinAngVel() const { return min_ang_vel; }
@@ -56,27 +56,24 @@ public:
     double getAngTolerance() const { return ang_tolerance; }
   };
 
-  Dumper(ros::NodeHandle &node, const std::string &service_name,
-         const DumpingConstraints &c)
-      : server{node, "dump", boost::bind(&Dumper::dumpBinContents, this, _1),
-               false},
-        drivebase_publisher{node.advertise<geometry_msgs::Twist>("cmd_vel", 5)},
-        fiducialOdomSubscriber{node.subscribe(
-            "/fiducial_odom", 5, &Dumper::fiducialOdomCallback, this)},
-        drivebaseOdomSubscriber{node.subscribe(
-            "/drivebase_odom", 5, &Dumper::drivebaseOdomCallback, this)},
-        detector{"light_detection"}, arm_manipulator{node} {
-    ROS_INFO("dumping action server initializing");
-    detector.waitForServer();
-    server.start();
-    ROS_INFO("dumping action server initialized");
+  Dumper(ros::NodeHandle &node, const std::string &service_name, const DumpingConstraints &c):
+         server{node, "dump", boost::bind(&Dumper::dumpBinContents, this, _1), false},
+         drivebase_publisher{node.advertise<geometry_msgs::Twist>("cmd_vel", 5)},
+         fiducialOdomSubscriber{node.subscribe("/fiducial_odom", 5, &Dumper::fiducialOdomCallback, this)},
+         drivebaseOdomSubscriber{node.subscribe("/drivebase_odom", 5, &Dumper::drivebaseOdomCallback, this)},
+         detector{"light_detection"},
+         arm_manipulator{node} {
+            ROS_INFO("dumping action server initializing");
+            detector.waitForServer();
+            server.start();
+            ROS_INFO("dumping action server initialized");
   }
 
-  ~Dumper() = default;
   Dumper(const Dumper &) = delete;
   Dumper &operator=(const Dumper &) = delete;
   Dumper(Dumper &&) = delete;
   Dumper &operator=(Dumper &&) = delete;
+  ~Dumper() = default;
 
 private:
   actionlib::SimpleActionServer<tfr_msgs::EmptyAction> server;
@@ -88,13 +85,15 @@ private:
   ros::Subscriber drivebaseOdomSubscriber;
 
   float currentFiducialDistance, originalFiducialDistance;
-  float currentTreadDistanceX, currentTreadDistanceY,
-      actualCurrentTreadDistance;
-  float originalTreadDistanceX, originalTreadDistanceY,
-      actualOriginalTreadDistance;
-
+  float currentTreadDistanceX, currentTreadDistanceY, actualCurrentTreadDistance;
+  float originalTreadDistanceX, originalTreadDistanceY, actualOriginalTreadDistance;
   float movedDistance = 0;
   float half_robot_length, adjust_distance;
+
+  geometry_msgs::Twist move_cmd{};
+
+  ArmManipulator arm_manipulator;
+
 
   void fiducialOdomCallback(const nav_msgs::Odometry &dumpDistance) {
     currentFiducialDistance = dumpDistance.pose.pose.position.x;
@@ -103,48 +102,36 @@ private:
   void drivebaseOdomCallback(const nav_msgs::Odometry &treadDistance) {
     currentTreadDistanceX = treadDistance.pose.pose.position.x;
     currentTreadDistanceY = treadDistance.pose.pose.position.x;
-    actualCurrentTreadDistance =
-        sqrt((currentTreadDistanceX * currentTreadDistanceX) +
-             (currentTreadDistanceY * currentTreadDistanceY));
+    actualCurrentTreadDistance = sqrt((currentTreadDistanceX * currentTreadDistanceX) +
+                                      (currentTreadDistanceY * currentTreadDistanceY));
   }
 
-  geometry_msgs::Twist move_cmd{};
-
-  ArmManipulator arm_manipulator;
 
   float setActualOriginalTreadDistance() {
-    actualOriginalTreadDistance =
-        sqrt((currentTreadDistanceX * currentTreadDistanceX) +
-             (currentTreadDistanceY * currentTreadDistanceY));
+    actualOriginalTreadDistance = sqrt((currentTreadDistanceX * currentTreadDistanceX) +
+                                       (currentTreadDistanceY * currentTreadDistanceY));
     return actualOriginalTreadDistance;
   }
 
-  /*
-   * back up slowwwwly we can see now
-   */
   void moveNotBlind() {
     ROS_INFO("Dumping Action Server: Command Recieved, BACKWARD");
     move_cmd.linear.x = -.1;
     drivebase_publisher.publish(move_cmd);
-
-    ROS_INFO("Original Tread Distance starting at %f",
-             actualOriginalTreadDistance);
-    ROS_INFO("Original Fiducial Distance starting at %f",
-             originalFiducialDistance);
-    ROS_INFO("Original Current Tread Distance Starting at %f",
-             actualCurrentTreadDistance);
+    // when done testing, take out from here
+    ROS_INFO("Original Tread Distance starting at %f", actualOriginalTreadDistance);
+    ROS_INFO("Original Fiducial Distance starting at %f", originalFiducialDistance);
+    ROS_INFO("Original Current Tread Distance Starting at %f", actualCurrentTreadDistance);
+    // to here
     while (movedDistance < originalFiducialDistance) {
-      movedDistance =
-          (actualOriginalTreadDistance - actualCurrentTreadDistance) +
-          half_robot_length + adjust_distance;
+      movedDistance = (actualOriginalTreadDistance - actualCurrentTreadDistance) +
+                       half_robot_length + adjust_distance;
     }
-    ROS_INFO("Original Tread Distance Finished at %f",
-             actualOriginalTreadDistance);
-    ROS_INFO("Original Fiducial Distance Finished at %f",
-             originalFiducialDistance);
-    ROS_INFO("Original Current Tread Distance Finished at %f",
-             actualCurrentTreadDistance);
+    // when done testing, take out from here
+    ROS_INFO("Original Tread Distance Finished at %f", actualOriginalTreadDistance);
+    ROS_INFO("Original Fiducial Distance Finished at %f", originalFiducialDistance);
+    ROS_INFO("Original Current Tread Distance Finished at %f", actualCurrentTreadDistance);
     ROS_INFO("Dumping Action Server: BACKWARD finsihed");
+    // to here
   }
 
   void stopMoving() {
@@ -189,24 +176,24 @@ private:
   }
 };
 
-/*
-initialize ros
-create Dumper object
-*/
+
 int main(int argc, char **argv) {
   ros::init(argc, argv, "dumping_action_server");
   ros::NodeHandle n;
+
   double min_lin_vel, max_lin_vel, min_ang_vel, max_ang_vel, ang_tolerance;
+  std::string service_name;
   ros::param::param<double>("~min_lin_vel", min_lin_vel, 0);
   ros::param::param<double>("~max_lin_vel", max_lin_vel, 0);
   ros::param::param<double>("~min_ang_vel", min_ang_vel, 0);
   ros::param::param<double>("~max_ang_vel", max_ang_vel, 0);
   ros::param::param<double>("~ang_tolerance", ang_tolerance, 0);
-  std::string service_name;
   ros::param::param<std::string>("~image_service_name", service_name, "");
   Dumper::DumpingConstraints constraints(min_lin_vel, max_lin_vel, min_ang_vel,
                                          max_ang_vel, ang_tolerance);
+
   Dumper dumper(n, service_name, constraints);
+
   ros::spin();
   return 0;
 }
