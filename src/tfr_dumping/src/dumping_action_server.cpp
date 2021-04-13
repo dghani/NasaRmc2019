@@ -24,11 +24,11 @@
  *
  * First checks fiducual odometry for distance from dumping location
  *
- * Next, checks odometry filtered distance
+ * Next, checks drivebase odometry distance
  *
- * Then, moves backwards until the displacement of the average of left tread
- * and right tread distance is greater than or equal to the original distance
- * from the dumping location accirding to fiducial odometry.
+ * Then, moves backwards until the displacement of the drivebase odometry 
+ * is greater than or equal to the original distance from the dumping 
+ * location according to fiducial odometry.
  *
  * Next, Raises bin.
  *
@@ -58,7 +58,7 @@ public:
          drivebase_publisher{node.advertise<geometry_msgs::Twist>("cmd_vel", 5)},
          fiducialOdomSubscriber{node.subscribe("/fiducial_odom", 5, &Dumper::fiducialOdomCallback, this)},
          drivebaseOdomSubscriber{node.subscribe("/drivebase_odom", 5, &Dumper::drivebaseOdomCallback, this)},
-         //detector{"light_detection"},
+         detector{"light_detection"},
          arm_manipulator{node} {
             ROS_INFO("dumping action server initializing");
             detector.waitForServer();
