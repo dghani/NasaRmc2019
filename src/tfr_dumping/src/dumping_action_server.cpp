@@ -52,13 +52,12 @@ public:
     double getMaxAngVel() const { return max_ang_vel; }
     double getAngTolerance() const { return ang_tolerance; }
   };
-
+//detector{"light_detection"},
   Dumper(ros::NodeHandle &node, const std::string &service_name, const DumpingConstraints &c):
          server{node, "dump", boost::bind(&Dumper::dumpBinContents, this, _1), false},
          drivebase_publisher{node.advertise<geometry_msgs::Twist>("cmd_vel", 5)},
          fiducialOdomSubscriber{node.subscribe("/fiducial_odom", 5, &Dumper::fiducialOdomCallback, this)},
          drivebaseOdomSubscriber{node.subscribe("/drivebase_odom", 5, &Dumper::drivebaseOdomCallback, this)},
-         detector{"light_detection"},
          arm_manipulator{node} {
             ROS_INFO("dumping action server initializing");
             detector.waitForServer();
