@@ -149,7 +149,7 @@ private:
 
   // where the actions of dumping are called
   void dumpBinContents(const tfr_msgs::EmptyGoalConstPtr &goal) {
-    // make sure robot is not moving so fiducial odom is accurate as possible
+    // sleep makes sure robot is not moving so fiducial odom is accurate as possible
     // when original fiducial distance is set
     ros::Duration(4.0).sleep();
 
