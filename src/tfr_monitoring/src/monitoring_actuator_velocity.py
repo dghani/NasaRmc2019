@@ -27,7 +27,6 @@ def turnTableCallback(msg):
     rospy.loginfo(turnTableVelocity)
     if turnTableVelocity < 5.0:
         mon.turnTableMoving = False
-
     else:
         mon.turnTableMoving = True
 
