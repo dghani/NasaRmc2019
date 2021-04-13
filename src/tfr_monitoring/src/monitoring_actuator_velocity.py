@@ -14,6 +14,7 @@
 import rospy
 from std_msgs.msg import Float32
 
+TURNTABLETOLERANCE = 0.1
 
 class monitor:
     turnTableMoving = True
@@ -24,17 +25,19 @@ class monitor:
 
 def turnTableCallback(msg):
     turnTableVelocity = msg.data
-    rospy.loginfo(turnTableVelocity)
-    if turnTableVelocity < 5.0:
+    if turnTableVelocity < TURNTABLETOLERANCE:
         mon.turnTableMoving = False
+        rospy.loginfo("false")
     else:
         mon.turnTableMoving = True
+        rospy.loginfo("true")
 
 
 if __name__ == '__main__':
-    while True:
-        try:
-            rospy.init_node('monitoring_actuator_velocity')
-            mon = monitor()
-        except rospy.ROSInterruptException:
-            pass
+    try:
+        rospy.init_node('monitoring_actuator_velocity')
+        mon = monitor()
+    except rospy.ROSInterruptException:
+        pass
+
+    rospy.spin()
