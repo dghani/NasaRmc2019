@@ -1,3 +1,19 @@
+/*
+ * First checks fiducual odometry for distance from dumping location
+ *
+ * Next, checks drivebase odometry distance
+ *
+ * Then, moves backwards until the displacement of the drivebase odometry
+ * is greater than or equal to the original distance from the dumping
+ * location according to fiducial odometry.
+ *
+ * Next, Raises bin.
+ *
+ * FInally, lowers bin
+ *
+ * published topic: -/cmd_vel geometry_msgs/Twist the drivebase velocity
+ * */
+
 #include <actionlib/client/simple_action_client.h>
 #include <actionlib/server/simple_action_server.h>
 #include <geometry_msgs/Twist.h>
@@ -16,24 +32,7 @@
 #include <tfr_utilities/arm_manipulator.h>
 #include <tfr_utilities/control_code.h>
 
-/*
- *
- * published topics:
- *   -/cmd_vel geometry_msgs/Twist the drivebase velocity
- *
- *
- * First checks fiducual odometry for distance from dumping location
- *
- * Next, checks drivebase odometry distance
- *
- * Then, moves backwards until the displacement of the drivebase odometry 
- * is greater than or equal to the original distance from the dumping 
- * location according to fiducial odometry.
- *
- * Next, Raises bin.
- *
- * FInally, lowers bin
- * */
+
 
 class Dumper {
 public:
@@ -52,7 +51,7 @@ public:
     double getMaxAngVel() const { return max_ang_vel; }
     double getAngTolerance() const { return ang_tolerance; }
   };
-//detector{"light_detection"},
+
   Dumper(ros::NodeHandle &node, const std::string &service_name, const DumpingConstraints &c):
          server{node, "dump", boost::bind(&Dumper::dumpBinContents, this, _1), false},
          drivebase_publisher{node.advertise<geometry_msgs::Twist>("cmd_vel", 5)},
@@ -60,7 +59,6 @@ public:
          drivebaseOdomSubscriber{node.subscribe("/drivebase_odom", 5, &Dumper::drivebaseOdomCallback, this)},
          arm_manipulator{node} {
             ROS_INFO("dumping action server initializing");
-            detector.waitForServer();
             server.start();
             ROS_INFO("dumping action server initialized");
   }
@@ -71,9 +69,9 @@ public:
   Dumper &operator=(Dumper &&) = delete;
   ~Dumper() = default;
 
+
 private:
   actionlib::SimpleActionServer<tfr_msgs::EmptyAction> server;
-  actionlib::SimpleActionClient<tfr_msgs::EmptyAction> detector;
 
   ros::Publisher drivebase_publisher;
 
@@ -91,23 +89,21 @@ private:
   ArmManipulator arm_manipulator;
 
 
+
+  // continually upddating but only needed to set original fiducial distance
   void fiducialOdomCallback(const nav_msgs::Odometry &dumpDistance) {
     currentFiducialDistance = dumpDistance.pose.pose.position.x;
   }
 
+  // continually updating actualCurrentTreadDistance so we can know how far the robot has moved
   void drivebaseOdomCallback(const nav_msgs::Odometry &treadDistance) {
     currentTreadDistanceX = treadDistance.pose.pose.position.x;
-    currentTreadDistanceY = treadDistance.pose.pose.position.x;
+    currentTreadDistanceY = treadDistance.pose.pose.position.y;
     actualCurrentTreadDistance = sqrt((currentTreadDistanceX * currentTreadDistanceX) +
                                       (currentTreadDistanceY * currentTreadDistanceY));
   }
 
 
-  float setActualOriginalTreadDistance() {
-    actualOriginalTreadDistance = sqrt((currentTreadDistanceX * currentTreadDistanceX) +
-                                       (currentTreadDistanceY * currentTreadDistanceY));
-    return actualOriginalTreadDistance;
-  }
 
   void moveNotBlind() {
     ROS_INFO("Dumping Action Server: Command Recieved, BACKWARD");
@@ -151,13 +147,14 @@ private:
     ROS_INFO("Dumping Action Server: DUMPING_RESET finished");
   }
 
+  // where the actions of dumping are called
   void dumpBinContents(const tfr_msgs::EmptyGoalConstPtr &goal) {
     // make sure robot is not moving so fiducial odom is accurate as possible
     // when original fiducial distance is set
     ros::Duration(4.0).sleep();
 
     originalFiducialDistance = currentFiducialDistance;
-    setActualOriginalTreadDistance();
+    actualOriginalTreadDistance = actualCurrentTreadDistance;
 
     moveNotBlind();
 
@@ -173,6 +170,7 @@ private:
 };
 
 
+
 int main(int argc, char **argv) {
   ros::init(argc, argv, "dumping_action_server");
   ros::NodeHandle n;
@@ -185,7 +183,7 @@ int main(int argc, char **argv) {
   ros::param::param<double>("~ang_tolerance", ang_tolerance, 0);
   Dumper::DumpingConstraints constraints(min_lin_vel, max_lin_vel, min_ang_vel,
                                          max_ang_vel, ang_tolerance);
-  
+
   std::string service_name;
   ros::param::param<std::string>("~image_service_name", service_name, "");
 
