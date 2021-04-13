@@ -18,9 +18,6 @@
 
 /*
  *
- * Its first step is to make sure it can see the aruco board, it will abort the
- * mission if it can't. <todo>
- *
  * published topics:
  *   -/cmd_vel geometry_msgs/Twist the drivebase velocity
  *
@@ -61,7 +58,7 @@ public:
          drivebase_publisher{node.advertise<geometry_msgs::Twist>("cmd_vel", 5)},
          fiducialOdomSubscriber{node.subscribe("/fiducial_odom", 5, &Dumper::fiducialOdomCallback, this)},
          drivebaseOdomSubscriber{node.subscribe("/drivebase_odom", 5, &Dumper::drivebaseOdomCallback, this)},
-         detector{"light_detection"},
+         //detector{"light_detection"},
          arm_manipulator{node} {
             ROS_INFO("dumping action server initializing");
             detector.waitForServer();
@@ -182,15 +179,16 @@ int main(int argc, char **argv) {
   ros::NodeHandle n;
 
   double min_lin_vel, max_lin_vel, min_ang_vel, max_ang_vel, ang_tolerance;
-  std::string service_name;
   ros::param::param<double>("~min_lin_vel", min_lin_vel, 0);
   ros::param::param<double>("~max_lin_vel", max_lin_vel, 0);
   ros::param::param<double>("~min_ang_vel", min_ang_vel, 0);
   ros::param::param<double>("~max_ang_vel", max_ang_vel, 0);
   ros::param::param<double>("~ang_tolerance", ang_tolerance, 0);
-  ros::param::param<std::string>("~image_service_name", service_name, "");
   Dumper::DumpingConstraints constraints(min_lin_vel, max_lin_vel, min_ang_vel,
                                          max_ang_vel, ang_tolerance);
+  
+  std::string service_name;
+  ros::param::param<std::string>("~image_service_name", service_name, "");
 
   Dumper dumper(n, service_name, constraints);
 
