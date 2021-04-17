@@ -93,28 +93,27 @@ private:
     actualCurrentTreadDistance = -actualCurrentTreadDistance;
     ROS_INFO("Moved Distance: %f", movedDistance);
   }
-
-
-
+  
+  
+  // moves backwards until the moved distance is equal to or greater than the original fiducial odometry distance
   void moveNotBlind() {
     ROS_INFO("Dumping Action Server: Command Recieved, BACKWARD");
     move_cmd.linear.x = -.1;
     drivebase_publisher.publish(move_cmd);
-    // when done testing, take out from here
+    
     ROS_INFO("Original Tread Distance starting at %f", actualOriginalTreadDistance);
     ROS_INFO("Original Fiducial Distance starting at %f", originalFiducialDistance);
     ROS_INFO("Original Current Tread Distance Starting at %f", actualCurrentTreadDistance);
-    // to here
+    
     while (movedDistance < originalFiducialDistance) {
       movedDistance = (actualOriginalTreadDistance - actualCurrentTreadDistance) +
                        half_robot_length + adjust_distance;
     }
-    // when done testing, take out from here
+    
     ROS_INFO("Original Tread Distance Finished at %f", actualOriginalTreadDistance);
     ROS_INFO("Original Fiducial Distance Finished at %f", originalFiducialDistance);
     ROS_INFO("Original Current Tread Distance Finished at %f", actualCurrentTreadDistance);
     ROS_INFO("Dumping Action Server: BACKWARD finsihed");
-    // to here
   }
 
   void stopMoving() {
