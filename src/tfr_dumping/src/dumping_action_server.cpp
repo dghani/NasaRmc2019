@@ -117,6 +117,7 @@ private:
     while (movedDistance < originalFiducialDistance) {
       movedDistance = (actualOriginalTreadDistance - actualCurrentTreadDistance) +
                        half_robot_length + adjust_distance;
+      ROS_INFO("Moved Distance: %f", movedDistance);
     }
     // when done testing, take out from here
     ROS_INFO("Original Tread Distance Finished at %f", actualOriginalTreadDistance);
