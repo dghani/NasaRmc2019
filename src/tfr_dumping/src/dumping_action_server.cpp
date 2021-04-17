@@ -82,7 +82,6 @@ private:
   float currentTreadDistanceX, currentTreadDistanceY, actualCurrentTreadDistance;
   float originalTreadDistanceX, originalTreadDistanceY, actualOriginalTreadDistance;
   float movedDistance = 0;
-  float half_robot_length, adjust_distance;
 
   geometry_msgs::Twist move_cmd{};
 
@@ -186,6 +185,7 @@ int main(int argc, char **argv) {
   ros::param::param<double>("~min_ang_vel", min_ang_vel, 0);
   ros::param::param<double>("~max_ang_vel", max_ang_vel, 0);
   ros::param::param<double>("~ang_tolerance", ang_tolerance, 0);
+  float half_robot_length, adjust_distance;
   ros::param::param<float>("~half_robot_length", half_robot_length, 0);
   ros::param::param<float>("~adjust_distance", adjust_distance, 0);
   Dumper::DumpingConstraints constraints(min_lin_vel, max_lin_vel, min_ang_vel,
