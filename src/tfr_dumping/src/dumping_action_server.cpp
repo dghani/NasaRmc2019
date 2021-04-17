@@ -194,6 +194,7 @@ int main(int argc, char **argv) {
 
   Dumper dumper(n, service_name, constraints);
 
+  ros::Rate rate(1);
   ros::spin();
   return 0;
 }
