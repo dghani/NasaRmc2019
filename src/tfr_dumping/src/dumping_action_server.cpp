@@ -37,7 +37,7 @@
 class Dumper {
 public:
   
-  Dumper(ros::NodeHandle &node, const std::string &service_name, const DumpingConstraints &c):
+  Dumper(ros::NodeHandle &node, const std::string &service_name):
          server{node, "dump", boost::bind(&Dumper::dumpBinContents, this, _1), false},
          drivebase_publisher{node.advertise<geometry_msgs::Twist>("cmd_vel", 5)},
          fiducialOdomSubscriber{node.subscribe("/fiducial_odom", 5, &Dumper::fiducialOdomCallback, this)},
@@ -167,8 +167,6 @@ int main(int argc, char **argv) {
   float half_robot_length, adjust_distance;
   ros::param::param<float>("~half_robot_length", half_robot_length, 0);
   ros::param::param<float>("~adjust_distance", adjust_distance, 0);
-  Dumper::DumpingConstraints constraints(min_lin_vel, max_lin_vel, min_ang_vel,
-                                         max_ang_vel, ang_tolerance);
 
   std::string service_name;
   ros::param::param<std::string>("~image_service_name", service_name, "");
