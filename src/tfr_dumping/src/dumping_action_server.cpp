@@ -186,6 +186,8 @@ int main(int argc, char **argv) {
   ros::param::param<double>("~min_ang_vel", min_ang_vel, 0);
   ros::param::param<double>("~max_ang_vel", max_ang_vel, 0);
   ros::param::param<double>("~ang_tolerance", ang_tolerance, 0);
+  ros::param::param<float>("~half_robot_length", half_robot_length, 0);
+  ros::param::param<float>("~adjust_distance", adjust_distance, 0);
   Dumper::DumpingConstraints constraints(min_lin_vel, max_lin_vel, min_ang_vel,
                                          max_ang_vel, ang_tolerance);
 
