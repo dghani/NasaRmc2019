@@ -36,22 +36,7 @@
 
 class Dumper {
 public:
-  struct DumpingConstraints {
-  private:
-    double min_lin_vel, max_lin_vel, min_ang_vel, max_ang_vel, ang_tolerance;
-
-  public:
-    DumpingConstraints(double min_lin, double max_lin, double min_ang, double max_ang, double ang_tol):
-        min_lin_vel(min_lin), max_lin_vel(max_lin), min_ang_vel(min_ang),
-        max_ang_vel(max_ang), ang_tolerance(ang_tol) {}
-
-    double getMinLinVel() const { return min_lin_vel; }
-    double getMaxLinVel() const { return max_lin_vel; }
-    double getMinAngVel() const { return min_ang_vel; }
-    double getMaxAngVel() const { return max_ang_vel; }
-    double getAngTolerance() const { return ang_tolerance; }
-  };
-
+  
   Dumper(ros::NodeHandle &node, const std::string &service_name, const DumpingConstraints &c):
          server{node, "dump", boost::bind(&Dumper::dumpBinContents, this, _1), false},
          drivebase_publisher{node.advertise<geometry_msgs::Twist>("cmd_vel", 5)},
@@ -179,12 +164,6 @@ int main(int argc, char **argv) {
   ros::init(argc, argv, "dumping_action_server");
   ros::NodeHandle n;
 
-  double min_lin_vel, max_lin_vel, min_ang_vel, max_ang_vel, ang_tolerance;
-  ros::param::param<double>("~min_lin_vel", min_lin_vel, 0);
-  ros::param::param<double>("~max_lin_vel", max_lin_vel, 0);
-  ros::param::param<double>("~min_ang_vel", min_ang_vel, 0);
-  ros::param::param<double>("~max_ang_vel", max_ang_vel, 0);
-  ros::param::param<double>("~ang_tolerance", ang_tolerance, 0);
   float half_robot_length, adjust_distance;
   ros::param::param<float>("~half_robot_length", half_robot_length, 0);
   ros::param::param<float>("~adjust_distance", adjust_distance, 0);
@@ -196,7 +175,7 @@ int main(int argc, char **argv) {
 
   Dumper dumper(n, service_name, constraints);
 
-  ros::Rate rate(1);
+  ros::Rate rate(10);
   ros::spin();
   return 0;
 }
