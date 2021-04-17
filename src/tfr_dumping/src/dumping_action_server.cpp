@@ -56,7 +56,7 @@ public:
          server{node, "dump", boost::bind(&Dumper::dumpBinContents, this, _1), false},
          drivebase_publisher{node.advertise<geometry_msgs::Twist>("cmd_vel", 5)},
          fiducialOdomSubscriber{node.subscribe("/fiducial_odom", 5, &Dumper::fiducialOdomCallback, this)},
-         drivebaseOdomSubscriber{node.subscribe("/drivebase_odom", 5, &Dumper::drivebaseOdomCallback, this)},
+         filteredOdomSubscriber{node.subscribe("/odometry/filtered", 5, &Dumper::filteredOdomCallback, this)},
          arm_manipulator{node} {
             ROS_INFO("dumping action server initializing");
             server.start();
@@ -76,7 +76,7 @@ private:
   ros::Publisher drivebase_publisher;
 
   ros::Subscriber fiducialOdomSubscriber;
-  ros::Subscriber drivebaseOdomSubscriber;
+  ros::Subscriber filteredOdomSubscriber;
 
   float currentFiducialDistance, originalFiducialDistance;
   float currentTreadDistanceX, currentTreadDistanceY, actualCurrentTreadDistance;
@@ -96,7 +96,7 @@ private:
   }
 
   // continually updating actualCurrentTreadDistance so we can know how far the robot has moved
-  void drivebaseOdomCallback(const nav_msgs::Odometry &treadDistance) {
+  void filteredOdomCallback(const nav_msgs::Odometry &treadDistance) {
     currentTreadDistanceX = treadDistance.pose.pose.position.x;
     currentTreadDistanceY = treadDistance.pose.pose.position.y;
     actualCurrentTreadDistance = sqrt((currentTreadDistanceX * currentTreadDistanceX) +
