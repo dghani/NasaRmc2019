@@ -104,7 +104,7 @@ private:
                                       (currentTreadDistanceY * currentTreadDistanceY));
     // this was done because I think the distance formula was resulting in the wrong sign so I 
     // flipped it, so I just flipped it
-    actualCurrentTreadDistance = -actualCurrentTreadDistance
+    actualCurrentTreadDistance = -actualCurrentTreadDistance;
   }
 
 
