@@ -36,14 +36,14 @@
 
 class Dumper {
 public:
-  
-  Dumper(ros::NodeHandle &node, const std::string &service_name, float half_robot_length, float adjust_distance):
+
+  Dumper(ros::NodeHandle &node, const std::string &service_name, const float half_robot_length, const float adjust_distance, const std::string odometry):
+         arm_manipulator{node},
          server{node, "dump", boost::bind(&Dumper::dumpBinContents, this, _1), false},
          half_robot_length{half_robot_length}, adjust_distance{adjust_distance},
          drivebase_publisher{node.advertise<geometry_msgs::Twist>("cmd_vel", 5)},
          fiducialOdomSubscriber{node.subscribe("/fiducial_odom", 5, &Dumper::fiducialOdomCallback, this)},
-         filteredOdomSubscriber{node.subscribe("/odometry/filtered", 5, &Dumper::filteredOdomCallback, this)},
-         arm_manipulator{node} {
+         filteredOdomSubscriber{node.subscribe("odometry", 5, &Dumper::odomCallback, this)} {
             ROS_INFO("dumping action server initializing");
             server.start();
             ROS_INFO("dumping action server initialized");
@@ -63,11 +63,10 @@ private:
 
   ros::Subscriber fiducialOdomSubscriber;
   ros::Subscriber filteredOdomSubscriber;
-  
+
   float half_robot_length, adjust_distance;
   float currentFiducialDistance, originalFiducialDistance;
-  float currentTreadDistanceX, currentTreadDistanceY, actualCurrentTreadDistance;
-  float originalTreadDistanceX, originalTreadDistanceY, actualOriginalTreadDistance;
+  float currDistanceX, currDistanceY, actualCurrDistance, actualOriginalDistance;
   float movedDistance = 0;
 
   geometry_msgs::Twist move_cmd{};
@@ -82,37 +81,37 @@ private:
   }
 
   // continually updating actualCurrentTreadDistance so we can know how far the robot has moved
-  void filteredOdomCallback(const nav_msgs::Odometry &treadDistance) {
-    currentTreadDistanceX = treadDistance.pose.pose.position.x;
-    currentTreadDistanceY = treadDistance.pose.pose.position.y;
+  void odomCallback(const nav_msgs::Odometry &distance) {
+    currDistanceX = distance.pose.pose.position.x;
+    currDistanceY = distance.pose.pose.position.y;
     // distance formula
-    actualCurrentTreadDistance = sqrt((currentTreadDistanceX * currentTreadDistanceX) +
-                                      (currentTreadDistanceY * currentTreadDistanceY));
+    actualCurrDistance = sqrt((currDistanceX * currDistanceX) +
+                              (currDistanceY * currDistanceY));
     // this was done because I think the distance formula was resulting in the wrong sign,
     // so I just flipped it
-    actualCurrentTreadDistance = -actualCurrentTreadDistance;
+    actualCurrDistance = -actualCurrDistance;
   }
-  
-  
-  
+
+
+
   // moves backwards until the moved distance is equal to or greater than the original fiducial odometry distance
   void moveNotBlind() {
     ROS_INFO("Dumping Action Server: Command Recieved, BACKWARD");
     move_cmd.linear.x = -.1;
     drivebase_publisher.publish(move_cmd);
-    
-    ROS_INFO("Original Tread Distance starting at %f", actualOriginalTreadDistance);
+
+    ROS_INFO("Original Tread Distance starting at %f", actualOriginalDistance);
     ROS_INFO("Original Fiducial Distance starting at %f", originalFiducialDistance);
-    ROS_INFO("Original Current Tread Distance Starting at %f", actualCurrentTreadDistance);
-    
+    ROS_INFO("Original Current Tread Distance Starting at %f", actualCurrDistance);
+
     while (movedDistance < originalFiducialDistance) {
-      movedDistance = (actualOriginalTreadDistance - actualCurrentTreadDistance) +
+      movedDistance = (actualOriginalDistance - actualCurrDistance) +
                        half_robot_length + adjust_distance;
     }
-    
-    ROS_INFO("Original Tread Distance Finished at %f", actualOriginalTreadDistance);
+
+    ROS_INFO("Original Tread Distance Finished at %f", actualOriginalDistance);
     ROS_INFO("Original Fiducial Distance Finished at %f", originalFiducialDistance);
-    ROS_INFO("Original Current Tread Distance Finished at %f", actualCurrentTreadDistance);
+    ROS_INFO("Original Current Tread Distance Finished at %f", actualCurrDistance);
     ROS_INFO("Dumping Action Server: BACKWARD finsihed");
   }
 
@@ -144,7 +143,7 @@ private:
     ros::Duration(4.0).sleep();
 
     originalFiducialDistance = currentFiducialDistance;
-    actualOriginalTreadDistance = actualCurrentTreadDistance;
+    this->actualOriginalDistance = this->actualCurrDistance;
 
     moveNotBlind();
 
@@ -172,7 +171,10 @@ int main(int argc, char **argv) {
   std::string service_name;
   ros::param::param<std::string>("~image_service_name", service_name, "");
 
-  Dumper dumper(n, service_name, half_robot_length, adjust_distance);
+  std::string odometry;
+  ros::param::param<std::string>("~odometry", odometry, "");
+
+  Dumper dumper(n, service_name, half_robot_length, adjust_distance, odometry);
 
   ros::Rate rate(10);
   ros::spin();
