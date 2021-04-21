@@ -6,8 +6,6 @@
             lowerArmTolerance: 7.00
             upperArmTolerance: 3.00
             scoopTolerance: 2.00
-            leftBinTolerance: 0.00
-            rightBinTolerance: 0.00
         </rosparam>
     </node>
 </launch>
