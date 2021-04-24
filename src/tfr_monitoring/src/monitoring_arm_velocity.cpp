@@ -65,7 +65,7 @@ private:
   //called when the subsribers recieve a message from the publishers
 
   void turnTableCallback(const std_msgs::Float32& turnTableVelocity) {
-    if (turnTableVelocity.data == 0) {
+    if (turnTableVelocity.data < turnTableTolerance && turnTableVelocity.data > -turnTableTolerance) {
       this->turnTableMoving.data = false;
     }
     else {
@@ -75,7 +75,7 @@ private:
   }
 
   void lowerArmCallback(const std_msgs::Float32& lowerArmVelocity) {
-    if (lowerArmVelocity.data == 0) {
+    if (lowerArmVelocity.data < lowerArmTolerance && lowerArmVelocity.data > -lowerArmTolerance) {
       this->lowerArmMoving.data = false;
     }
     else {
@@ -85,7 +85,7 @@ private:
   }
 
   void upperArmCallback(const std_msgs::Float32& upperArmVelocity) {
-    if (upperArmVelocity.data == 0) {
+    if (upperArmVelocity.data < upperArmTolerance && upperArmVelocity.data > -upperArmTolerance) {
       this->upperArmMoving.data = false;
     }
     else {
@@ -95,7 +95,7 @@ private:
   }
 
   void scoopCallback(const std_msgs::Float32& scoopVelocity) {
-    if (scoopVelocity.data == 0) {
+    if (scoopVelocity.data < scoopTolerance && scoopVelocity.data > -scoopTolerance) {
       this->scoopMoving.data = false;
     }
     else {
