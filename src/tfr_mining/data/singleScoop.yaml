@@ -5,7 +5,7 @@
 # -5.8 is mining spot
 #[turntable, lowerArm, upperArm, scoop]
 positions: [
-  [[0.1, 4.79, 1.0, 2.0], 
+  [[3.14, 4.79, 1.0, 2.0], 
   [3.14, 4.79, 1.0, 2.0], #scoop 1 Zero position
   [3.14, 4.79, 1.0, 2.0],
   [3.14, 4.79, 1.0, 2.0],
