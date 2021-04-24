@@ -23,7 +23,7 @@
 class monitorArmVelocity {
 public:
   monitorArmVelocity(ros::NodeHandle &nh, const float turnTableTolerance, const float lowerArmTolerance, const float upperArmTolerance, const float scoopTolerance) :
-      turnTableSub{nh.subscribe("/device1/velocity_actual_value", 5, &monitorArmVelocity::turnTableCallback, this)},
+      turnTableSub{nh.subscribe("/device1/velocity_actual_values/velocity_actual_value_averaged", 5, &monitorArmVelocity::turnTableCallback, this)},
       lowerArmSub{nh.subscribe("/device23/velocity_actual_value", 5, &monitorArmVelocity::lowerArmCallback, this)},
       upperArmSub{nh.subscribe("/device45/velocity_actual_value", 5, &monitorArmVelocity::upperArmCallback, this)},
       scoopSub{nh.subscribe("/device56/velocity_actual_value", 5, &monitorArmVelocity::scoopCallback, this)},
