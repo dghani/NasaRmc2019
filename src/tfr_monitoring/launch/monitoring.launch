@@ -3,9 +3,9 @@
     <node name="monitoring_arm_velocity" pkg="tfr_monitoring" type="monitoring_arm_velocity" output="screen">
         <rosparam>
             turnTableTolerance: 0.00000001
-            lowerArmTolerance: 0.001
-            upperArmTolerance: 0.001
-            scoopTolerance: 0.001
+            lowerArmTolerance: 0.00000001
+            upperArmTolerance: 0.00000001
+            scoopTolerance: 0.00000001
         </rosparam>
     </node>
 </launch>
