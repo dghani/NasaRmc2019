@@ -153,28 +153,28 @@ private:
 
 
     void turnTableVelocityCallback(const std_msgs::Bool &turnTableStatus) {
-      //Outputting velocity for tests
+      //Outputting bool for tests
       ROS_INFO("Turn Table moving: %d\n", turnTableStatus.data);
 
       this->turnTableMoving = turnTableStatus.data;
     }
 
     void lowerArmVelocityCallback(const std_msgs::Bool &lowerArmStatus) {
-      //Outputting velocity for tests
+      //Outputting bool for tests
       ROS_INFO("Lower arm mooving: %d\n", lowerArmStatus.data);
 
       this->lowerArmMoving = lowerArmStatus.data;
     }
 
     void upperArmVelocityCallback(const std_msgs::Bool &upperArmStatus) {
-      //Outputting velocity for tests
+      //Outputting bool for tests
       ROS_INFO("Upper arm moving: %d\n", upperArmStatus.data);
 
       this->upperArmMoving = upperArmStatus.data;
     }
 
     void scoopVelocityCallback(const std_msgs::Bool &scoopStatus) {
-      //Outputting velocity for tests
+      //Outputting bool for tests
       ROS_INFO("Scoop moving: %d\n", scoopStatus.data);
 
       this->scoopMoving = scoopStatus.data;
