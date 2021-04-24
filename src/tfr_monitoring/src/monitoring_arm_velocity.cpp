@@ -71,6 +71,7 @@ private:
     else {
       this->turnTableMoving.data = true;
     }
+    ROS_INFO("Turn table velocity: %d\n"turnTableVelocity.data)
     turnTablePub.publish(turnTableMoving);
   }
 
