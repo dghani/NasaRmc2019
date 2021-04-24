@@ -156,13 +156,38 @@ void setupMaxonDevice(kaco::Device& device, kaco::Bridge& bridge, std::string& e
     auto iopub_3 = std::make_shared<kaco::EntryPublisher>(device, "velocity_actual_values/velocity_actual_value_averaged");
     bridge.add_publisher(iopub_3, loop_rate);
 
+    // Publishing/subscribing to find right topic for turntable encoder.
     // Publisher and subscriber since it is a read/write.
     auto iopub_4 = std::make_shared<kaco::EntryPublisher>(device, "digital_incremental_encoder_1/digital_incremental_encoder_1_number_of_pulses");
     bridge.add_publisher(iopub_4, loop_rate);
     
     auto iosub_5 = std::make_shared<kaco::EntrySubscriber>(device, "digital_incremental_encoder_1/digital_incremental_encoder_1_number_of_pulses");
     bridge.add_subscriber(iosub_5);
+
+    auto iopub_6 = std::make_shared<kaco::EntryPublisher>(device, "ssi_absolute_encoder/ssi_number_of_data_bits");
+    bridge.add_publisher(iopub_6, loop_rate);
     
+    auto iosub_7 = std::make_shared<kaco::EntrySubscriber>(device, "ssi_absolute_encoder/ssi_number_of_data_bits");
+    bridge.add_subscriber(iosub_7);
+
+    auto iopub_8 = std::make_shared<kaco::EntryPublisher>(device, "digital_incremental_encoder_2/digital_incremental_encoder_2_number_of_pulses");
+    bridge.add_publisher(iopub_8, loop_rate);
+
+    auto iosub_9 = std::make_shared<kaco::EntrySubscriber>(device, "digital_incremental_encoder_2/digital_incremental_encoder_2_number_of_pulses");
+    bridge.add_subscriber(iosub_9);
+
+    // Home position is a RWW, dont know if pub and sub are set up the same.
+    auto iopub_10 = std::make_shared<kaco::EntryPublisher>(device, "home_position");
+    bridge.add_publisher(iopub_10, loop_rate);
+	
+    auto iosub_11 = std::make_shared<kaco::EntrySubscriber>(device, "home_position");
+    bridge.add_subscriber(iosub_11);
+	
+    auto iopub_12 = std::make_shared<kaco::EntryPublisher>(device, "si_unit_position");
+    bridge.add_publisher(iopub_12, loop_rate);
+	
+    auto iosub_13 = std::make_shared<kaco::EntrySubscriber>(device, "si_unit_position");
+    bridge.add_subscriber(iosub_12);
 }
 
 // Usage: e.g. intToHexString(10) == "A"
