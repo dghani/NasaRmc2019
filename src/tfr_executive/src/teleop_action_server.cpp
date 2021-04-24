@@ -89,7 +89,7 @@ public:
   lower_arm_pub{n.advertise<std_msgs::Int32>("/device12/set_cmd_cango/cmd_cango_1", 1)},
   upper_arm_pub{n.advertise<std_msgs::Int32>("/device4/set_cmd_cango/cmd_cango_3", 1)},
   scoop_pub{n.advertise<std_msgs::Int32>("/device4/set_cmd_cango/cmd_cango_2", 1)},
-  turntable_encoder_publisher{n.advertise<std_msgs::Int32>("/device4/set_cmd_sencntr/counter_1", 1)},
+  turntable_encoder_publisher{n.advertise<std_msgs::Int32>("/device1/set_digital_incremental_encoder_1/digital_incremental_encoder_1_number_of_pulses", 1)},
   lower_arm_encoder_publisher{n.advertise<std_msgs::Int32>("/device12/set_cmd_sencntr/counter_2", 1)},
   upper_arm_encoder_publisher{n.advertise<std_msgs::Int32>("/device4/set_cmd_sencntr/counter_3", 1)},
   scoop_encoder_publisher{n.advertise<std_msgs::Int32>("/device4/set_cmd_sencntr/counter_2", 1)},
