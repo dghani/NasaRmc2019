@@ -187,7 +187,7 @@ void setupMaxonDevice(kaco::Device& device, kaco::Bridge& bridge, std::string& e
     bridge.add_publisher(iopub_12, loop_rate);
 	
     auto iosub_13 = std::make_shared<kaco::EntrySubscriber>(device, "si_unit_position");
-    bridge.add_subscriber(iosub_12);
+    bridge.add_subscriber(iosub_13);
 }
 
 // Usage: e.g. intToHexString(10) == "A"
