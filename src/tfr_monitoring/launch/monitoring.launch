@@ -2,7 +2,7 @@
     <node name="monitoring_battery" pkg="tfr_monitoring" type="monitoring_battery" output="screen"/>
     <node name="monitoring_arm_velocity" pkg="tfr_monitoring" type="monitoring_arm_velocity" output="screen">
         <rosparam>
-            turnTableTolerance: 0.00001
+            turnTableTolerance: 0.00000001
             lowerArmTolerance: 0.001
             upperArmTolerance: 0.001
             scoopTolerance: 0.001
