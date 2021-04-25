@@ -75,7 +75,7 @@ private:
     turnTablePub.publish(turnTableMoving);
   }
 
-  void lowerArmCallback(const std_msgs::Float32& lowerArmVelocity) {
+  void lowerArmCallback(const std_msgs::Int32& lowerArmVelocity) {
     if (lowerArmVelocity.data < lowerArmTolerance && lowerArmVelocity.data > -lowerArmTolerance) {
       this->lowerArmMoving.data = false;
     }
@@ -85,7 +85,7 @@ private:
     lowerArmPub.publish(lowerArmMoving);
   }
 
-  void upperArmCallback(const std_msgs::Float32& upperArmVelocity) {
+  void upperArmCallback(const std_msgs::Int32& upperArmVelocity) {
     if (upperArmVelocity.data < upperArmTolerance && upperArmVelocity.data > -upperArmTolerance) {
       this->upperArmMoving.data = false;
     }
@@ -95,7 +95,7 @@ private:
     upperArmPub.publish(upperArmMoving);
   }
 
-  void scoopCallback(const std_msgs::Float32& scoopVelocity) {
+  void scoopCallback(const std_msgs::Int32& scoopVelocity) {
     if (scoopVelocity.data < scoopTolerance && scoopVelocity.data > -scoopTolerance) {
       this->scoopMoving.data = false;
     }
