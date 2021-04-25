@@ -13,6 +13,7 @@
 #include <ros/ros.h>
 #include <std_msgs/Float32.h>
 #include <std_msgs/Bool.h>
+#include <std_msgs/Int32.h>
 
 
 
@@ -64,7 +65,7 @@ private:
    *****************************************************************************/
   //called when the subsribers recieve a message from the publishers
 
-  void turnTableCallback(const std_msgs::Float32& turnTableVelocity) {
+  void turnTableCallback(const std_msgs::Int32& turnTableVelocity) {
     if (turnTableVelocity.data < turnTableTolerance && turnTableVelocity.data > -turnTableTolerance) {
       this->turnTableMoving.data = false;
     }
