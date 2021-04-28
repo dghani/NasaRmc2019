@@ -63,42 +63,7 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
-        bin:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        left_tread:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        left_tread_b:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        left_tread_f:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
         lower_arm:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        right_tread:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        right_tread_b:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        right_tread_f:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -133,7 +98,7 @@ Visualization Manager:
       Value: true
   Enabled: true
   Global Options:
-    Background Color: 238; 238; 238
+    Background Color: 98; 98; 98
     Fixed Frame: base_link
     Frame Rate: 30
   Name: root
