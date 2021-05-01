@@ -63,7 +63,7 @@ private:
   /*****************************************************************************
                               Callback Functions
    *****************************************************************************/
-  //called when the subsribers recieve a message from the publishers
+  // called when the subsribers recieve a message from the publishers
 
   void turnTableCallback(const std_msgs::Int32& turnTableVelocity) {
     if (turnTableVelocity.data < turnTableTolerance && turnTableVelocity.data > -turnTableTolerance) {
