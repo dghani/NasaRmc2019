@@ -26,10 +26,11 @@ const double loop_rate = 32; // 32 Hz
 const int slow_loop_rate = 1; // 1 Hz
 
 // CANopen node IDs:
+const int TURNTABLE = 1;
+const int DRIVETRAIN = 8;
 const int SERVO_CYLINDER_LOWER_ARM = 23;
 const int SERVO_CYLINDER_UPPER_ARM = 45;
 const int SERVO_CYLINDER_SCOOP = 56;
-const int TURNTABLE = 1;
 const int SERVO_CYLINDER_BIN_LEFT = 77; 
 const int SERVO_CYLINDER_BIN_RIGHT = 88; 
 
@@ -284,7 +285,7 @@ int main(int argc, char* argv[]) {
 		
 		
 		
-		else if (deviceId == 8) //Drivetrain Motor controller
+		else if (deviceId == DRIVETRAIN) //Drivetrain Motor controller
 		{
 			device.load_dictionary_from_eds(eds_files_path + "roboteq_motor_controllers_v60.eds");
 			
