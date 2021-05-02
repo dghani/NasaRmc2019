@@ -122,11 +122,11 @@ private:
                 ROS_INFO("Moving arm to position: %.2f %.2f %.2f %.2f", state[0], state[1], state[2], state[3]);
                 arm_manipulator.moveArmWithoutPlanningOrLimits(state[0], state[1], state[2], state[3]);
 		
-		if(turnTablePosition != state[3]) {
+		if(turnTablePosition != state[0]) {
                      ros::Duration(0.50).sleep();
 		}
 		    
-		turnTablePosition = state[3];
+		turnTablePosition = state[0];
 
                 // This loop checks for the actuators and turn table to be done moving. Will keep looping until they are done moving.
                 while (true) {
