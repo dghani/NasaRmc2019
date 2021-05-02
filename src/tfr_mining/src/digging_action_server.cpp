@@ -90,6 +90,8 @@ private:
     bool lowerArmMoving;
     bool upperArmMoving;
     bool scoopMoving;
+	
+    double turnTablePosition
 
 
 
@@ -119,8 +121,12 @@ private:
                 // generated. There is also no collision checking, so be careful.
                 ROS_INFO("Moving arm to position: %.2f %.2f %.2f %.2f", state[0], state[1], state[2], state[3]);
                 arm_manipulator.moveArmWithoutPlanningOrLimits(state[0], state[1], state[2], state[3]);
-
-                ros::Duration(0.50).sleep();
+		
+		if(turnTablePosition != state[3]) {
+                     ros::Duration(0.50).sleep();
+		}
+		    
+		turnTablePosition = state[3];
 
                 // This loop checks for the actuators and turn table to be done moving. Will keep looping until they are done moving.
                 while (true) {
