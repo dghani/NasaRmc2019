@@ -91,7 +91,7 @@ private:
     bool upperArmMoving;
     bool scoopMoving;
 	
-    double turnTablePosition
+    double turnTablePosition;
 
 
 
