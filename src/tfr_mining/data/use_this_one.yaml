@@ -1,6 +1,6 @@
-#40 cm: is 1.1 of lowerArm
+#42 cm at teeth: 0.8 of lowerArm
 #For Turntable:
-#  is facing towards the bin
+# 4.65 is facing towards the bin
 # 3.7 is dumping exces spot
 # 3.14 is mining spot
 #[turntable, lowerArm, upperArm, scoop]
