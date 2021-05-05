@@ -157,16 +157,17 @@
   <!--Joint: Turntable and Lower Arm-->
   <joint
     name="Lower-Arm"
-    type="continuous">
+    type="revolute">
+    <axis
+      xyz="0 0 1" />
+    <limit effort="1000.0" lower="-1.2" upper="0.55" velocity="0.5" />
     <origin
       xyz="0 0.18949 0"
-      rpy="1.5708 1.0411 1.5708" />
+      rpy="1.5708 1 1.5708" />
     <parent
       link="Turntable_Link" />
     <child
       link="Lower-Arm_Link" />
-    <axis
-      xyz="0 0 1" />
   </joint>
 
   <!--Upper Arm Link -->
@@ -214,7 +215,8 @@
   <!--Joint: Lower Arm and Upper Arm-->
   <joint
     name="Upper-Arm"
-    type="continuous">
+    type="revolute">
+    <limit effort="1000.0" lower="0.98" upper="1.33" velocity="0.5" />
     <origin
       xyz="0.6 0.39 0"
       rpy="0 0 -2.3039" />
@@ -273,7 +275,8 @@
   <!--Joint: Upper Arm and Scoop-->
   <joint
     name="Scoop"
-    type="continuous">
+    type="revolute">
+    <limit effort="1000.0" lower="-1.65" upper="0.25" velocity="0.5" />
     <origin
       xyz="0.453 0.01 0"
       rpy="0 0 1.9904" />
