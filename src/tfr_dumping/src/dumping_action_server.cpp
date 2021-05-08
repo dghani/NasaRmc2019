@@ -100,9 +100,9 @@ private:
     move_cmd.linear.x = -.1;
     drivebase_publisher.publish(move_cmd);
 
-    ROS_INFO("Original Tread Distance starting at %f", this->actualOriginalDistance);
+    ROS_INFO("Original Odometry Distance starting at %f", this->actualOriginalDistance);
     ROS_INFO("Original Fiducial Distance starting at %f", this->originalFiducialDistance);
-    ROS_INFO("Original Current Tread Distance Starting at %f", this->actualCurrDistance);
+    ROS_INFO("Original Current Odometry Distance Starting at %f", this->actualCurrDistance);
 
     while (this->movedDistance < this->originalFiducialDistance) {
       this->movedDistance = (this->actualOriginalDistance - this->actualCurrDistance) +
