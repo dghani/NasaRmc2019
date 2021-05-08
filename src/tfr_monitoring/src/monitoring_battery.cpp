@@ -14,14 +14,13 @@
 
 void batteryVoltageCallback(const std_msgs::UInt16& batteryVoltage) {
 	//Roboteq controller sends voltage * 10 back i.e. if 150 is reported than it is 15 volts.
-        int batteryVolt = batteryVoltage.data / 10;
-        if (batteryVolt < 37) {
-        	ROS_ERROR("BATTERY LOW! CHARGE NOW! (%d volts)\n", batteryVolt);
-        }
+  float batteryVolt = batteryVoltage.data / 10;
+  if (batteryVolt <= 36.5) {
+    ROS_ERROR("BATTERY LOW! CHARGE NOW! (%f volts)\n", batteryVolt);
+  }
 }
 
-int main(int argc, char **argv)
-{
+int main(int argc, char **argv) {
 	ros::init(argc, argv, "monitoring_battery");
 	ros::NodeHandle n;
 	ros::Subscriber batteryVoltageSubscriber = n.subscribe("/device8/get_qry_volts/v_bat",
