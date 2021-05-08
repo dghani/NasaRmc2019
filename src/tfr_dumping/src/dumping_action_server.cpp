@@ -91,7 +91,6 @@ private:
     // this was done because I think the distance formula was resulting in the wrong sign,
     // so I just flipped it
     this->actualCurrDistance = -this->actualCurrDistance;
-    ROS_INFO("current distance is being updated.");
   }
 
 
@@ -109,7 +108,6 @@ private:
     while (this->movedDistance < this->originalFiducialDistance) {
       this->movedDistance = (this->actualOriginalDistance - this->actualCurrDistance) +
                        this->half_robot_length + this->adjust_distance;
-      //ROS_INFO("Moved Distance: %f", this->movedDistance);
     }
 
     ROS_INFO("Original Tread Distance Finished at %f", this->actualOriginalDistance);
