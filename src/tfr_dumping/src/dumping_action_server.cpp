@@ -107,6 +107,7 @@ private:
     while (this->movedDistance < this->originalFiducialDistance) {
       this->movedDistance = (this->actualOriginalDistance - this->actualCurrDistance) +
                        this->half_robot_length + this->adjust_distance;
+      ROS_INFO("Moved Distance: %f", this->movedDistance);
     }
 
     ROS_INFO("Original Tread Distance Finished at %f", this->actualOriginalDistance);
