@@ -6,6 +6,7 @@
 #[turntable, lowerArm, upperArm, scoop]
 positions: [
   [[3.14, 5.0, 3.6, 3.5], # scoop facing robot bin
+  [1.6, 5.0, 3.6, 3.5], # scoop facing forward
   [1.6, 4.3, 3.0, 0.3], # SCOOP 1 ZERO POSITION
   [1.6, 3.0, 1.1, 0.3], # move over mining spot 1
   [1.6, 2.0, 1.1, 0.3], # stick into dirt 2
