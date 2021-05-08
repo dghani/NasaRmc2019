@@ -77,19 +77,19 @@ private:
 
   // continually upddating but only needed to set original fiducial distance
   void fiducialOdomCallback(const nav_msgs::Odometry &dumpDistance) {
-    currentFiducialDistance = dumpDistance.pose.pose.position.x;
+    this->currentFiducialDistance = dumpDistance.pose.pose.position.x;
   }
 
   // continually updating actualCurrentTreadDistance so we can know how far the robot has moved
   void odomCallback(const nav_msgs::Odometry &distance) {
-    currDistanceX = distance.pose.pose.position.x;
-    currDistanceY = distance.pose.pose.position.y;
+    this->currDistanceX = distance.pose.pose.position.x;
+    this->currDistanceY = distance.pose.pose.position.y;
     // distance formula
-    actualCurrDistance = sqrt((currDistanceX * currDistanceX) +
-                              (currDistanceY * currDistanceY));
+    this->actualCurrDistance = sqrt((this->currDistanceX * this->currDistanceX) +
+                              (this->currDistanceY * this->currDistanceY));
     // this was done because I think the distance formula was resulting in the wrong sign,
     // so I just flipped it
-    actualCurrDistance = -actualCurrDistance;
+    this->actualCurrDistance = -this->actualCurrDistance;
   }
 
 
@@ -100,18 +100,18 @@ private:
     move_cmd.linear.x = -.1;
     drivebase_publisher.publish(move_cmd);
 
-    ROS_INFO("Original Tread Distance starting at %f", actualOriginalDistance);
-    ROS_INFO("Original Fiducial Distance starting at %f", originalFiducialDistance);
-    ROS_INFO("Original Current Tread Distance Starting at %f", actualCurrDistance);
+    ROS_INFO("Original Tread Distance starting at %f", this->actualOriginalDistance);
+    ROS_INFO("Original Fiducial Distance starting at %f", this->originalFiducialDistance);
+    ROS_INFO("Original Current Tread Distance Starting at %f", this->actualCurrDistance);
 
-    while (movedDistance < originalFiducialDistance) {
-      movedDistance = (actualOriginalDistance - actualCurrDistance) +
-                       half_robot_length + adjust_distance;
+    while (this->movedDistance < this->originalFiducialDistance) {
+      this->movedDistance = (this->actualOriginalDistance - this->actualCurrDistance) +
+                       this->half_robot_length + this->adjust_distance;
     }
 
-    ROS_INFO("Original Tread Distance Finished at %f", actualOriginalDistance);
-    ROS_INFO("Original Fiducial Distance Finished at %f", originalFiducialDistance);
-    ROS_INFO("Original Current Tread Distance Finished at %f", actualCurrDistance);
+    ROS_INFO("Original Tread Distance Finished at %f", this->actualOriginalDistance);
+    ROS_INFO("Original Fiducial Distance Finished at %f", this->originalFiducialDistance);
+    ROS_INFO("Original Current Tread Distance Finished at %f", this->actualCurrDistance);
     ROS_INFO("Dumping Action Server: BACKWARD finsihed");
   }
 
@@ -142,7 +142,7 @@ private:
     // when original fiducial distance is set
     ros::Duration(4.0).sleep();
 
-    originalFiducialDistance = currentFiducialDistance;
+    this->originalFiducialDistance = this->currentFiducialDistance;
     this->actualOriginalDistance = this->actualCurrDistance;
 
     moveNotBlind();
