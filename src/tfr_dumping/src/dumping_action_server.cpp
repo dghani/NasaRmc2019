@@ -43,7 +43,7 @@ public:
          half_robot_length{half_robot_length}, adjust_distance{adjust_distance},
          drivebase_publisher{node.advertise<geometry_msgs::Twist>("cmd_vel", 5)},
          fiducialOdomSubscriber{node.subscribe("/fiducial_odom", 5, &Dumper::fiducialOdomCallback, this)},
-         filteredOdomSubscriber{node.subscribe("odometry", 5, &Dumper::odomCallback, this)} {
+         odomSubscriber{node.subscribe("odometry", 5, &Dumper::odomCallback, this)} {
             ROS_INFO("dumping action server initializing");
             server.start();
             ROS_INFO("dumping action server initialized");
@@ -62,7 +62,7 @@ private:
   ros::Publisher drivebase_publisher;
 
   ros::Subscriber fiducialOdomSubscriber;
-  ros::Subscriber filteredOdomSubscriber;
+  ros::Subscriber odomSubscriber;
 
   float half_robot_length, adjust_distance;
   float currentFiducialDistance, originalFiducialDistance;
@@ -90,6 +90,7 @@ private:
     // this was done because I think the distance formula was resulting in the wrong sign,
     // so I just flipped it
     this->actualCurrDistance = -this->actualCurrDistance;
+    ROS_INFO("current distance is being updated.");
   }
 
 
