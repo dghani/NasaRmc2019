@@ -43,7 +43,7 @@ public:
          half_robot_length{half_robot_length}, adjust_distance{adjust_distance},
          drivebase_publisher{node.advertise<geometry_msgs::Twist>("cmd_vel", 5)},
          fiducialOdomSubscriber{node.subscribe("/fiducial_odom", 5, &Dumper::fiducialOdomCallback, this)},
-         odomSubscriber{node.subscribe("odometry", 5, &Dumper::odomCallback, this)} {
+         odomSubscriber{node.subscribe("/odometry/filtered", 5, &Dumper::odomCallback, this)} {
             ROS_INFO("dumping action server initializing");
             server.start();
             ROS_INFO("dumping action server initialized");
@@ -108,7 +108,7 @@ private:
     while (this->movedDistance < this->originalFiducialDistance) {
       this->movedDistance = (this->actualOriginalDistance - this->actualCurrDistance) +
                        this->half_robot_length + this->adjust_distance;
-      ROS_INFO("Moved Distance: %f", this->movedDistance);
+      //ROS_INFO("Moved Distance: %f", this->movedDistance);
     }
 
     ROS_INFO("Original Tread Distance Finished at %f", this->actualOriginalDistance);
