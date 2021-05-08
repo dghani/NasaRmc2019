@@ -47,7 +47,6 @@ public:
             ROS_INFO("dumping action server initializing");
             server.start();
             ROS_INFO("dumping action server initialized");
-            ROS_INFO("odometry: %s", odometry);
   }
 
   Dumper(const Dumper &) = delete;
