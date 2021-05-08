@@ -30,7 +30,7 @@ imu0_config: [false, false, false,
               false, false, false,
               false, false, true,
               true, true, false]
-imu0_differential: false
+imu0_differential: true
 imu0_nodelay: false
 imu0_relative: true
 #outputs at ~200 hz so want to average a lot of values
@@ -48,8 +48,8 @@ imu0_remove_gravitational_acceleration: true
 #It records x and y position because it can do that using geometry.
 #It records yaw because based off the position of the navigational marker, it has to know how it is facing. 
 odom0: /fiducial_odom
-odom0_config: [false,  false, false,
-               false, false,  false,
+odom0_config: [true,  true, false,
+               false, false,  true,
                false, false, false,
                false,  false,  false,
                false,  false,  false]
