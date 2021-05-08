@@ -6,7 +6,9 @@
 #[turntable, lowerArm, upperArm, scoop]
 positions: [
   [[3.14, 5.5, 0.3, 3.5], # scoop facing robot bin
-  [1.6, 5.5, 0.3, 3.5], # scoop facing forward
+  [2.8, 5.5, 0.3, 3.5], # turn part way
+  [2.8, 5.0, 0.7, 3.5], # curl arm in
+  [1.6, 5.0, 0.7, 3.5], # scoop facing forward
   [1.6, 4.3, 0.7, 0.3], # SCOOP 1 ZERO POSITION
   [1.6, 3.0, 1.1, 0.3], # move over mining spot 1
   [1.6, 2.0, 1.1, 0.3], # stick into dirt 2
@@ -55,11 +57,14 @@ positions: [
   [1.6, 3.0, 1.1, 0.3], # move over mining spot 1
   [1.6, 0.8, 1.1, 0.3], # stick into dirt 2
   [1.6, 0.9, 2.8, 2.0], # pull scoop through 3
-  [1.6, 3.0, 3.0, 3.3], # Come back up 4
+  [1.6, 3.0, 2.0, 3.3], # Come back up 4
   [1.6, 5.0, 1.0, 3.5], # Prep for rotation to release into robot bin 5
-  [2.3, 5.5, 0.3, 3.5], # halfway prep 6
-  [3.14, 5.5, 0.3, 3.5], # Rotate to release position 7
-  [3.14, 5.5, 0.3, 2.5], # Open scoop halfway to dump BP1 8
-  [3.14, 5.5, 0.3, 0.3], # Open scoop up to dump BP1 9
-  [3.14, 5.5, 0.3, 3.5]] # close scoop, scoop facing robot bin 10
+  [2.8, 5.0, 1.0, 3.5], # turn 6
+  [2.8, 5.5, 0.3, 3.5], # open arm up for height to clear robot bin 7
+  [3.14, 5.5, 0.3, 3.5], # Rotate to release position 8
+  [3.14, 5.5, 0.3, 3.0], # Open scoop partly to dump BP1 9
+  [3.14, 5.5, 0.3, 2.5], # Open scoop partly to dump BP1 10
+  [3.14, 5.5, 0.3, 2.0], # Open scoop partly to dump BP1 11
+  [3.14, 5.5, 0.3, 0.3], # Open scoop up fully 12
+  [3.14, 5.5, 0.3, 3.5]] # close scoop, scoop facing robot bin 13
 ]
