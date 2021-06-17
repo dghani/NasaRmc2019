@@ -2,12 +2,13 @@
     <!-- Load all of the motor controllers -->
     <rosparam file="$(find tfr_control)/config/controllers.yaml" command="load"/>
 
-    <param name="robot_description" command="$(find xacro)/xacro --inorder
-        '$(find tfr_description)/xacro/model.xacro'" />
+    <param name="robot_description" textfile="$(find tfr_description)/urdf_2021/urdf/urdf_v2.urdf" />
 
     <!-- Publishes the state of the robot to TF for Rviz or other usages -->
-    <node name="robot_state_publisher" pkg="robot_state_publisher"
-        type="robot_state_publisher" respawn="false" />
+    <node name="joint_state_publisher" pkg="joint_state_publisher"
+        type="joint_state_publisher">
+      <param name="use_gui" value="FALSE"/>
+    </node>
 
     <node name="drivebase" pkg="tfr_control" type="drivebase" output="screen">
         <param name="wheel_span"  value="0.72"/> 
