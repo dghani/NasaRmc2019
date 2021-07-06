@@ -1,6 +1,5 @@
 #This is the frequency in Hz, this outputs a position estimate.
-# 300Hz maybe too high, if so revert back to 16Hz
-frequency: 300
+frequency: 64
 
 #These are all map variable definations for the kalman filter.
 #stock settings for robots without gps and no big hills
