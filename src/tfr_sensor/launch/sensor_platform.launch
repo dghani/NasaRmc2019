@@ -2,7 +2,7 @@
     <group ns="sensors">
         <include file="$(find tfr_sensor)/launch/fiducial_cam.launch"/>
         <include file="$(find tfr_sensor)/launch/realsense.launch">
-        <include file="$(find tfr_sensor)/launch/slam.launch">
+        <!-- <include file="$(find tfr_sensor)/launch/slam.launch"> -->
         </include>
     </group>
     <remap from="/imu/data" to="/sensors/imu" />
