@@ -14,5 +14,9 @@
         <arg name="depth_camera_info_topic" value="/sensors/camera/depth/camera_info"/>
         <arg name="rtabmapviz" value="false"/>
         <arg name="rviz" value="true"/>
+        
+        <remap from="/camera/color/image_raw" to="/sensors/camera/color/image_raw" />
+        <remap from="/camera/color/aligned_depth_to_color/image_raw" to="/sensors/camera/color/aligned_depth_to_color/image_raw" />
+        <remap from="/camera/color/camera_info" to="/sensors/camera/camera_info" />     
     </include>
 </launch>
