@@ -1,9 +1,8 @@
 <launch>
     <group ns="sensors">
         <include file="$(find tfr_sensor)/launch/fiducial_cam.launch"/>
-        <include file="$(find tfr_sensor)/launch/realsense.launch">
-         <!-- <include file="$(find tfr_sensor)/launch/slam.launch"> -->
-        </include>
+        <include file="$(find tfr_sensor)/launch/realsense.launch"/>
+        <include file="$(find tfr_sensor)/launch/slam.launch"/>
     </group>
     <remap from="/imu/data" to="/sensors/imu" />
     <node name="imu_tf_broadcaster" pkg="tf2_ros" type="static_transform_publisher"
