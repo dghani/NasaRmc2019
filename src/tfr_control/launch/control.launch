@@ -1,17 +1,20 @@
 <launch>
+
+    <arg name="model" default='$(find tfr_description)/xacro/model.xacro'/>
+
     <!-- Load all of the motor controllers -->
     <rosparam file="$(find tfr_control)/config/controllers.yaml" command="load"/>
 
     <param name="robot_description" command="$(find xacro)/xacro --inorder
-        '$(find tfr_description)/xacro/model.xacro'" />
+        $(arg model)" />
 
     <!-- Publishes the state of the robot to TF for Rviz or other usages -->
     <node name="robot_state_publisher" pkg="robot_state_publisher"
         type="robot_state_publisher" respawn="false" />
 
     <node name="drivebase" pkg="tfr_control" type="drivebase" output="screen">
-        <param name="wheel_span"  value="0.72"/> 
-        <param name="wheel_radius" value="0.15"/> 
+        <param name="wheel_span"  value="0.72"/>
+        <param name="wheel_radius" value="0.15"/>
     </node>
 
     <!-- Load the controller manager plugin for the drivebase -->
@@ -20,7 +23,7 @@
             rate: 16 <!-- Keep this rate low, or zeros will sneak into drivebase commands-->
         </rosparam>
     </node>
-	
+
     <!-- Spawn the controllers -->
     <node name="controller_spawner" pkg="controller_manager" type="spawner"
         args="joint_state_controller
@@ -29,13 +32,13 @@
         bin_position_controller
         arm_controller
         arm_end_controller"/>
-	
+
 	<param name="left_tread_scale" value="1" type="int"/>
 	<param name="right_tread_scale" value="1" type="int"/>
 	<param name="/write_arm_values" value="false" type="bool"/>
 
     <!-- Launch all the MoveIt! nodes -->
     <include file="$(find tfr_moveit)/launch/move_group.launch"/>
-    
+
     <node name="arm_action_server" pkg="tfr_control" type="arm_action_server" output="screen"/>
 </launch>
