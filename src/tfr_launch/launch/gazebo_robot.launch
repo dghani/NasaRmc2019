@@ -3,6 +3,7 @@
 <launch>
 
   <arg name="gazebo" default="true"/>
+  <!-- <arg name="use_sim_time" default="true"/> -->
 
   <!-- no clue what these do but they are in the robot.launch file *shrugs* -->
   <include file="$(find tfr_launch)/launch/core.launch"/>
@@ -10,10 +11,10 @@
   <include file="$(find tfr_sensor)/launch/sensor.launch"/>
 
   <!-- simulation version of /tfr_control/launch/control.launch -->
-
   <include file="$(find tfr_control)/launch/control.launch">
     <arg name="model" value="$(find tfr_description)/urdf_2021/urdf/urdf_ulti.urdf" />
   </include>
+  <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />
 
   <!-- Double **shrugs** -->
   <include file="$(find tfr_localization)/launch/localization.launch"/>
@@ -27,7 +28,6 @@
   <group if="$(arg gazebo)">
     <!-- these are the arguments you can pass this launch file, for example paused:=true -->
     <arg name="paused" default="false"/>
-    <arg name="use_sim_time" default="true"/>
     <arg name="gui" default="true"/>
     <arg name="headless" default="false"/>
     <arg name="debug" default="false"/>
@@ -37,7 +37,6 @@
       <arg name="debug" value="$(arg debug)" />
       <arg name="gui" value="$(arg gui)" />
       <arg name="paused" value="$(arg paused)"/>
-      <arg name="use_sim_time" value="$(arg use_sim_time)"/>
       <arg name="headless" value="$(arg headless)"/>
     </include>
 
