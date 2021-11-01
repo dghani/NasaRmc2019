@@ -1,0 +1,458 @@
+<?xml version="1.0"?>
+<robot name="excavator" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!--some properties-->
+  <xacro:property name="baselen" value="0.5"/>
+  <xacro:property name="wheeldiam" value="0.2"/>
+  <xacro:property name="wheelyoffset" value=".4"/>
+  <xacro:property name="camera_link" value="0.05" />
+
+  <!-- Import all Gazebo-customization elements, including Gazebo colors -->
+  <xacro:include filename="$(find tfr_description)/urdf_2021/urdf/excavator.gazebo" />
+
+  <material name="bland">
+    <color rgba="0.792156862745098 0.819607843137255 0.933333333333333 1"/>
+  </material>
+
+  <xacro:macro name="default_inertial" params="mass">
+    <inertial>
+      <mass value="${mass}" />
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0" />
+    </inertial>
+  </xacro:macro>
+
+  <!--world link -->
+  <link name="base_footprint" />
+
+  <joint name="base_footprint_joint" type="fixed">
+    <origin xyz="0 0 0.017" rpy="0 0 ${pi/2}" />
+    <parent link="base_footprint" />
+    <child link="base_link" />
+  </joint>
+
+  <!--Drivetrain Link -->
+  <link
+    name="base_link">
+    <inertial>
+      <mass
+        value="73.1987225940831" />
+      <inertia
+        ixx="5.44844381853453"
+        ixy="0.000530588416338094"
+        ixz="0.00684956990429821"
+        iyy="4.94620833738639"
+        iyz="0.0418907255499782"
+        izz="0.794151271490352" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://tfr_description/urdf_2021/meshes/base_link.STL" />
+      </geometry>
+      <material name="bland"/>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://tfr_description/urdf_2021/meshes/base_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+  <!-- Bin Link -->
+  <link name="bin_footprint">
+    <xacro:default_inertial mass="2"/>
+    <visual>
+      <origin xyz="2 0 0" rpy="0 0 ${pi/2}" />
+      <geometry>
+        <mesh filename="package://tfr_description/urdf_2021/meshes/aruco.dae" />
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="2 0 0" rpy="0 0 0" />
+      <geometry>
+        <box size=".2 .95 .25"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="bin_joint" type="fixed">
+    <axis xyz="0 0 0" rpy="0 0 0" />
+    <parent link="base_footprint"/>
+    <child link="bin_footprint"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
+
+    <!--Wheel link-->
+    <xacro:macro name="wheel" params="prefix suffix reflect left">
+
+    <link name="${prefix}_${suffix}">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <cylinder radius="${wheeldiam/2}" length="0.1"/>
+        </geometry>
+        <material name="bland"/>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <cylinder radius="${wheeldiam/2}" length="0.1"/>
+        </geometry>
+      </collision>
+      <xacro:default_inertial mass="1"/>
+    </link>
+    <joint name="${prefix}_${suffix}_joint" type="continuous">
+      <axis xyz="1 0 0" rpy="0 0 0" />
+      <parent link="base_link"/>
+      <child link="${prefix}_${suffix}"/>
+      <origin xyz="${baselen*left/3} ${-baselen*reflect/2} ${wheeldiam/2}" rpy="${pi/2} 0 ${pi/2}"/>
+    </joint>
+
+    <!-- This block provides the simulator (Gazebo) with information on a few additional
+    physical properties. See http://gazebosim.org/tutorials/?tut=ros_urdf for more-->
+    <gazebo reference="${prefix}_${suffix}">
+      <mu1 value="200.0"/>
+      <mu2 value="100.0"/>
+      <kp value="10000000.0" />
+      <kd value="1.0" />
+      <material>Gazebo/Grey</material>
+    </gazebo>
+
+    <!-- This block connects the wheel joint to an actuator (motor), which informs both
+    simulation and visualization of the robot -->
+    <transmission name="${prefix}_${suffix}_trans">
+      <type>transmission_interface/SimpleTransmission</type>
+      <actuator name="${prefix}_${suffix}_motor">
+        <mechanicalReduction>1</mechanicalReduction>
+      </actuator>
+      <joint name="${prefix}_${suffix}_joint">
+        <hardwareInterface>VelocityJointInterface</hardwareInterface>
+      </joint>
+    </transmission>
+
+  </xacro:macro>
+
+  <xacro:wheel prefix="right" suffix="tread" reflect="1" left="-1"/>
+  <!-- <xacro:wheel prefix="right" suffix="tread" reflect="-1" left="-1"/> -->
+  <xacro:wheel prefix="left" suffix="tread" reflect="1" left="1"/>
+  <!-- <xacro:wheel prefix="left" suffix="tread" reflect="-1" left="1"/> -->
+
+  <!--Turntable link-->
+  <link
+    name="turntable_link">
+    <inertial>
+      <mass
+        value="0.227999436482662" />
+      <inertia
+        ixx="0.000570763969480878"
+        ixy="1.48699454009952E-11"
+        ixz="2.69155197840914E-12"
+        iyy="0.000802639067555957"
+        iyz="5.46441695495813E-08"
+        izz="0.000323934062677162" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://tfr_description/urdf_2021/meshes/Turntable_Link.STL" />
+      </geometry>
+      <material
+        name="bland" />
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://tfr_description/urdf_2021/meshes/Turntable_Link.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+  <!--Joint: Drivetrain and Turntable -->
+  <joint
+    name="turntable_joint"
+    type="continuous">
+    <origin
+      xyz="0.029464 -0.40799 0.059056"
+      rpy="1.5708 0 3.1416" />
+    <parent
+      link="base_link" />
+    <child
+      link="turntable_link" />
+    <axis
+      xyz="0 -1 0" />
+  </joint>
+
+  <transmission name="turntable_trans">
+    <type>transmission_interface/SimpleTransmission</type>
+    <actuator name="$turntable_motor">
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+    <joint name="turntable_joint">
+      <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+    </joint>
+  </transmission>
+
+  <!--Lower Arm Link-->
+  <link
+    name="lower_arm_link">
+    <inertial>
+      <mass
+        value="0.991682751991289" />
+      <inertia
+        ixx="0.0085625561640718"
+        ixy="-0.0130932756356974"
+        ixz="-1.51270777719062E-11"
+        iyy="0.0306481453453158"
+        iyz="2.88975286149604E-12"
+        izz="0.0392090151653679" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://tfr_description/urdf_2021/meshes/Lower-Arm_Link.STL" />
+      </geometry>
+      <material
+        name="bland"/>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://tfr_description/urdf_2021/meshes/Lower-Arm_Link.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+  <!--Joint: Turntable and Lower Arm-->
+  <joint
+    name="lower_arm_joint"
+    type="revolute">
+    <axis
+      xyz="0 0 1" />
+    <limit effort="1000.0" lower="-1.2" upper="0.55" velocity="0.5" />
+    <origin
+      xyz="0 0.18949 0"
+      rpy="1.5708 1 1.5708" />
+    <parent
+      link="turntable_link" />
+    <child
+      link="lower_arm_link" />
+  </joint>
+
+  <transmission name="lower_arm_trans">
+     <type>transmission_interface/SimpleTransmission</type>
+     <actuator name="$lower_arm_motor">
+       <mechanicalReduction>1</mechanicalReduction>
+     </actuator>
+     <joint name="lower_arm_joint">
+       <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+     </joint>
+   </transmission>
+
+  <!--Upper Arm Link -->
+  <link
+    name="upper_arm_link">
+    <inertial>
+      <mass
+        value="0.537973764882104" />
+      <inertia
+        ixx="0.000176359531021174"
+        ixy="0.000243676618961583"
+        ixz="1.37699254869698E-11"
+        iyy="0.012563907734834"
+        iyz="5.41325045272918E-12"
+        izz="0.012739343200944" />
+    </inertial>
+    <visual>
+    <origin
+      xyz="0.53 -0.22 0"
+      rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://tfr_description/urdf_2021/meshes/Upper-Arm_Link.STL" />
+      </geometry>
+      <material
+        name="bland"/>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://tfr_description/urdf_2021/meshes/Upper-Arm_Link.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+  <!--Joint: Lower Arm and Upper Arm-->
+  <joint
+    name="upper_arm_joint"
+    type="revolute">
+    <limit effort="1000.0" lower="0.98" upper="1.33" velocity="0.5" />
+    <origin
+      xyz="0.6 0.39 0"
+      rpy="0 0 -2.3039" />
+    <parent
+      link="lower_arm_link" />
+    <child
+      link="upper_arm_link" />
+    <axis
+      xyz="0 0 1" />
+  </joint>
+
+  <transmission name="upper_arm_trans">
+    <type>transmission_interface/SimpleTransmission</type>
+    <actuator name="$upper_arm_motor">
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+    <joint name="upper_arm_joint">
+      <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+    </joint>
+  </transmission>
+
+  <!--Scoop Link -->
+  <link
+    name="scoop_link">
+    <inertial>
+      <mass
+        value="0.201108630026289" />
+      <inertia
+        ixx="0.000208232213351491"
+        ixy="-7.29191619926531E-05"
+        ixz="5.39582740208427E-18"
+        iyy="0.000293811680022154"
+        iyz="3.03202611839885E-18"
+        izz="0.000367984985857797" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="-0.02 -0.22 -0.05"
+        rpy="0 135.1 0" />
+      <geometry>
+        <mesh
+          filename="package://tfr_description/urdf_2021/meshes/2020_scoop.STL" scale="0.001 0.001 0.001" />
+        <box size="0.15316 0.11473 0.18542" />
+      </geometry>
+      <material
+        name="bland"/>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://tfr_description/urdf_2021/meshes/2020_scoop.STL" scale="0.001 0.001 0.001" />
+        <box size="0.15316 0.11473 0.18542" />
+      </geometry>
+    </collision>
+  </link>
+
+  <!--Joint: Upper Arm and Scoop-->
+  <joint
+    name="scoop_joint"
+    type="revolute">
+    <limit effort="1000.0" lower="-1.65" upper="0.25" velocity="0.5" />
+    <origin
+      xyz="0.453 0.01 0"
+      rpy="0 0 1.9904" />
+    <parent
+      link="upper_arm_link" />
+    <child
+      link="scoop_link" />
+    <axis
+      xyz="0 0 1" />
+  </joint>
+
+  <transmission name="scoop_trans">
+    <type>transmission_interface/SimpleTransmission</type>
+    <actuator name="$scoop_motor">
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+    <joint name="scoop_joint">
+      <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+    </joint>
+  </transmission>
+
+<!-- rear camera -->
+  <link name="rear_cam_link">
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+    <box size="${camera_link} ${camera_link} ${camera_link}"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+    <box size="${camera_link} ${camera_link} ${camera_link}"/>
+      </geometry>
+      <material name="bland"/>
+    </visual>
+
+    <inertial>
+      <mass value="1e-5" />
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
+    </inertial>
+  </link>
+
+  <joint name="rear_cam_joint" type="fixed">
+    <axis xyz="0 1 0" />
+    <origin xyz="0.1 0.5 0.2" rpy="0 0 ${pi/2}"/>
+    <parent link="base_link"/>
+    <child link="rear_cam_link"/>
+  </joint>
+
+  <!-- realsense camera -->
+  <link name="camera_link">
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+    <box size="${camera_link} ${camera_link} ${camera_link}"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+    <box size="${camera_link} ${camera_link} ${camera_link}"/>
+      </geometry>
+      <material name="red"/>
+    </visual>
+
+    <inertial>
+      <mass value="1e-5" />
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
+    </inertial>
+  </link>
+
+  <joint name="camera_joint" type="fixed">
+    <axis xyz="0 1 0" />
+    <origin xyz="0.1 -0.5 0.2" rpy="0 0 ${-pi/2}"/>
+    <parent link="base_link"/>
+    <child link="camera_link"/>
+  </joint>
+
+</robot>
