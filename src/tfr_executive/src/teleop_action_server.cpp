@@ -215,7 +215,7 @@ class TeleopExecutive
                 case (tfr_utilities::TeleopCode::COUNTERCLOCKWISE):
                     {
                         ROS_INFO("Teleop Action Server: Command Recieved, COUNTERCLOCKWISE");
-                        arm_manipulator.moveTurntablePosition(3.14); // Move arm from front to back
+                        arm_manipulator.moveTurntablePosition(1.57); // Move arm from front to back
                         break;
                     }
                     
