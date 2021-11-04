@@ -244,7 +244,7 @@ class TeleopExecutive
                 case (tfr_utilities::TeleopCode::UPPER_ARM_RETRACT):
                     {
  			ROS_INFO("Teleop Action Server: Command Recieved, UPPER_ARM_RETRACT");
-			arm_manipulator.moveUpperArmPosition(4.5); // Retract upper arm
+			arm_manipulator.moveUpperArmPosition(3.5); // Retract upper arm
 			break;
                     }
                     
