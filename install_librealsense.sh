@@ -8,6 +8,4 @@ sudo apt-get install build-essential cmake cmake-curses-gui -y
 sudo apt-get install libgtk-3-dev libglfw3-dev libgl1-mesa-dev libglu1-mesa-dev -y
 sudo apt-get install qtcreator -y
 sudo apt-get install -y python3 python3-dev
-
-yes | ./buildLibrealsense.sh
-
+yes | ./buildLibrealsense.sh [ -v | --version 2.31.0 ]
