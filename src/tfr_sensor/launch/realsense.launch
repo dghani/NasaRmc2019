@@ -18,7 +18,7 @@
         <arg name="color_fps"  value="15"/>
         <arg name="enable_pointcloud"   value="true"/>
         <arg name="filters" value="pointcloud"/>
-        <arg name="odom_frame_id"    value="base_link"/>
+        <arg name="odom_frame_id"    value="/sensors/imu"/>
         <arg name="topic_odom_in"    value="/drivebase_odom"/>
         <arg name="publish_odom_tf"  value="true"/>
         <arg name="unite_imu_method"    value="linear_interpolation"/>
