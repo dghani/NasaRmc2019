@@ -21,5 +21,7 @@
         <arg name="publish_odom_tf"  value="true"/>
         <arg name="unite_imu_method"      value="linear_interpolation"/>
         <arg name="hold_back_imu_for_frames"      value="true"/>
+        <arg name="enable_gyro"         value="true"/>
+        <arg name="enable_accel"        value="true"/>
     </include>
 </launch>
