@@ -19,5 +19,7 @@
         <arg name="enable_pointcloud"   value="true"/>
         <arg name="filters" value="pointcloud"/>
         <arg name="publish_odom_tf"  value="true"/>
+        <arg name="unite_imu_method"      value="linear_interpolation"/>
+        <arg name="hold_back_imu_for_frames"      value="true"/>
     </include>
 </launch>
