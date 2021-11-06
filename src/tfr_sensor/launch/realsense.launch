@@ -19,6 +19,5 @@
         <arg name="enable_pointcloud"   value="true"/>
         <arg name="filters" value="pointcloud"/>
         <arg name="publish_odom_tf"  value="true"/>
-        <arg name="odom_frame_id"   value="/sensors/RealsenseIMU"/>
     </include>
 </launch>
