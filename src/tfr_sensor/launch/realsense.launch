@@ -18,5 +18,6 @@
         <arg name="color_fps"  value="15"/>
         <arg name="filters" value="pointcloud"/>
         <arg name="publish_odom_tf"  value="true"/>
+        <arg name="odom_frame_id"    value="$(find realsense2_camera)_odom_frame"/>
     </include>
 </launch>
