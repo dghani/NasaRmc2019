@@ -19,7 +19,7 @@
         <arg name="enable_pointcloud"   value="true"/>
         <arg name="filters" value="pointcloud"/>
         <arg name="publish_odom_tf"  value="true"/>
-        <arg name="odom_frame_id"  value="odom"/>
+        <arg name="odom_frame_id"  value="base_link"/>
         <arg name="unite_imu_method"    value="linear_interpolation"/>
         <arg name="enable_gyro"         value="true"/>
         <arg name="enable_accel"        value="true"/>
