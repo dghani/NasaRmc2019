@@ -1,11 +1,11 @@
 #This is the frequency in Hz, this outputs a position estimate.
-frequency: 64
+frequency: 16
 
 #These are all map variable definations for the kalman filter.
 #stock settings for robots without gps and no big hills
 odom_frame: odom
-base_link_frame: camera_link
-world_frame: odom 
+base_link_frame: base_footprint
+world_frame: map 
 two_d_mode: true
 sensor_timeout: 0.15
 transform_timeout: 0.2
