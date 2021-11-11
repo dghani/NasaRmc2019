@@ -16,10 +16,12 @@
         <arg name="color_width"         value="640"/>
         <arg name="color_height"        value="480"/>
         <arg name="filters"             value="pointcloud"/>
-        <arg name="gyro_fps"            value="1"/>
-        <arg name="accel_fps"           value="1"/>
+        <arg name="gyro_fps"            value="400"/>
+        <arg name="accel_fps"           value="250"/>
+        <arg name="enable_pointcloud"   value="true"/>
         
         <arg name="linear_accel_cov"    value="1.0"/>
         <arg name="unite_imu_method"    value="linear_interpolation"/>
     </include>
 </launch>
+
