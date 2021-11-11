@@ -12,6 +12,7 @@
         <arg name="depth_topic" value="/sensors/camera/aligned_depth_to_color/image_raw"/>
         <arg name="camera_info_topic" value="/sensors/camera/color/camera_info"/>
         <arg name="depth_camera_info_topic" value="/sensors/camera/depth/camera_info"/>
+        <arg name="odom_topic" value="/odometry/filtered"/>
         <arg name="rtabmapviz" value="false"/>
         <arg name="rviz" value="false"/>
         
