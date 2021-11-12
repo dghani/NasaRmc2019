@@ -22,6 +22,5 @@
         <arg name="gyro_fps"            value="400"/>
         <arg name="accel_fps"           value="250"/>
 	<arg name="initial_reset"       value="true"/>
-	<arg name="odom_frame_id" value="odom"/>
     </include>
 </launch>
