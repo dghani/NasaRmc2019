@@ -130,7 +130,7 @@ void setupMaxonDevice(kaco::Device& device, kaco::Bridge& bridge, std::string& e
 
 
     // min: 0 -> 0, 
-    // max: 1024 encoder clicks * 4.3 Maxon gear * 70 worm gear = 308224   
+    // max: 1024 encoder clicks * 4.3 Maxon gear * 34 worm gear = 149708   
     auto jspub = std::make_shared<kaco::JointStatePublisher>(device, -6321, 6321); 
     bridge.add_publisher(jspub, loop_rate);
     
