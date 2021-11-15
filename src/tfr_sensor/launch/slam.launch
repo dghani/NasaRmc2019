@@ -7,8 +7,8 @@
     </node>
     
     <include file="$(find rtabmap_ros)/launch/rtabmap.launch">
-        <param name="frame_id" type="string" value="base_link" />
-        <param name="odom_frame_id" type="string" value="odom" />
+        <arg name="frame_id" value="base_link" />
+        <arg name="odom_frame_id" value="odom" />
         <arg name="args" value="--delete_db_on_start"/>
         <arg name="rgb_topic" value="/sensors/camera/color/image_raw"/>
         <arg name="depth_topic" value="/sensors/camera/aligned_depth_to_color/image_raw"/>
