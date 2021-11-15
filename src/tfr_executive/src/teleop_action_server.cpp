@@ -208,14 +208,14 @@ class TeleopExecutive
                 case (tfr_utilities::TeleopCode::CLOCKWISE):
                     {
                         ROS_INFO("Teleop Action Server: Command Recieved, CLOCKWISE");
-                        arm_manipulator.moveTurntablePosition(0.01); // Move arm from back to front
+                        arm_manipulator.moveTurntablePosition(3.14); // Move arm to origin
                         break;
                     }
 
                 case (tfr_utilities::TeleopCode::COUNTERCLOCKWISE):
                     {
                         ROS_INFO("Teleop Action Server: Command Recieved, COUNTERCLOCKWISE");
-                        arm_manipulator.moveTurntablePosition(3.14); // Move arm from front to back
+                        arm_manipulator.moveTurntablePosition(1.57); // rotate arm 180 degrees
                         break;
                     }
                     
@@ -244,7 +244,7 @@ class TeleopExecutive
                 case (tfr_utilities::TeleopCode::UPPER_ARM_RETRACT):
                     {
  			ROS_INFO("Teleop Action Server: Command Recieved, UPPER_ARM_RETRACT");
-			arm_manipulator.moveUpperArmPosition(4.5); // Retract upper arm
+			arm_manipulator.moveUpperArmPosition(3.5); // Retract upper arm
 			break;
                     }
                     

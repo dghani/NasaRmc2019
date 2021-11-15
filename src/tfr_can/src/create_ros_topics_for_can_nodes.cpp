@@ -20,16 +20,17 @@ const std::string busname = "can1";
 // "1M", "500K", "125K", "100K", "50K", "20K", "10K" and "5K".
 const std::string baudrate = "250K";
 
-const size_t num_devices_required = 5;
+const size_t num_devices_required = 7;
 
 const double loop_rate = 32; // 32 Hz
 const int slow_loop_rate = 1; // 1 Hz
 
 // CANopen node IDs:
+const int TURNTABLE = 1;
+const int DRIVETRAIN = 8;
 const int SERVO_CYLINDER_LOWER_ARM = 23;
 const int SERVO_CYLINDER_UPPER_ARM = 45;
 const int SERVO_CYLINDER_SCOOP = 56;
-const int TURNTABLE = 1;
 const int SERVO_CYLINDER_BIN_LEFT = 77; 
 const int SERVO_CYLINDER_BIN_RIGHT = 88; 
 
@@ -130,10 +131,10 @@ void setupMaxonDevice(kaco::Device& device, kaco::Bridge& bridge, std::string& e
 
     // min: 0 -> 0, 
     // max: 1024 encoder clicks * 4.3 Maxon gear * 70 worm gear = 308224   
-    auto jspub = std::make_shared<kaco::JointStatePublisher>(device, -308224, 308224); 
+    auto jspub = std::make_shared<kaco::JointStatePublisher>(device, -6321, 6321); 
     bridge.add_publisher(jspub, loop_rate);
     
-    auto jssub = std::make_shared<kaco::JointStateSubscriber>(device, -308224, 308224); 
+    auto jssub = std::make_shared<kaco::JointStateSubscriber>(device, -6321, 6321); 
     bridge.add_subscriber(jssub);		
 
     // Read the "statusword" from the CANopen device.
@@ -284,7 +285,7 @@ int main(int argc, char* argv[]) {
 		
 		
 		
-		else if (deviceId == 8) //Drivetrain Motor controller
+		else if (deviceId == DRIVETRAIN) //Drivetrain Motor controller
 		{
 			device.load_dictionary_from_eds(eds_files_path + "roboteq_motor_controllers_v60.eds");
 			
@@ -327,7 +328,11 @@ int main(int argc, char* argv[]) {
 
             auto iopub_8_2_6 = std::make_shared<kaco::EntryPublisher>(device, "qry_abcntr/channel_2");
     		bridge.add_publisher(iopub_8_2_6, loop_rate);
-			
+		
+		//Reads battery voltage	
+		auto iopub_8 = std::make_shared<kaco::EntryPublisher>(device, "qry_volts/v_bat");
+    		bridge.add_publisher(iopub_8, loop_rate);
+
 		}
 		
 		

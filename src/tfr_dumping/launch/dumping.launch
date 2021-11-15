@@ -7,12 +7,10 @@
     </node>
     <node name="dumping_action_server" pkg="tfr_dumping" type="dumping_action_server" output="screen">
         <rosparam>
-            min_lin_vel: 0.1
-            max_lin_vel: 0.2
-            min_ang_vel: 0.5
-            max_ang_vel: 0.6 
-            ang_tolerance: 0.1
             image_service_name: /on_demand/rear_cam/image_raw
+            half_robot_length: 0.5
+            adjust_distance: 0.3
+            odometry: /odometry/filtered
         </rosparam>
     </node>
 </launch>

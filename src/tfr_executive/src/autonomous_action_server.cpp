@@ -57,10 +57,11 @@
 class AutonomousExecutive
 {
     public:
-        AutonomousExecutive(ros::NodeHandle &n,double f):
+        AutonomousExecutive(ros::NodeHandle &n,double f):        
             server{n, "autonomous_action_server", 
                 boost::bind(&AutonomousExecutive::autonomousMission, this, _1),
                 false},
+           
             localizationClient{n, "localize", true},
             navigationClient{n, "navigate", true},
             diggingClient{n, "dig", true},
@@ -156,6 +157,8 @@ class AutonomousExecutive
          * Upon successfully completing the goal sever will be set to succeed.
          * Upon failure server will be set to aborted
          */ 
+    
+    
         void autonomousMission(const tfr_msgs::EmptyGoalConstPtr &goal)
         {
             
@@ -169,7 +172,7 @@ class AutonomousExecutive
             if (LOCALIZATION_TO)
             {
                 ROS_INFO("Autonomous Action Server: commencing Localization To");
-                localize(true, 0);
+                localize(false, 0);
                 ROS_INFO("Autonomous Action Server: finished Localization To");
             }
 
@@ -389,7 +392,7 @@ class AutonomousExecutive
                 ROS_INFO("Autonomous Action Server: stabilized odometry");
                 std_srvs::Empty empty;
                 ros::service::call("/reset_fusion", empty);
-            }
+           }
             ROS_INFO("Autonomous Action Server: forward localization");
             geometry_msgs::Twist vel;
             vel.linear.x = 0.25;
