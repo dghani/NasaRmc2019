@@ -7,13 +7,13 @@
       <geometry>
         <cylinder radius="${turntable_radius}" length="${turntable_height}" />
       </geometry>
-      <origin xyz="0 0 ${turntable_height/2}" rpy="0 0 ${pi}" />
+      <origin xyz="0 0 ${turntable_height/2}" rpy="0 0 0" />
     </visual>
     <collision>
       <geometry>
         <cylinder radius="${turntable_radius}" length="${turntable_height}" />
       </geometry>
-      <origin xyz="0 0 ${turntable_height/2}" rpy="0 0 ${pi}" />
+      <origin xyz="0 0 ${turntable_height/2}" rpy="0 0 0" />
     </collision>
     <!-- test -->
     <inertial>
