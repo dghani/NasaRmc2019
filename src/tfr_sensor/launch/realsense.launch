@@ -19,6 +19,7 @@
         <arg name="gyro_fps"            value="400"/>
         <arg name="accel_fps"           value="250"/>
         <arg name="enable_pointcloud"   value="true"/>
+        <remap from="/sensors/camera/imu" to="/imu/data_raw" />
         
         <arg name="linear_accel_cov"    value="1.0"/>
         <arg name="unite_imu_method"    value="linear_interpolation"/>
