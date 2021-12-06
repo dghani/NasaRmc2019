@@ -61,8 +61,6 @@ void setupServoCylinderDevice(kaco::Device& device, kaco::Bridge& bridge, std::s
     auto iopub_1 = std::make_shared<kaco::EntryPublisher>(device, "torque_actual_value");
     bridge.add_publisher(iopub_1, loop_rate);
     
-    auto iosub_1 = std::make_shared<kaco::EntrySubscriber>(device, "torque_actual_value");
-    bridge.add_subscriber(iosub_1);
     
     // read/write the max allowed torque value
     auto iopub_2 = std::make_shared<kaco::EntryPublisher>(device, "max_torque");
