@@ -22,3 +22,6 @@ add_executable(read_torque
     src/read_torque.cpp
 )
 
+add_dependencies(read_torque ${catkin_EXPORTED_TARGETS})
+target_link_libraries(read_torque ${catkin_LIBRARIES})
+
