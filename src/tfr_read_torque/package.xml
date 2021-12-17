@@ -1,0 +1,10 @@
+<package format="2">
+	<name>tfr_read_torque</name>
+	<version>0.0.0</version>
+	<description>This is a package to learn ROS</description>
+	<license>BSD</license>
+
+	<depend>roscpp</depend>
+	
+
+</package>
