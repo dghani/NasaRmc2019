@@ -5,13 +5,14 @@ class read_torque {
 
 public:
 	readTorqueValues(ross:NodeHandle &handler) : 
-		lowerArmSub{handler.subscribe("/device23/get_torque_actual_value")}
+		lowerArmSub{handler.subscribe("/device23/get_torque_actual_value",5,&read_torque::lowerArmCallback,this)}
 	{}
+
+
 
 //class variables
 private:
 	ros::Subscriber lowerArmSub;
-
 
 
 
@@ -33,7 +34,7 @@ int main(int argc, char** argv) {
 
 	ros::Rate loop_rate(10);
 	ros::spin();
-
+	
 
 	std::cout << "Hello World";
 	return 0;
