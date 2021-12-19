@@ -5,6 +5,8 @@ add_compile_options(-std=c++11)
 
 find_package(catkin REQUIRED COMPONENTS
   roscpp
+  tfr_can
+  std_msgs
 )
 
 find_package(GTest REQUIRED)
