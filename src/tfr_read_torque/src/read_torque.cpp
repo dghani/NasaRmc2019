@@ -1,6 +1,6 @@
 #include <iostream>
 #include <ros/ros.h>
-#include <std_msg/Char.h>
+#include <std_msgs/Char.h>
 
 //class read_torque {
 
@@ -24,7 +24,7 @@
 //	}
 //}
 
-void lowerArmCallback() {
+void lowerArmCallback(const std_msgs::Char data) {
 	std::cout << "Lower arm callback";
 }
 
