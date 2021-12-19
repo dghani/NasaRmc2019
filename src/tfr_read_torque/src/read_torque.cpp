@@ -1,27 +1,31 @@
 #include <iostream>
 #include <ros/ros.h>
 
-class read_torque {
+//class read_torque {
 
-public:
-	readTorqueValues(ross:NodeHandle &handler) : 
-		lowerArmSub{handler.subscribe("/device23/get_torque_actual_value",5,&read_torque::lowerArmCallback,this)}
-	{}
+//public:
+//	readTorqueValues(ros:NodeHandle &handler) : 
+//		lowerArmSub{handler.subscribe("/device23/get_torque_actual_value",5,&read_torque::lowerArmCallback,this)}
+//	{}
+//
+//
+//
+////class variables
+//private:
+//	ros::Subscriber lowerArmSub;
+//
+//
+//
+////callback functions
+//	void lowerArmCallback() {
+//		std::cout << "Lower arm callback"
+//
+//	}
+//}
 
-
-
-//class variables
-private:
-	ros::Subscriber lowerArmSub;
-
-
-
-//callback functions
-	void lowerArmCallback() {
-		std::cout << "Lower arm callback"
-
-	}
-};
+void lowerArmCallback() {
+	std:cout << "Lower arm callback";
+}
 
 
 
@@ -30,9 +34,10 @@ int main(int argc, char** argv) {
 	ros::init(argc, argv, "read_torque");
 	ros::NodeHandle nodeHandler;
 
-	readTorqueValues(nodeHandler);
+	ros::Subscriber lowerArmSub = nodeHandler.subscribe("/device23/get_torque_actual_value",5, lowerArmCallback);
 
-	ros::Rate loop_rate(10);
+	//readTorqueValues(nodeHandler);
+
 	ros::spin();
 	
 
