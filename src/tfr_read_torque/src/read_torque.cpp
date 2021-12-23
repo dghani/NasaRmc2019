@@ -24,8 +24,13 @@
 //	}
 //}
 
-void lowerArmCallback(const std_msgs::Int16 data) {
+void lowerArmCallback(const std_msgs::Int16 torqueSensorCount) {
 	std::cout << "Lower arm callback";
+
+	double amps = (25 * torqueSensorCount) / (512); //page 93 in the ultra motion servo cylinder manual
+
+	std::cout << "Amps: " << amps;
+
 }
 
 
