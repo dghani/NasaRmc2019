@@ -11,10 +11,10 @@ local_costmap:
       origin_x: -2.0
       origin_y: -2.0
 
-  observation_sources: point_cloud_sensor
+observation_sources: point_cloud_sensor
 
   # assuming receiving a cloud from rtabmap_ros/obstacles_detection node
-  point_cloud_sensor: {
+point_cloud_sensor: {
         sensor_frame: base_footprint,
         data_type: PointCloud2, 
         topic: openni_points, 
