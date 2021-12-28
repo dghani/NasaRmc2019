@@ -5,7 +5,11 @@
 #include <chrono>
 
 double previousAmps{0};
-auto previousTime = std::chrono::system_clock::now();
+
+auto startupTime = std::chrono::system_clock::now();
+auto startTimeInSeconds = std::chrono::duration<double>(startupTime.time_since_epoch());
+double previousTime = 
+
 bool isScoopFull = false;
 
 
@@ -13,7 +17,11 @@ void upperArmCallback(const std_msgs::Int16 torqueSensorCount) {
 	std::cout << "Upper arm callback" << std::endl;
 
 	double currentAmps = (torqueSensorCount.data / 1848.43);//Page 93 from the Ultra Motion Servo Cylinder manual, "Motor Current"
-	auto currentTime = std::chrono::system_clock::now();
+
+
+	auto time = std::chrono::system_clock::now();
+	auto timeInSeconds = std::chrono::duration<double>(startupTime.time_since_epoch());
+	double currentTime = std::chrono::system_clock::now();
 
 	double torque_slope = (previousAmps - currentAmps) / (previousTime - currentTime);
 
