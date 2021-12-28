@@ -10,6 +10,8 @@ public:
     ReadTorque(ros::NodeHandle nodeHandler) {
         upperArmSub = nodeHandler.subscribe("/device45/get_torque_actual_value", 5, &ReadTorque::upperArmCallback, this);//upper arm
 
+        scoopFullPub = nodeHandler.advertise<std_msgs::Bool>("isScoopFull", 50);
+
         startupTime = std::chrono::system_clock::now();
         startTimeInSeconds = std::chrono::duration<double>(startupTime.time_since_epoch());
         previousTime = startTimeInSeconds.count();
