@@ -7,16 +7,47 @@
 class ReadTorque {
 
 public:
-	ReadTorque(ross::NodeHandle nodeHandler) {
+	ReadTorque(ros::NodeHandle nodeHandler) {
 		upperArmSub = nodeHandler.subscribe("/device45/get_torque_actual_value", 5, upperArmCallback);//upper arm
+
+		startupTime = std::chrono::system_clock::now();
+		startTimeInSeconds = std::chrono::duration<double>(startupTime.time_since_epoch());
+		previousTime = startTimeInSeconds.count;
 	}
 
 private:
 	ros::Subscriber upperArmSub;
 	ros::Publisher scoopFullPub;
 
- void upperArmCallback() {
+	auto startupTime;
+	auto startTimeInSeconds;
+	double previousTime;
 
+	bool isScoopFull = false;
+
+ void upperArmCallback(const std_msgs::Int16 torqueSensorCount) {
+	 std::cout << "Upper arm callback" << std::endl;
+	 
+	 	double currentAmps = (torqueSensorCount.data / 1848.43);//Page 93 from the Ultra Motion Servo Cylinder manual, "Motor Current"
+	 
+	 
+	 	auto time = std::chrono::system_clock::now();
+	 	auto timeInSeconds = std::chrono::duration<double>(startupTime.time_since_epoch());
+	 	double currentTime = timeInSeconds.count;
+	 
+	 	double torque_slope = (previousAmps - currentAmps) / (previousTime - currentTime);
+	 
+	 	if (torque_slope < 0.3 && torque_slope > -0.3) {//within 0.3amps of zero amps (aka an unchanging torque)
+	 		isScoopFull = true;
+	 	}
+	 	else {
+	 		isScoopFull = false;
+	 	}
+	 
+	 	previousAmps = currentAmps;
+	 	previousTime = currentTime;
+
+		scoopFullPub.publish(isScoopFull);
  }
 
 
