@@ -5,15 +5,15 @@
 #include <chrono>
 
 double previousAmps{0};
-double previousTime = std::chrono::system_clock::now();
+auto previousTime = std::chrono::system_clock::now();
 bool isScoopFull = false;
 
 
-void lowerArmCallback(const std_msgs::Int16 torqueSensorCount) {
+void upperArmCallback(const std_msgs::Int16 torqueSensorCount) {
 	std::cout << "Upper arm callback" << std::endl;
 
 	double currentAmps = (torqueSensorCount.data / 1848.43);//Page 93 from the Ultra Motion Servo Cylinder manual, "Motor Current"
-	double currentTime = std::chrono::system_clock::now();
+	auto currentTime = std::chrono::system_clock::now();
 
 	double torque_slope = (previousAmps - currentAmps) / (previousTime - currentTime);
 
@@ -37,7 +37,7 @@ int main(int argc, char** argv) {
 	ros::init(argc, argv, "read_torque");
 	ros::NodeHandle nodeHandler;
 
-	ros::Subscriber lowerArmSub = nodeHandler.subscribe("/device45/get_torque_actual_value",5, lowerArmCallback);//upper arm
+	ros::Subscriber lowerArmSub = nodeHandler.subscribe("/device45/get_torque_actual_value",5, upperArmCallback);//upper arm
 	ros::Publisher scoopFullPub = nodeHandler.advertise<std_msgs::Bool>("isScoopFull",50);
 
 
