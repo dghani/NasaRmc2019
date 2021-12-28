@@ -1,35 +1,32 @@
 #include <iostream>
 #include <ros/ros.h>
 #include <std_msgs/Int16.h>
+#include <std_msgs/Bool.h>
+#include <chrono>
 
-//class read_torque {
+double previousAmps{0};
+double previousTime = std::chrono::system_clock::now();
+bool isScoopFull = false;
 
-//public:
-//	readTorqueValues(ros:NodeHandle &handler) : 
-//		lowerArmSub{handler.subscribe("/device23/get_torque_actual_value",5,&read_torque::lowerArmCallback,this)}
-//	{}
-//
-//
-//
-////class variables
-//private:
-//	ros::Subscriber lowerArmSub;
-//
-//
-//
-////callback functions
-//	void lowerArmCallback() {
-//		std::cout << "Lower arm callback"
-//
-//	}
-//}
 
 void lowerArmCallback(const std_msgs::Int16 torqueSensorCount) {
-	std::cout << "Lower arm callback";
+	std::cout << "Upper arm callback" << std::endl;
 
-	//double amps = (25 * torqueSensorCount) / (512); //page 93 in the ultra motion servo cylinder manual
+	double currentAmps = (torqueSensorCount.data / 1848.43);//Page 93 from the Ultra Motion Servo Cylinder manual, "Motor Current"
+	double currentTime = std::chrono::system_clock::now();
 
-	//std::cout << "Amps: " << amps;
+	double torque_slope = (previousAmps - currentAmps) / (previousTime - currentTime);
+
+	if (torque_slope < 0.3 && torque_slope > -0.3) {//within 0.3amps of zero amps (aka an unchanging torque)
+		isScoopFull = true;
+	}
+	else {
+		isScoopFull = false;
+	}
+
+	previousAmps = currentAmps;
+	previousTime = currentTime;
+
 
 }
 
@@ -40,9 +37,10 @@ int main(int argc, char** argv) {
 	ros::init(argc, argv, "read_torque");
 	ros::NodeHandle nodeHandler;
 
-	ros::Subscriber lowerArmSub = nodeHandler.subscribe("/device23/get_torque_actual_value",5, lowerArmCallback);
+	ros::Subscriber lowerArmSub = nodeHandler.subscribe("/device45/get_torque_actual_value",5, lowerArmCallback);//upper arm
+	ros::Publisher scoopFullPub = nodeHandler.advertise<std_msgs::Bool>("isScoopFull",50);
 
-	//readTorqueValues(nodeHandler);
+
 
 	ros::spin();
 	
