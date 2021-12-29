@@ -47,6 +47,10 @@ add_executable(monitoring_arm_velocity src/monitoring_arm_velocity.cpp)
 add_dependencies(monitoring_arm_velocity ${catkin_EXPORTED_TARGETS})
 target_link_libraries(monitoring_arm_velocity ${catkin_LIBRARIES})
 
+add_executable(read_arm_torque src/read_torque.cpp)
+add_dependencies(read_arm_torque ${catkin_EXPORTED_TARGETS})
+target_link_libraries(read_arm_torque ${catkin_LIBRARIES})
+
 
 #############
 ## Testing ##
