@@ -8,5 +8,5 @@
             scoopTolerance: 5
         </rosparam>
     </node>
-	<node name="read_arm_torque" pkg="tfr_monitoring" type="read_arm_torque.cpp"  output="screen"/>
+	<node name="read_arm_torque" pkg="tfr_monitoring" type="read_arm_torque"  output="screen"/>
 </launch>
