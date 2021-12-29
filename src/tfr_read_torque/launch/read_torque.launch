@@ -1,5 +1,0 @@
-<launch>
-	<node name="read_torque" type="read_torque" pkg="tfr_read_torque" output="screen" >
-
-	</node>
-</launch>
