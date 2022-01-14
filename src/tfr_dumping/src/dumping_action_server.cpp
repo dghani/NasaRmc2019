@@ -136,6 +136,12 @@ private:
     ROS_INFO("Dumping Action Server: DUMPING_RESET finished");
   }
 
+  void moveAwayFromDumpBin() {
+    move_cmd.linear.x = .1;
+    drivebase_publisher.publish(move_cmd);
+
+  }
+
   // where the actions of dumping are called
   void dumpBinContents(const tfr_msgs::EmptyGoalConstPtr &goal) {
     // sleep makes sure robot is not moving so fiducial odom is accurate as possible
@@ -155,6 +161,11 @@ private:
 
     retractBin();
     ros::Duration(10.0).sleep();
+
+    moveAwayFromDumpBin();
+    ros::Duration(4.0).sleep();
+
+    stopMoving();
   }
 };
 
