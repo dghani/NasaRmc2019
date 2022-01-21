@@ -163,7 +163,7 @@ class AutonomousExecutive
 
         void autonomousMission(const tfr_msgs::EmptyGoalConstPtr &goal)
         {
-          
+          for (int run = 1; run < 3; run++) { // to control amount of autonomous runs
             ROS_INFO("Autonomous Action Server: mission started");
             if (server.isPreemptRequested() || ! ros::ok())
             {
@@ -329,7 +329,10 @@ class AutonomousExecutive
             }
             ROS_INFO("Autonomous Action Server: AUTONOMOUS MISSION SUCCESS");
             server.setSucceeded();
-          
+              
+          tfr_msgs::EmptyGoal goal2{}; // to help make goal empty again
+          goal = goal2; // make goal empty again
+          } // end for
         }
         /*
         * PRECONDITIONS:
