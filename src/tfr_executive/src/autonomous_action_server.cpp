@@ -426,6 +426,7 @@ class AutonomousExecutive
         bool NAVIGATION_FROM;
         bool DIGGING;
         bool DUMPING;
+        int RUNS;
         //how often to check for preemption
         ros::Duration frequency;
         ros::Publisher drivebase_publisher;
