@@ -431,17 +431,11 @@ class AutonomousExecutive
 
 int main(int argc, char **argv)
 {
-  //for (int i = 0; i < 2; i++) { // for loop for two runs of autonomy
-    //if (i == 1) {
-      //ROS_INFO("YOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO");
-    //}
     ros::init(argc, argv, "autonomous_action_server");
     ros::NodeHandle n{};
     double rate;
     ros::param::param<double>("~rate", rate, 10.0);
     AutonomousExecutive autonomousExecutive{n, 1.0/rate};
-    //ros::Duration(3).sleep();
-  //}
-  ros::spin();
-  return 0;
+    ros::spin();
+    return 0;
 }
