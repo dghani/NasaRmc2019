@@ -76,6 +76,7 @@ class AutonomousExecutive
             ros::param::param<bool>("~localization_to", LOCALIZATION_TO, true);
             ros::param::param<bool>("~localization_from", LOCALIZATION_FROM, true);
             ros::param::param<bool>("~localization_finish", LOCALIZATION_FINISH, true);
+            ros::param::param<int>("~runs", RUNS, 1);
             if (LOCALIZATION_TO || LOCALIZATION_FROM || LOCALIZATION_FINISH)
             {
                 ROS_INFO("Autonomous Action Server: Connecting to localization server");
@@ -163,7 +164,7 @@ class AutonomousExecutive
 
         void autonomousMission(const tfr_msgs::EmptyGoalConstPtr &goal)
         {
-          for (int run = 1; run < 3; run++) { // to control amount of autonomous runs
+          for (int run = 1; run < RUNS; run++) { // to control amount of autonomous runs
             ROS_INFO("Autonomous Action Server: mission started");
             if (server.isPreemptRequested() || ! ros::ok())
             {
