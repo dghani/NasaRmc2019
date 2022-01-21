@@ -12,7 +12,7 @@
         <rosparam>
             localization_to: true 
             navigation_to: true
-            digging: true 
+            digging: false 
             localization_from: true
             navigation_from: true
             localization_finish: true
