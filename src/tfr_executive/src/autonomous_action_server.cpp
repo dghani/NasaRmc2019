@@ -72,6 +72,7 @@ class AutonomousExecutive
             moveClient{n, "move_base", true}
 
         {
+          for (int i = 0; i < 2; i ++) { // for loop for two runs of autonomy
             ros::param::param<bool>("~localization_to", LOCALIZATION_TO, true);
             ros::param::param<bool>("~localization_from", LOCALIZATION_FROM, true);
             ros::param::param<bool>("~localization_finish", LOCALIZATION_FINISH, true);
@@ -116,6 +117,7 @@ class AutonomousExecutive
             server.start();
             ROS_INFO("Autonomous Action Server: online, %f",
                     ros::Time::now().toSec());
+          }
         }
         ~AutonomousExecutive() = default;
         AutonomousExecutive(const AutonomousExecutive&) = delete;
@@ -161,7 +163,7 @@ class AutonomousExecutive
 
         void autonomousMission(const tfr_msgs::EmptyGoalConstPtr &goal)
         {
-          for (int i = 0; i < 2; i ++) { // for loop for two runs of autonomy
+          
             ROS_INFO("Autonomous Action Server: mission started");
             if (server.isPreemptRequested() || ! ros::ok())
             {
@@ -327,7 +329,7 @@ class AutonomousExecutive
             }
             ROS_INFO("Autonomous Action Server: AUTONOMOUS MISSION SUCCESS");
             server.setSucceeded();
-          }
+          
         }
         /*
         * PRECONDITIONS:
