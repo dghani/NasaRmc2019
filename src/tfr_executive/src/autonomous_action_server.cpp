@@ -72,7 +72,7 @@ class AutonomousExecutive
             moveClient{n, "move_base", true}
 
         {
-          for (int i = 0; i < 2; i ++) { // for loop for two runs of autonomy
+          
             ros::param::param<bool>("~localization_to", LOCALIZATION_TO, true);
             ros::param::param<bool>("~localization_from", LOCALIZATION_FROM, true);
             ros::param::param<bool>("~localization_finish", LOCALIZATION_FINISH, true);
@@ -117,7 +117,7 @@ class AutonomousExecutive
             server.start();
             ROS_INFO("Autonomous Action Server: online, %f",
                     ros::Time::now().toSec());
-          }
+          
         }
         ~AutonomousExecutive() = default;
         AutonomousExecutive(const AutonomousExecutive&) = delete;
@@ -431,11 +431,15 @@ class AutonomousExecutive
 
 int main(int argc, char **argv)
 {
+  for (int i = 0; i < 2; i ++) { // for loop for two runs of autonomy
     ros::init(argc, argv, "autonomous_action_server");
     ros::NodeHandle n{};
     double rate;
     ros::param::param<double>("~rate", rate, 10.0);
     AutonomousExecutive autonomousExecutive{n, 1.0/rate};
     ros::spin();
-    return 0;
+    ros::Duration(5).sleep();
+  }
+  return 0;
+  
 }
