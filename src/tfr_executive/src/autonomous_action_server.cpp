@@ -161,7 +161,7 @@ class AutonomousExecutive
 
         void autonomousMission(const tfr_msgs::EmptyGoalConstPtr &goal)
         {
-          for (int i = 0; i < 2; i ++) {
+          for (int i = 0; i < 2; i ++) { // for loop for two runs of autonomy
             ROS_INFO("Autonomous Action Server: mission started");
             if (server.isPreemptRequested() || ! ros::ok())
             {
