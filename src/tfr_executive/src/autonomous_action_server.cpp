@@ -329,7 +329,7 @@ class AutonomousExecutive
             }
             ROS_INFO("Autonomous Action Server: AUTONOMOUS MISSION SUCCESS");
               
-          } // end for
+          } // end autonomous runs for loop
           server.setSucceeded();
         }
         /*
