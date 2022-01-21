@@ -328,11 +328,9 @@ class AutonomousExecutive
 
             }
             ROS_INFO("Autonomous Action Server: AUTONOMOUS MISSION SUCCESS");
-            server.setSucceeded();
               
-          tfr_msgs::EmptyGoal goal2{}; // to help make goal empty again
-          goal = goal2; // make goal empty again
           } // end for
+          server.setSucceeded();
         }
         /*
         * PRECONDITIONS:
