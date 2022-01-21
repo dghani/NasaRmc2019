@@ -440,9 +440,8 @@ int main(int argc, char **argv)
     double rate;
     ros::param::param<double>("~rate", rate, 10.0);
     AutonomousExecutive autonomousExecutive{n, 1.0/rate};
-    ros::spin();
-    ros::Duration(5).sleep();
+    ros::Duration(3).sleep();
   }
+  ros::spin();
   return 0;
-  
 }
