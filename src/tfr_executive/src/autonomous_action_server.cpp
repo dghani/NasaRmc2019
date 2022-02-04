@@ -167,11 +167,26 @@ class AutonomousExecutive
         {
           ROS_INFO("Autonomous Action Server: Moving arm out of starting position.");
           if (MOVE_ARM_OUT_OF_START_POSITION) {
+
+            arm_manipulator.moveLeftBinPosition(5.0);  // Extend left bin actuator
+            arm_manipulator.moveRightBinPosition(5.0); // Extend right bin actuator
+            ros::Duration(4.0).sleep();
+
             arm_manipulator.moveLowerArmPosition(5.0);
             ros::Duration(4.0).sleep();
             arm_manipulator.moveUpperArmPosition(1.0);
             ros::Duration(4.0).sleep();
             arm_manipulator.moveScoopPosition(3.5);
+            ros::Duration(4.0).sleep();
+            arm_manipulator.moveTurntablePosition(1.19);
+            ros::Duration(4.0).sleep();
+
+            arm_manipulator.moveLeftBinPosition(1.0);  // Retract left bin actuator
+            arm_manipulator.moveRightBinPosition(1.0); // Retract right bin actuator
+            ros::Duration(4.0).sleep();
+
+            arm_manipulator.moveTurntablePosition(3.14);
+
             MOVE_ARM_OUT_OF_START_POSITION = false;
           }
           ROS_INFO("Autonomous Action Server: Finished moving arm.");
