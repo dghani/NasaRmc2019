@@ -48,6 +48,7 @@
 #include <move_base_msgs/MoveBaseAction.h>
 #include <std_srvs/Empty.h>
 #include <geometry_msgs/Twist.h>
+#include <tfr_utilities/arm_manipulator.h>
 #include <tfr_utilities/location_codes.h>
 #include <tfr_utilities/status_code.h>
 #include <tfr_utilities/status_publisher.h>
@@ -61,7 +62,7 @@ class AutonomousExecutive
             server{n, "autonomous_action_server",
                 boost::bind(&AutonomousExecutive::autonomousMission, this, _1),
                 false},
-
+            arm_manipulator{n},
             localizationClient{n, "localize", true},
             navigationClient{n, "navigate", true},
             diggingClient{n, "dig", true},
@@ -72,7 +73,7 @@ class AutonomousExecutive
             moveClient{n, "move_base", true}
 
         {
-          
+            ros::param::param<bool>("~move_arm_out_of_start_position", MOVE_ARM_OUT_OF_START_POSITION, false);
             ros::param::param<bool>("~localization_to", LOCALIZATION_TO, true);
             ros::param::param<bool>("~localization_from", LOCALIZATION_FROM, true);
             ros::param::param<bool>("~localization_finish", LOCALIZATION_FINISH, true);
@@ -118,7 +119,7 @@ class AutonomousExecutive
             server.start();
             ROS_INFO("Autonomous Action Server: online, %f",
                     ros::Time::now().toSec());
-          
+
         }
         ~AutonomousExecutive() = default;
         AutonomousExecutive(const AutonomousExecutive&) = delete;
@@ -164,6 +165,32 @@ class AutonomousExecutive
 
         void autonomousMission(const tfr_msgs::EmptyGoalConstPtr &goal)
         {
+          ROS_INFO("Autonomous Action Server: Moving arm out of starting position.");
+          if (MOVE_ARM_OUT_OF_START_POSITION) {
+
+            arm_manipulator.moveLeftBinPosition(5.0);  // Extend left bin actuator
+            arm_manipulator.moveRightBinPosition(5.0); // Extend right bin actuator
+            ros::Duration(4.0).sleep();
+
+            arm_manipulator.moveLowerArmPosition(5.0);
+            ros::Duration(4.0).sleep();
+            arm_manipulator.moveUpperArmPosition(1.0);
+            ros::Duration(4.0).sleep();
+            arm_manipulator.moveScoopPosition(3.5);
+            ros::Duration(4.0).sleep();
+            arm_manipulator.moveTurntablePosition(1.19);
+            ros::Duration(4.0).sleep();
+
+            arm_manipulator.moveLeftBinPosition(.5);  // Retract left bin actuator
+            arm_manipulator.moveRightBinPosition(.5); // Retract right bin actuator
+            ros::Duration(4.0).sleep();
+
+            arm_manipulator.moveTurntablePosition(3.14);
+
+            MOVE_ARM_OUT_OF_START_POSITION = false;
+          }
+          ROS_INFO("Autonomous Action Server: Finished moving arm.");
+
           for (int run = 1; run < RUNS; run++) { // to control amount of autonomous runs
             ROS_INFO("Autonomous Action Server: mission started");
             if (server.isPreemptRequested() || ! ros::ok())
@@ -329,7 +356,7 @@ class AutonomousExecutive
 
             }
             ROS_INFO("Autonomous Action Server: AUTONOMOUS MISSION SUCCESS");
-              
+
           } // end autonomous runs for loop
           server.setSucceeded();
         }
@@ -410,6 +437,7 @@ class AutonomousExecutive
             ROS_INFO("Autonomous Action Server: localization finished");
         }
 
+        ArmManipulator arm_manipulator;
         actionlib::SimpleActionServer<tfr_msgs::EmptyAction> server;
         actionlib::SimpleActionClient<tfr_msgs::LocalizationAction> localizationClient;
         actionlib::SimpleActionClient<tfr_msgs::NavigationAction> navigationClient;
@@ -419,6 +447,7 @@ class AutonomousExecutive
 
        StatusPublisher status_publisher;
 
+        bool MOVE_ARM_OUT_OF_START_POSITION;
         bool LOCALIZATION_TO;
         bool LOCALIZATION_FROM;
         bool LOCALIZATION_FINISH;
