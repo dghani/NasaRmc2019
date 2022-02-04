@@ -72,7 +72,7 @@ class AutonomousExecutive
             moveClient{n, "move_base", true}
 
         {
-          
+
             ros::param::param<bool>("~localization_to", LOCALIZATION_TO, true);
             ros::param::param<bool>("~localization_from", LOCALIZATION_FROM, true);
             ros::param::param<bool>("~localization_finish", LOCALIZATION_FINISH, true);
@@ -118,7 +118,7 @@ class AutonomousExecutive
             server.start();
             ROS_INFO("Autonomous Action Server: online, %f",
                     ros::Time::now().toSec());
-          
+
         }
         ~AutonomousExecutive() = default;
         AutonomousExecutive(const AutonomousExecutive&) = delete;
@@ -329,7 +329,7 @@ class AutonomousExecutive
 
             }
             ROS_INFO("Autonomous Action Server: AUTONOMOUS MISSION SUCCESS");
-              
+
           } // end autonomous runs for loop
           server.setSucceeded();
         }

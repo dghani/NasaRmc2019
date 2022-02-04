@@ -5,6 +5,7 @@
             turn_velocity: 0.7
             turn_duration: 1.0
             yaw_threshold: 0.10
+            moveArmOutOfStartingPosition: true
         </rosparam>
     </node>
     <include file="$(find tfr_localization)/launch/bin_broadcaster.launch"/>

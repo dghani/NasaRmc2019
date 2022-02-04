@@ -4,7 +4,7 @@
  * Takes in the empty action request, and provides no feedback.
  * Turns until it sees the aruco markers, exits succesfully once it does.
  *
- * Needs access to the image wrapper topic wrapper to fetch images, 
+ * Needs access to the image wrapper topic wrapper to fetch images,
  * name is specified as a parameter.
  *
  * parameters:
@@ -23,19 +23,22 @@
 #include <tfr_msgs/WrappedImage.h>
 #include <tfr_msgs/PoseSrv.h>
 #include <tfr_utilities/tf_manipulator.h>
+#include <tfr_utilities/arm_manipulator.h>
 #include <geometry_msgs/Twist.h>
 
 class Localizer
 {
     public:
         Localizer(ros::NodeHandle &n, double& velocity, double&
-                duration, double& thresh) : 
+                duration, double& thresh, bool& moveArmOutOfStartingPosition) :
+            arm_manipulator{n},
             aruco{n, "aruco_action_server"},
             server{n, "localize", boost::bind(&Localizer::localize, this, _1) ,false},
             cmd_publisher{n.advertise<geometry_msgs::Twist>("cmd_vel", 5)},
             turn_velocity{velocity},
             turn_duration{duration},
-            threshold{thresh}
+            threshold{thresh},
+            moveArmOutOfStartingPosition{moveArmOutOfStartingPosition}
 
         {
             ROS_INFO("Localization Action Server: Connecting Aruco");
@@ -44,14 +47,14 @@ class Localizer
             } else {
                 ROS_INFO("Autonomous Action Server: Connected to digging server");
             }
-            
+
 
             ROS_INFO("Localization Action Server: Connecting Image Client");
             rear_cam_client = n.serviceClient<tfr_msgs::WrappedImage>("/on_demand/rear_cam/image_raw");
             front_cam_client = n.serviceClient<tfr_msgs::WrappedImage>("/on_demand/front_cam/image_raw");
             tfr_msgs::WrappedImage request{};
             ros::Duration busy_wait{0.1};
-            while(!rear_cam_client.call(request)) 
+            while(!rear_cam_client.call(request))
                 busy_wait.sleep();
             while(!front_cam_client.call(request))
                 busy_wait.sleep();
@@ -59,6 +62,8 @@ class Localizer
             ROS_INFO("Localization Action Server: Starting");
             server.start();
             ROS_INFO("Localization Action Server: Started");
+
+            ArmOutStartPos = moveArmOutOfStartingPosition;
         };
         ~Localizer() = default;
         Localizer(const Localizer&) = delete;
@@ -75,11 +80,23 @@ class Localizer
         double turn_velocity;
         double turn_duration;
         double threshold;
+        bool moveArmOutOfStartingPosition;
+        bool ArmOutStartPos;
+        ArmManipulator arm_manipulator;
 
         void localize( const tfr_msgs::LocalizationGoalConstPtr &goal)
         {
             ROS_INFO("Localization Action Server: Localize Starting");
-            
+
+            if (ArmOutStartPos) {
+              arm_manipulator.moveLowerArmPosition();
+              ros::Duration(4.0).sleep();
+              arm_manipulator.moveUpperArmPosition();
+              ros::Duration(4.0).sleep();
+              arm_manipulator.moveScoopPosition();
+              ArmOutStartPos = false;
+            }
+
             //setup
             bool odometry = goal->set_odometry, success = true, set = false;
             geometry_msgs::Twist cmd;
@@ -95,12 +112,12 @@ class Localizer
 
                 ROS_INFO("Localization Action Server: iterating");
                 if (checkPreempt(output, success)){break;}
-                
+
                 if ( not ros::param::getCached("~turn_velocity", turn_velocity)) {turn_velocity = .5;}
-                
+
                 tfr_msgs::ArucoResultConstPtr result = getArucoResult();
-                
-                
+
+
                 if (result != nullptr && result->number_found > 0) {
                     //we found something
                     geometry_msgs::PoseStamped unprocessed_pose = result->relative_pose;
@@ -115,7 +132,7 @@ class Localizer
                     }
 
                     ROS_INFO("transformed");
-                    
+
                     processed_pose.pose.position.z = 0;
                     processed_pose.header.stamp = ros::Time::now();
 
@@ -124,10 +141,10 @@ class Localizer
                     request.pose = processed_pose;
                     tfr_msgs::PoseSrv::Response response;
                     output.pose = processed_pose.pose;
-                    
+
 
                     while(true) {
-                        if (checkPreempt(output, success)) {break;} 
+                        if (checkPreempt(output, success)) {break;}
                         if(ros::service::call("/localize_bin", request, response)) {
                             ROS_INFO("localized");
                             tfr_msgs::LocalizationResult result;
@@ -139,12 +156,12 @@ class Localizer
                         }
                     }
 
-                    auto siny = +2.0 * 
-                        (processed_pose.pose.orientation.w * processed_pose.pose.orientation.z + 
+                    auto siny = +2.0 *
+                        (processed_pose.pose.orientation.w * processed_pose.pose.orientation.z +
                          processed_pose.pose.orientation.x * processed_pose.pose.orientation.y);
-                    auto cosy = +1.0 - 2.0 * 
-                        (processed_pose.pose.orientation.y * processed_pose.pose.orientation.y + 
-                         processed_pose.pose.orientation.z * processed_pose.pose.orientation.z );  
+                    auto cosy = +1.0 - 2.0 *
+                        (processed_pose.pose.orientation.y * processed_pose.pose.orientation.y +
+                         processed_pose.pose.orientation.z * processed_pose.pose.orientation.z );
                     auto angle = atan2(siny, cosy);
 
                     auto difference = std::abs(goal->target_yaw) - std::abs(angle);
@@ -172,10 +189,10 @@ class Localizer
                 ROS_INFO("Localization Action Server: turning");
 
                 geometry_msgs::Twist cmd;
-                cmd.angular.z = turn_velocity; 
-                cmd_publisher.publish(cmd); 
+                cmd.angular.z = turn_velocity;
+                cmd_publisher.publish(cmd);
                 //Removed the below to try and continuously spin until we localize
-              //  ros::Duration(turn_duration).sleep(); 
+              //  ros::Duration(turn_duration).sleep();
               //  ROS_INFO("Localization Action Server: stopping");
 
                // cmd.angular.z = 0;
@@ -185,13 +202,13 @@ class Localizer
 
             if (success)
                 server.setSucceeded(output);
- 
+
             cmd.angular.z = 0;
             cmd_publisher.publish(cmd);
             //teardown
             ROS_INFO("Localization Action Server: Localize Finished");
         }
-        
+
         tfr_msgs::ArucoResultConstPtr getArucoResult(){
             tfr_msgs::ArucoResultConstPtr result = nullptr;
             tfr_msgs::WrappedImage image_wrapper{};
@@ -200,7 +217,7 @@ class Localizer
                 result = sendAruco(image_wrapper);
             ROS_INFO("Localization Action Server: rearcam %d", result->number_found);
 
-            //front camera 
+            //front camera
             if (result != nullptr && result->number_found == 0 && front_cam_client.call(image_wrapper))
                 result = sendAruco(image_wrapper);
             ROS_INFO("Localization Action Server: frontcam %d", result->number_found);
@@ -216,7 +233,7 @@ class Localizer
             aruco.waitForResult();
             return aruco.getResult();
         }
-        
+
         bool checkPreempt(tfr_msgs::LocalizationResult& output, bool& success){
             if (server.isPreemptRequested() || !server.isActive() || ! ros::ok()) {
                 ROS_INFO("Localization Action Server: preempt requested");
@@ -229,19 +246,19 @@ class Localizer
 
 };
 
-
-
 int main(int argc, char** argv)
 {
     ros::init(argc, argv, "localization_action_server");
     ros::NodeHandle n{};
     double turn_velocity, turn_duration, threshold;
+    bool moveArmOutOfStartingPosition;
     ros::param::param<double>("~turn_velocity", turn_velocity, 0.0);
     ros::param::param<double>("~turn_duration", turn_duration, 0.0);
     ros::param::param<double>("~yaw_threshold", threshold, 0.0);
+    ros::param::param<bool>("~moveArmOutOfStartingPosition", moveArmOutOfStartingPosition, false);
     if (turn_velocity == 0.0 || turn_duration == 0.0)
         ROS_WARN("Localization Action Server: Uninitialized Parameters");
-    Localizer localizer(n, turn_velocity, turn_duration, threshold);
+    Localizer localizer(n, turn_velocity, turn_duration, threshold, moveArmOutOfStartingPosition);
     ros::Rate rate(10);
     while(ros::ok()){
         ros::spinOnce();
