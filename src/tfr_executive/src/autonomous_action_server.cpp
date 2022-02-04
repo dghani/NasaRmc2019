@@ -181,8 +181,8 @@ class AutonomousExecutive
             arm_manipulator.moveTurntablePosition(1.19);
             ros::Duration(4.0).sleep();
 
-            arm_manipulator.moveLeftBinPosition(1.0);  // Retract left bin actuator
-            arm_manipulator.moveRightBinPosition(1.0); // Retract right bin actuator
+            arm_manipulator.moveLeftBinPosition(.5);  // Retract left bin actuator
+            arm_manipulator.moveRightBinPosition(.5); // Retract right bin actuator
             ros::Duration(4.0).sleep();
 
             arm_manipulator.moveTurntablePosition(3.14);
