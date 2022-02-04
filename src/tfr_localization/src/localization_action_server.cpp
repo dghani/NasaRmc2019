@@ -23,22 +23,19 @@
 #include <tfr_msgs/WrappedImage.h>
 #include <tfr_msgs/PoseSrv.h>
 #include <tfr_utilities/tf_manipulator.h>
-#include <tfr_utilities/arm_manipulator.h>
 #include <geometry_msgs/Twist.h>
 
 class Localizer
 {
     public:
         Localizer(ros::NodeHandle &n, double& velocity, double&
-                duration, double& thresh, bool& moveArmOutOfStartingPosition) :
-            arm_manipulator{n},
+                duration, double& thresh) :
             aruco{n, "aruco_action_server"},
             server{n, "localize", boost::bind(&Localizer::localize, this, _1) ,false},
             cmd_publisher{n.advertise<geometry_msgs::Twist>("cmd_vel", 5)},
             turn_velocity{velocity},
             turn_duration{duration},
-            threshold{thresh},
-            moveArmOutOfStartingPosition{moveArmOutOfStartingPosition}
+            threshold{thresh}
 
         {
             ROS_INFO("Localization Action Server: Connecting Aruco");
@@ -63,7 +60,6 @@ class Localizer
             server.start();
             ROS_INFO("Localization Action Server: Started");
 
-            ArmOutStartPos = moveArmOutOfStartingPosition;
         };
         ~Localizer() = default;
         Localizer(const Localizer&) = delete;
@@ -80,22 +76,10 @@ class Localizer
         double turn_velocity;
         double turn_duration;
         double threshold;
-        bool moveArmOutOfStartingPosition;
-        bool ArmOutStartPos;
-        ArmManipulator arm_manipulator;
 
         void localize( const tfr_msgs::LocalizationGoalConstPtr &goal)
         {
             ROS_INFO("Localization Action Server: Localize Starting");
-
-            if (ArmOutStartPos) {
-              arm_manipulator.moveLowerArmPosition();
-              ros::Duration(4.0).sleep();
-              arm_manipulator.moveUpperArmPosition();
-              ros::Duration(4.0).sleep();
-              arm_manipulator.moveScoopPosition();
-              ArmOutStartPos = false;
-            }
 
             //setup
             bool odometry = goal->set_odometry, success = true, set = false;
@@ -255,10 +239,9 @@ int main(int argc, char** argv)
     ros::param::param<double>("~turn_velocity", turn_velocity, 0.0);
     ros::param::param<double>("~turn_duration", turn_duration, 0.0);
     ros::param::param<double>("~yaw_threshold", threshold, 0.0);
-    ros::param::param<bool>("~moveArmOutOfStartingPosition", moveArmOutOfStartingPosition, false);
     if (turn_velocity == 0.0 || turn_duration == 0.0)
         ROS_WARN("Localization Action Server: Uninitialized Parameters");
-    Localizer localizer(n, turn_velocity, turn_duration, threshold, moveArmOutOfStartingPosition);
+    Localizer localizer(n, turn_velocity, turn_duration, threshold);
     ros::Rate rate(10);
     while(ros::ok()){
         ros::spinOnce();
