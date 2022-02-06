@@ -11,6 +11,7 @@
 #include "digging_queue.h"
 #include <geometry_msgs/Twist.h>
 #include <std_msgs/Bool.h>
+#include <std_msgs/Int16.h>
 #include <std_msgs/Int32.h>
 #include <tfr_msgs/ArmMoveAction.h>  // Note: "Action" is appended
 #include <tfr_msgs/DiggingAction.h>  // Note: "Action" is appended
@@ -31,10 +32,11 @@ public:
     DiggingActionServer(ros::NodeHandle &nh, ros::NodeHandle &p_nh) :
         priv_nh{p_nh},
         drivebase_publisher{nh.advertise<geometry_msgs::Twist>("cmd_vel", 5)},
-        turnTableSub{nh.subscribe("arm_status/turnTable", 5, &DiggingActionServer::turnTableVelocityCallback, this)},
-        lowerArmSub{nh.subscribe("/device23/get_position_actual_value", 5, &DiggingActionServer::lowerArmPositionCallback, this)},
-        upperArmSub{nh.subscribe("/device45/get_position_actual_value", 5, &DiggingActionServer::upperArmPositionCallback, this)},
-        scoopSub{nh.subscribe("/device56/get_position_actual_value", 5, &DiggingActionServer::scoopPositionCallback, this)},
+        turnTablePositionSub{nh.subscribe("arm_status/turnTable", 5, &DiggingActionServer::turnTableVelocityCallback, this)},
+        lowerArmPositionSub{nh.subscribe("/device23/get_position_actual_value", 5, &DiggingActionServer::lowerArmPositionCallback, this)},
+        upperArmPositionSub{nh.subscribe("/device45/get_position_actual_value", 5, &DiggingActionServer::upperArmPositionCallback, this)},
+        scoopPositionSub{nh.subscribe("/device56/get_position_actual_value", 5, &DiggingActionServer::scoopPositionCallback, this)},
+        lowerArmTorqueSub{nh.subscribe("/device23/get_torque_actual_value", 5, &DiggingActionServer::lowerArmTorqueCallback, this)},
         server{nh, "dig", boost::bind(&DiggingActionServer::execute, this, _1), false},
         arm_manipulator{nh}
 
@@ -55,7 +57,7 @@ private:
    * set of positions will be sent.
    *
    * During a scoop the max/min actuator positions will be saved to determine if
-   * the arm reached the sent positions. After a scoop the current of the lower
+   * the arm reached the sent positions. After a scoop the torque of the lower
    * arm actuator will be checked to determine how full of material the scoop
    * is. The position the arm reached and the fullness of the scoop will
    * determine how much farther down the next scoop will be.
@@ -87,10 +89,11 @@ private:
 
     ArmManipulator arm_manipulator;
 
-    ros::Subscriber turnTableSub;
-    ros::Subscriber lowerArmSub;
-    ros::Subscriber upperArmSub;
-    ros::Subscriber scoopSub;
+    ros::Subscriber turnTablePositionSub;
+    ros::Subscriber lowerArmPositionSub;
+    ros::Subscriber upperArmPositionSub;
+    ros::Subscriber scoopPositionSub;
+    ros::Subscriber lowerArmTorqueSub;
 
     bool turnTableMoving;
     bool lowerArmNear;
@@ -124,6 +127,10 @@ private:
     }
 
     void scoopPositionCallback(const std_msgs::Int32& scoopPosition) {
+
+    }
+
+    void lowerArmTorqueCallback(const std_msgs::Int16& lowerArmTorque) {
       
     }
 
