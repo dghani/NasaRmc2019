@@ -40,4 +40,3 @@ target_link_libraries(test_digging_client
 )
 
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
-

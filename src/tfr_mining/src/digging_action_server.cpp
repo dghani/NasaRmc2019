@@ -75,92 +75,28 @@ private:
 
     ros::NodeHandle &priv_nh;
 
+    Server server;
+
     ros::Publisher drivebase_publisher;
+
+    ArmManipulator arm_manipulator;
 
     ros::Subscriber turnTableSubscriber;
     ros::Subscriber lowerArmSubscriber;
     ros::Subscriber upperArmSubscriber;
     ros::Subscriber scoopSubscriber;
 
-    ArmManipulator arm_manipulator;
-    tfr_mining::DiggingQueue queue;
-    Server server;
-
     bool turnTableMoving;
     bool lowerArmMoving;
     bool upperArmMoving;
     bool scoopMoving;
-	
-    double turnTablePosition;
 
+    double turnTablePosition;
 
 
     void execute(const tfr_msgs::DiggingGoalConstPtr& goal)
     {
-        ROS_INFO("Start digging queue.");
 
-        std::queue<tfr_mining::DiggingSet> current_queue{queue.sets};
-
-        while (!current_queue.empty())
-        {
-            tfr_mining::DiggingSet set = current_queue.front();
-            current_queue.pop();
-            ros::Time now = ros::Time::now();
-
-            ROS_INFO("Starting digging set");
-
-            std::queue<std::vector<double> > current_set{set.states};
-
-            while (!current_set.empty())
-            {
-                std::vector<double> state = current_set.front();
-                current_set.pop();
-
-                // Use arm_manipulator, and NOT MoveIt, to send commands to the arm. The actuators will just
-                // move to each of the points in the digging queue, there is no trajectory or other points being
-                // generated. There is also no collision checking, so be careful.
-                ROS_INFO("Moving arm to position: %.2f %.2f %.2f %.2f", state[0], state[1], state[2], state[3]);
-                arm_manipulator.moveArmWithoutPlanningOrLimits(state[0], state[1], state[2], state[3]);
-		
-		// since turn table takes longer than actuators to increase in velocity, if the turn table moves then sleep 0.5 seconds
-		// to allow it to start moving so the robot doesn't think it's not moving and move to the next set of positions
-		if(turnTablePosition != state[0]) {
-                     ros::Duration(0.50).sleep();
-		}
-		turnTablePosition = state[0];
-
-                // This loop checks for the actuators and turn table to be done moving. Will keep looping until they are done moving.
-                while (true) {
-                  if (this->turnTableMoving == false &&
-                      this->lowerArmMoving == false &&
-                      this->upperArmMoving == false &&
-                      this->scoopMoving == false) {
-			  ros::Duration(0.10).sleep();
-			  if (this->turnTableMoving == false &&
-                              this->lowerArmMoving == false &&
-                              this->upperArmMoving == false &&
-                              this->scoopMoving == false) {
-			  	  break;
-			  }
-                  }
-                }
-
-                ros::Rate rate(10.0);
-
-                if (server.isPreemptRequested() || !ros::ok())
-                {
-                    ROS_INFO("Preempting digging action server");
-                    tfr_msgs::DiggingResult result;
-                    server.setPreempted(result);
-                    return;
-                }
-
-                rate.sleep();
-            }
-        }
-        ROS_INFO("End digging queue.");
-        tfr_msgs::DiggingResult result;
-        server.setSucceeded(result);
     }
 
 
@@ -177,7 +113,7 @@ private:
       this->upperArmMoving = upperArmStatus.data;
     }
 
-    void scoopVelocityCallback(const std_msgs::Bool &scoopStatus) {   
+    void scoopVelocityCallback(const std_msgs::Bool &scoopStatus) {
       this->scoopMoving = scoopStatus.data;
     }
 
@@ -191,7 +127,7 @@ int main(int argc, char** argv)
     ros::NodeHandle n;
     ros::NodeHandle p_n("~");
 
-    DiggingActionServer server(n, p_n);
+    DiggingActionServer digger(n, p_n);
     ros::spin();
     return 0;
 }

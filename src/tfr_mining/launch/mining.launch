@@ -1,5 +1,3 @@
 <launch>
-    <node name="digging_action_server" type="digging_action_server" pkg="tfr_mining" output="screen" >
-        <rosparam file="$(find tfr_mining)/data/use_this_one.yaml" command="load" />
-    </node>
+    <node name="digging_action_server" type="digging_action_server" pkg="tfr_mining" output="screen" />
 </launch>
