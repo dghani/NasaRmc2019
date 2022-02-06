@@ -70,8 +70,11 @@ void setupServoCylinderDevice(kaco::Device& device, kaco::Bridge& bridge, std::s
     bridge.add_subscriber(iosub_2);
     
     
-    // read the current velocity value
+    // read the current velocity and position value
     auto iopub_3 = std::make_shared<kaco::EntryPublisher>(device, "velocity_actual_value");
+    bridge.add_publisher(iopub_3, loop_rate);
+	
+    auto iopub_3 = std::make_shared<kaco::EntryPublisher>(device, "position_actual_value");
     bridge.add_publisher(iopub_3, loop_rate);
     
     // read/write max speed
