@@ -12,7 +12,7 @@
  * subscribed topics:
  *   image (sensor_msgs/Image) - the camera topic
  * published topics:
- *   fiducial_odom (geometry_msgs/Odometry)- the odometry topic 
+ *   fiducial_odom (geometry_msgs/Odometry)- the odometry topic
  * */
 #include <ros/ros.h>
 #include <ros/console.h>
@@ -36,8 +36,8 @@
 class FiducialOdom
 {
     public:
-        FiducialOdom(ros::NodeHandle& n, 
-                const std::string& f_frame, 
+        FiducialOdom(ros::NodeHandle& n,
+                const std::string& f_frame,
                 const std::string& b_frame,
                 const std::string& o_frame) :
             aruco{"aruco_action_server", true},
@@ -58,9 +58,9 @@ class FiducialOdom
             //connect to the image clients
             tfr_msgs::WrappedImage request{};
             ros::Duration busy_wait{0.1};
-            while(!rear_cam_client.call(request))
+            while(!rear_cam_client.call(request) && ros::ok())
                 busy_wait.sleep();
-            while(!front_cam_client.call(request))
+            while(!front_cam_client.call(request) && ros::ok())
                 busy_wait.sleep();
             ROS_INFO("Fiducial Odom Publisher: Connected Image Clients");
         }
@@ -143,7 +143,7 @@ class FiducialOdom
                     0,   0,1e-1,   0,   0,   0,
                     0,   0,   0,1e-1,   0,   0,
                     0,   0,   0,   0,1e-1,   0,
-                    0,   0,   0,   0,   0,1e-1}; 
+                    0,   0,   0,   0,   0,1e-1};
                 //fire it off! and cleanup
                 publisher.publish(odom);
 
@@ -159,10 +159,10 @@ class FiducialOdom
                     for (int i = 1; i < 100; i += 1)
                     {
                         ros::service::call("/set_drivebase_odometry", odom_req);
-                    } 
-                } */  
+                    }
+                } */
 
-            }  
+            }
         }
 
     private:

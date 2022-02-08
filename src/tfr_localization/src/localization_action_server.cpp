@@ -51,9 +51,9 @@ class Localizer
             front_cam_client = n.serviceClient<tfr_msgs::WrappedImage>("/on_demand/front_cam/image_raw");
             tfr_msgs::WrappedImage request{};
             ros::Duration busy_wait{0.1};
-            while(!rear_cam_client.call(request))
+            while(!rear_cam_client.call(request) && ros::ok())
                 busy_wait.sleep();
-            while(!front_cam_client.call(request))
+            while(!front_cam_client.call(request) && ros::ok())
                 busy_wait.sleep();
             ROS_INFO("Localization Action Server: Connected Image Clients");
             ROS_INFO("Localization Action Server: Starting");
@@ -242,10 +242,11 @@ int main(int argc, char** argv)
     if (turn_velocity == 0.0 || turn_duration == 0.0)
         ROS_WARN("Localization Action Server: Uninitialized Parameters");
     Localizer localizer(n, turn_velocity, turn_duration, threshold);
-    ros::Rate rate(10);
-    while(ros::ok()){
-        ros::spinOnce();
-        rate.sleep();
-    }
+    //ros::Rate rate(10);
+    ros::spin();
+    //while(ros::ok()){
+        //ros::spinOnce();
+        //rate.sleep();
+    //}
     return 0;
 }

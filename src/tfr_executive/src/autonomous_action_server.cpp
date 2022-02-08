@@ -28,7 +28,7 @@
  * - ~rate: the rate in hz to check to preemption during long running calls, (double, default: 10)
  * - ~localization: whether to run localization or not (bool, default: true);
  * - ~navigation_to: whether to run navigation_to or not (bool, default: true);
- * - ~digging: whether to run digging or not (bool, default: true);
+ * - ~mining: whether to run mining or not (bool, default: true);
  * - ~hole: whether to place the hole or not (bool, default: true);
  * - ~navigation_from: whether to run from or not (bool, default: true);
  * - ~dumping: whether to run dumping or not (bool, default: true);
@@ -65,7 +65,7 @@ class AutonomousExecutive
             arm_manipulator{n},
             localizationClient{n, "localize", true},
             navigationClient{n, "navigate", true},
-            diggingClient{n, "dig", true},
+            miningClient{n, "dig", true},
             dumpingClient{n, "dump", true},
             frequency{f},
             status_publisher{n},
@@ -99,22 +99,22 @@ class AutonomousExecutive
                     status_publisher.info(StatusCode::EXC_CONNECT_NAVIGATION, 1.0);
                 }
             }
-            ros::param::param<bool>("~digging", DIGGING, true);
-            if (DIGGING)
+            ros::param::param<bool>("~mining", MINING, true);
+            if (MINING)
             {
-                ROS_INFO("Autonomous Action Server: Connecting to digging server");
-                if( not diggingClient.waitForServer(ros::Duration(10))){
-                    ROS_INFO("Failed to connect to digging client");
+                ROS_INFO("Autonomous Action Server: Connecting to mining server");
+                if( not miningClient.waitForServer(ros::Duration(10))){
+                    ROS_INFO("Failed to connect to mining client");
                 } else {
-                    ROS_INFO("Autonomous Action Server: Connected to digging server");
+                    ROS_INFO("Autonomous Action Server: Connected to mining server");
                 }
             }
             ros::param::param<bool>("~dumping", DUMPING, true);
             if (DUMPING)
             {
-                ROS_INFO("Autonomous Action Server: Connecting to digging server");
+                ROS_INFO("Autonomous Action Server: Connecting to mining server");
                 dumpingClient.waitForServer(ros::Duration(10));
-                ROS_INFO("Autonomous Action Server: Connected to digging server");
+                ROS_INFO("Autonomous Action Server: Connected to mining server");
             }
             server.start();
             ROS_INFO("Autonomous Action Server: online, %f",
@@ -144,7 +144,7 @@ class AutonomousExecutive
          * 1. Run the localization subsystem.
          * 2. Store the odometry information gathered.
          * 3. Run the navigation subsystem with the drive to mining zone setting.
-         * 4. Run the digging action subsystem with the digging time, from the `get_digging_time` service.
+         * 4. Run the mining action subsystem with the mining time, from the `get_mining_time` service.
          * 5. Run the navigation subsystem with the return from mining zone option.
          * 6. Run the dumping subsystem.
          * 7. Put the system in teleop mode and await instructions.
@@ -155,7 +155,7 @@ class AutonomousExecutive
          * - Result: none
          * PRECONDITIONS:
          * autonomousMission accepts a pointer to a goal. This goal can be in the
-         * form of an action that the robot does. I.E. digging, dumping, navigation
+         * form of an action that the robot does. I.E. mining, dumping, navigation
          *
          * POSTCONDITIONS:
          * Upon successfully completing the goal sever will be set to succeed.
@@ -237,33 +237,33 @@ class AutonomousExecutive
                 ROS_INFO("Autonomous Action Server: navigation finished");
             }
 
-            if (DIGGING)
+            if (MINING)
             {
-                ROS_INFO("Autonomous Action Server: commencing digging");
+                ROS_INFO("Autonomous Action Server: commencing mining");
                 tfr_msgs::DiggingGoal goal{};
-                ROS_INFO("Autonomous Action Server: retrieving digging time");
-                tfr_msgs::DurationSrv digging_time;
-                ros::service::call("digging_time", digging_time);
-                ROS_INFO("Autonomous Action Server: digging time retreived %f",
-                        digging_time.response.duration.toSec());
-                goal.diggingTime = digging_time.response.duration;
-                diggingClient.sendGoal(goal);
+                ROS_INFO("Autonomous Action Server: retrieving mining time");
+                tfr_msgs::DurationSrv mining_time;
+                ros::service::call("mining_time", mining_time);
+                ROS_INFO("Autonomous Action Server: mining time retreived %f",
+                        mining_time.response.duration.toSec());
+                goal.diggingTime = mining_time.response.duration;
+                miningClient.sendGoal(goal);
 
                 //handle preemption
-                while (!diggingClient.getState().isDone())
+                while (!miningClient.getState().isDone())
                 {
                     if (server.isPreemptRequested()  || !server.isActive() || ! ros::ok())
                     {
-                        diggingClient.cancelAllGoals();
+                        miningClient.cancelAllGoals();
                         server.setPreempted();
-                        ROS_INFO("Autonomous Action Server: digging preempted");
+                        ROS_INFO("Autonomous Action Server: mining preempted");
                         return;
                     }
                     frequency.sleep();
                 }
-                if (diggingClient.getState()!=actionlib::SimpleClientGoalState::SUCCEEDED)
+                if (miningClient.getState()!=actionlib::SimpleClientGoalState::SUCCEEDED)
                 {
-                    ROS_INFO("Autonomous Action Server: digging failed");
+                    ROS_INFO("Autonomous Action Server: mining failed");
                     server.setAborted();
                     return;
                 }
@@ -274,7 +274,7 @@ class AutonomousExecutive
                 ros::Duration(5.0).sleep();
                 vel.linear.x = 0;
                 drivebase_publisher.publish(vel);
-                ROS_INFO("Autonomous Action Server: digging finished");
+                ROS_INFO("Autonomous Action Server: mining finished");
             }
             if (LOCALIZATION_FROM)
             {
@@ -441,7 +441,7 @@ class AutonomousExecutive
         actionlib::SimpleActionServer<tfr_msgs::EmptyAction> server;
         actionlib::SimpleActionClient<tfr_msgs::LocalizationAction> localizationClient;
         actionlib::SimpleActionClient<tfr_msgs::NavigationAction> navigationClient;
-        actionlib::SimpleActionClient<tfr_msgs::DiggingAction> diggingClient;
+        actionlib::SimpleActionClient<tfr_msgs::DiggingAction> miningClient;
         actionlib::SimpleActionClient<tfr_msgs::EmptyAction> dumpingClient;
         actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> moveClient;
 
@@ -453,7 +453,7 @@ class AutonomousExecutive
         bool LOCALIZATION_FINISH;
         bool NAVIGATION_TO;
         bool NAVIGATION_FROM;
-        bool DIGGING;
+        bool MINING;
         bool DUMPING;
         int RUNS;
         //how often to check for preemption

@@ -3,8 +3,11 @@ project(tfr_mining)
 
 add_compile_options(-std=c++11)
 
+catkin_python_setup()
+
 find_package(catkin REQUIRED COMPONENTS
   roscpp
+  rospy
   std_msgs
   tfr_msgs
   tfr_utilities
