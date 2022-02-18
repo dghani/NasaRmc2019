@@ -141,11 +141,11 @@ void ArmManipulator::updateTurntableTargetPosition(const std_msgs::UInt16 &value
 
 void ArmManipulator::scoopCallback(const std_msgs::Int32& scoop_position) 
 {
-    if (scoop_position.data < scoopTolerance && scoop_position.data > -scoopTolerance) {
+    if (scoop_position.data < scoopToleranceLimit && scoop_position.data > -scoopToleranceLimit) {
       this->scoopMoving.data = false;
     }
     else {
       this->scoopMoving.data = true;
     }
-    scoopPub.publish(scoopMoving);
+    scoop_publisher.publish(scoopMoving);
 }

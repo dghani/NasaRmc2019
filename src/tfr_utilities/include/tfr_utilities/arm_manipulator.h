@@ -56,6 +56,8 @@ class ArmManipulator
 
         // Gamepad change
         ros::Subscriber scoop_subscriber;
+        float scoopToleranceLimit;
+        std_msgs::Bool scoopMoving;
  };
 
 #endif
