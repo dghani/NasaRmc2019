@@ -41,6 +41,9 @@ class ArmManipulator
 
         bool turntable_target_position_reached = false;
 
+        // Gamepad change
+        void scoopCallback(const std_msgs::Int32& scoop_position);
+
     private:
         ros::Publisher turntable_publisher;
         ros::Publisher lower_arm_publisher;
@@ -50,6 +53,9 @@ class ArmManipulator
         ros::Publisher right_bin_publisher;
         ros::Subscriber turntable_statusword_subscriber;
         void updateTurntableTargetPosition(const std_msgs::UInt16 &value);
+
+        // Gamepad change
+        ros::Subscriber scoop_subscriber;
  };
 
 #endif

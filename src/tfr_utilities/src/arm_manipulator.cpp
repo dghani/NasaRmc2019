@@ -7,10 +7,23 @@ ArmManipulator::ArmManipulator(ros::NodeHandle &n, bool init_joints):
             scoop_publisher{n.advertise<sensor_msgs::JointState>("/device56/set_joint_state", 5)},
             left_bin_publisher{n.advertise<sensor_msgs::JointState>("/device77/set_joint_state", 5)},
             right_bin_publisher{n.advertise<sensor_msgs::JointState>("/device88/set_joint_state", 5)},
-            turntable_statusword_subscriber{n.subscribe("/device1/statusword", 5, &ArmManipulator::updateTurntableTargetPosition, this)}
+            turntable_statusword_subscriber{n.subscribe("/device1/statusword", 5, &ArmManipulator::updateTurntableTargetPosition, this)},
+            scoop_subscriber{n.subscribe("/device56/position_actual_value", 5, &ArmManipulator::scoopCallback, this)}
 {
   ROS_INFO("Initializing Arm Manipulator");
 }
+
+
+
+private:
+/*****************************************************************************
+                                 Class Variables
+   *****************************************************************************/
+
+    
+
+    
+  }
 
 void ArmManipulator::moveArm(const double& turntable, const double& lower_arm ,const double& upper_arm,  const double& scoop )
 {
@@ -124,4 +137,15 @@ void ArmManipulator::updateTurntableTargetPosition(const std_msgs::UInt16 &value
     {
         turntable_target_position_reached = false;
     }
+}
+
+void ArmManipulator::scoopCallback(const std_msgs::Int32& scoop_position) 
+{
+    if (scoop_position.data < scoopTolerance && scoop_position.data > -scoopTolerance) {
+      this->scoopMoving.data = false;
+    }
+    else {
+      this->scoopMoving.data = true;
+    }
+    scoopPub.publish(scoopMoving);
 }
