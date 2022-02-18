@@ -111,6 +111,10 @@ void setupServoCylinderDevice(kaco::Device& device, kaco::Bridge& bridge, std::s
     
     auto iosub_9 = std::make_shared<kaco::EntrySubscriber>(device, "positioning_option_code");
     bridge.add_subscriber(iosub_9);
+	
+    // NEW CODE GAMEPAD
+    auto iopub_10 = std::make_shared<kaco::EntryPublisher>(device, "position_actual_value");
+    bridge.add_publisher(iopub_10, loop_rate);
 }
 
 void setupMaxonDevice(kaco::Device& device, kaco::Bridge& bridge, std::string& eds_files_path)
