@@ -41,7 +41,7 @@ class ArmManipulator
 
         bool turntable_target_position_reached = false;
 
-        // Gamepad change
+        // Daniel/Matthew
         void scoopCallback(const std_msgs::Int32& scoop_position);
 
     private:
@@ -54,7 +54,7 @@ class ArmManipulator
         ros::Subscriber turntable_statusword_subscriber;
         void updateTurntableTargetPosition(const std_msgs::UInt16 &value);
 
-        // Gamepad change
+        // Daniel/Matthew
         ros::Subscriber scoop_subscriber;
         float scoopToleranceLimit;
         std_msgs::Bool scoopMoving;
