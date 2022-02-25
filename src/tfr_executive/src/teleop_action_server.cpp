@@ -251,14 +251,22 @@ class TeleopExecutive
                 case (tfr_utilities::TeleopCode::SCOOP_EXTEND):
                     {
                         ROS_INFO("Teleop Action Server: Command Recieved, SCOOP_EXTEND");
-			arm_manipulator.moveScoopPosition(0.3); // Extend scoop
+            //Old -> goes to predetermined position
+			//arm_manipulator.moveScoopPosition(0.3); // Extend scoop
+
+            //Daniel/Matthew
+            arm_manipulator.scoopIncremental(); //Increase/Extend scoop
 			break;
                     }
                     
                 case (tfr_utilities::TeleopCode::SCOOP_RETRACT):
                     {
                         ROS_INFO("Teleop Action Server: Command Recieved, SCOOP_RETRACT");
-			arm_manipulator.moveScoopPosition(1.7);// Retract scoop
+            //Old -> goes to predetermined position
+			//arm_manipulator.moveScoopPosition(1.7);// Retract scoop
+
+            //Daniel/Matthew
+            arm_manipulator.scoopDecremental(); // Decrease/retract scoop
 			break;
                     }
 
