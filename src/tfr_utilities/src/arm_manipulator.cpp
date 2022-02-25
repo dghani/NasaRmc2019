@@ -64,6 +64,31 @@ void ArmManipulator::moveScoopPosition(double scoop)
 
     scoop_publisher.publish(scoop_joint_state);
 }
+
+// Daniel/Matthew
+// Scoop increments
+void ArmManipulator::scoopIncremental()
+{
+    sensor_msgs::JointState scoop_joint_state;
+
+    scoop_joint_state.header.stamp = ros::Time::now();
+    scoop_joint_state.position.push_back(scoop_subscriber + 0.1);
+
+    scoop_publisher.publish(scoop_joint_state);
+}
+
+// Daniel/Matthew
+// Scoop decrements
+void ArmManipulator::scoopDecremental()
+{
+    sensor_msgs::JointState scoop_joint_state;
+
+    scoop_joint_state.header.stamp = ros::Time::now();
+    scoop_joint_state.position.push_back(scoop_subscriber - 0.1);
+
+    scoop_publisher.publish(scoop_joint_state);
+}
+
 void ArmManipulator::moveLeftBinPosition(double leftBin)
 {
     sensor_msgs::JointState left_bin_joint_state;
