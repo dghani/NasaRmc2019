@@ -45,6 +45,8 @@ class ArmManipulator
 
         // Daniel/Matthew
         void scoopCallback(const std_msgs::Int32& scoop_position);
+        void scoopIncremental();
+        void scoopDecremental();
 
     private:
         ros::Publisher turntable_publisher;
