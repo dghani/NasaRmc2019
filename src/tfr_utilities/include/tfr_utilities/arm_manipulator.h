@@ -10,6 +10,8 @@
 #include <urdf/model.h>
 #include <actionlib/client/simple_action_client.h>
 #include <sensor_msgs/JointState.h>
+#include <std_msgs/Bool.h>
+#include <std_msgs/Int32.h>
 
 /**
  * Provides a simple method for moving the arm.
