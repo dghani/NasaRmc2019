@@ -10,7 +10,7 @@ ArmManipulator::ArmManipulator(ros::NodeHandle &n, bool init_joints):
             turntable_statusword_subscriber{n.subscribe("/device1/statusword", 5, &ArmManipulator::updateTurntableTargetPosition, this)},
 
             // Daniel/Matthew
-            scoop_subscriber{n.subscribe("/device56/position_actual_value", 5, &ArmManipulator::scoopCallback, this)}
+            scoop_subscriber{n.subscribe("/device56/get_position_actual_value", 5, &ArmManipulator::scoopCallback, this)}
 {
   ROS_INFO("Initializing Arm Manipulator");
 }
