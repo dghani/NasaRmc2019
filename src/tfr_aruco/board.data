@@ -1,15 +1,25 @@
-25 31 100
+45 45 300
 
 # format reminder(everything in cm):
-
 # S size padding x y
-
 # G x-count y-count | size padding x y
+
 # remember: camera height is at 11.5 in. or 29.21 cm
 
 # the huge sized markers on the left and right
-S 22.5 2 0 0
+S 27.5 2 0 0
+
+# the boards center is 95cm wide and 25cm tall
+
+# some large sized markers on the middle board
+S 15.5 1.5 27.5 1
+
+# the small sized markers on the middle board
+G 5 2 | 3.1 .25 27.5 17.25
+
+# the small sized markers on the bumber of the board
+G 5 4 | 3.1 .25 27.5 26
 
 # some small markers under the large markers
 # (left)
-G 7 3 | 3.1 .15 2 20.7
+G 7 3 | 3.1 .25 2 27.5
