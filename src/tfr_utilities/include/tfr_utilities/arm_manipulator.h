@@ -44,7 +44,7 @@ class ArmManipulator
         bool turntable_target_position_reached = false;
 
         // Daniel/Matthew
-        void scoopCallback(const std_msgs::Int32& scoop_position);
+        void scoopCallback(const std_msgs::Float64& scoop_position);
         void scoopIncremental();
         void scoopDecremental();
 
