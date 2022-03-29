@@ -1,29 +1,29 @@
 /*
  * DESCRIPTION
- * The executive action server, is the main business logic for autonomous 
- * operation. It is initialized at system startup, and is commanded by the 
- * distributed mission control node. 
- * 
- * The autonomous operation starts when commence autonomous operation 
+ * The executive action server, is the main business logic for autonomous
+ * operation. It is initialized at system startup, and is commanded by the
+ * distributed mission control node.
+ *
+ * The autonomous operation starts when commence autonomous operation
  * command gets called. This will continue, until:
  * - The action gets into an inoperable state and ceases operation.
  * - The action completes the mission successfully.
  * - The action server is given a command, and is preempted.
- * 
- * Once the mission ceases operation resuming autonomy is not a system 
+ *
+ * Once the mission ceases operation resuming autonomy is not a system
  * priority. Attempting to return the system to a safe state is.
- * 
- * If preemption or mission failure occurs, it is the duty of the executive 
- * node to preempt all other active action servers it has called, allow them 
- * to return to a safe state on a timeout and promptly exit. 
- * 
- * On startup the action server will be expecting a command to start autonomy, 
- * and initialize autonomous operation. 
+ *
+ * If preemption or mission failure occurs, it is the duty of the executive
+ * node to preempt all other active action servers it has called, allow them
+ * to return to a safe state on a timeout and promptly exit.
+ *
+ * On startup the action server will be expecting a command to start autonomy,
+ * and initialize autonomous operation.
  *
  * PRECONDITION
  * The clock service must be up and started, anything else is undefined
  * behavior.
- * 
+ *
  * PARAMETERS
  * - ~rate: the rate in hz to check to preemption during long running calls, (double, default: 10)
  * - ~localization: whether to run localization or not (bool, default: true);
@@ -32,9 +32,9 @@
  * - ~hole: whether to place the hole or not (bool, default: true);
  * - ~navigation_from: whether to run from or not (bool, default: true);
  * - ~dumping: whether to run dumping or not (bool, default: true);
- * 
+ *
  * PUBLISHED TOPICS
- * - /com 
+ * - /com
  *   - the communication topic
  * */
 #include <ros/ros.h>
@@ -48,6 +48,7 @@
 #include <move_base_msgs/MoveBaseAction.h>
 #include <std_srvs/Empty.h>
 #include <geometry_msgs/Twist.h>
+#include <tfr_utilities/arm_manipulator.h>
 #include <tfr_utilities/location_codes.h>
 #include <tfr_utilities/status_code.h>
 #include <tfr_utilities/status_publisher.h>
@@ -57,11 +58,11 @@
 class AutonomousExecutive
 {
     public:
-        AutonomousExecutive(ros::NodeHandle &n,double f):        
-            server{n, "autonomous_action_server", 
+        AutonomousExecutive(ros::NodeHandle &n,double f):
+            server{n, "autonomous_action_server",
                 boost::bind(&AutonomousExecutive::autonomousMission, this, _1),
                 false},
-           
+            arm_manipulator{n},
             localizationClient{n, "localize", true},
             navigationClient{n, "navigate", true},
             diggingClient{n, "dig", true},
@@ -70,11 +71,13 @@ class AutonomousExecutive
             status_publisher{n},
             drivebase_publisher{n.advertise<geometry_msgs::Twist>("cmd_vel", 5)},
             moveClient{n, "move_base", true}
-            
+
         {
+            ros::param::param<bool>("~move_arm_out_of_start_position", MOVE_ARM_OUT_OF_START_POSITION, false);
             ros::param::param<bool>("~localization_to", LOCALIZATION_TO, true);
             ros::param::param<bool>("~localization_from", LOCALIZATION_FROM, true);
             ros::param::param<bool>("~localization_finish", LOCALIZATION_FINISH, true);
+            ros::param::param<int>("~runs", RUNS, 1);
             if (LOCALIZATION_TO || LOCALIZATION_FROM || LOCALIZATION_FINISH)
             {
                 ROS_INFO("Autonomous Action Server: Connecting to localization server");
@@ -116,6 +119,7 @@ class AutonomousExecutive
             server.start();
             ROS_INFO("Autonomous Action Server: online, %f",
                     ros::Time::now().toSec());
+
         }
         ~AutonomousExecutive() = default;
         AutonomousExecutive(const AutonomousExecutive&) = delete;
@@ -124,18 +128,18 @@ class AutonomousExecutive
         AutonomousExecutive& operator=(AutonomousExecutive&&) = delete;
     private:
         /* ACTION DESCRIPTION
-         * The main autonomous procedure is long running and needs to be responsive to 
-         * preemption. This means that after making time consuming calls, for example 
+         * The main autonomous procedure is long running and needs to be responsive to
+         * preemption. This means that after making time consuming calls, for example
          * starting navigation, it needs to do so in a non blocking manner, and query
-         * for preemption from the user at a set interval. At this interval it is also 
-         * appropriate to ask for feedback from the time consuming processes, or check 
-         * for success. The definition of long running means any call that starts a 
-         * subsystem. 
-         * 
-         * Also this is an action server so it is responsible for reporting important 
+         * for preemption from the user at a set interval. At this interval it is also
+         * appropriate to ask for feedback from the time consuming processes, or check
+         * for success. The definition of long running means any call that starts a
+         * subsystem.
+         *
+         * Also this is an action server so it is responsible for reporting important
          * state changes and updates to the standard communication channel.
-         * 
-         * Judiciously following these guidelines, the skeleton of the main procedure is 
+         *
+         * Judiciously following these guidelines, the skeleton of the main procedure is
          * as follows:
          * 1. Run the localization subsystem.
          * 2. Store the odometry information gathered.
@@ -144,7 +148,7 @@ class AutonomousExecutive
          * 5. Run the navigation subsystem with the return from mining zone option.
          * 6. Run the dumping subsystem.
          * 7. Put the system in teleop mode and await instructions.
-         * 
+         *
          * ACTION COMPONENTS
          * - Goal: none
          * - Feedback: none
@@ -156,12 +160,38 @@ class AutonomousExecutive
          * POSTCONDITIONS:
          * Upon successfully completing the goal sever will be set to succeed.
          * Upon failure server will be set to aborted
-         */ 
-    
-    
+         */
+
+
         void autonomousMission(const tfr_msgs::EmptyGoalConstPtr &goal)
         {
-            
+          ROS_INFO("Autonomous Action Server: Moving arm out of starting position.");
+          if (MOVE_ARM_OUT_OF_START_POSITION) {
+
+            arm_manipulator.moveLeftBinPosition(5.0);  // Extend left bin actuator
+            arm_manipulator.moveRightBinPosition(5.0); // Extend right bin actuator
+            ros::Duration(4.0).sleep();
+
+            arm_manipulator.moveLowerArmPosition(5.0);
+            ros::Duration(4.0).sleep();
+            arm_manipulator.moveUpperArmPosition(1.0);
+            ros::Duration(4.0).sleep();
+            arm_manipulator.moveScoopPosition(3.5);
+            ros::Duration(4.0).sleep();
+            arm_manipulator.moveTurntablePosition(1.19);
+            ros::Duration(4.0).sleep();
+
+            arm_manipulator.moveLeftBinPosition(.5);  // Retract left bin actuator
+            arm_manipulator.moveRightBinPosition(.5); // Retract right bin actuator
+            ros::Duration(4.0).sleep();
+
+            arm_manipulator.moveTurntablePosition(3.14);
+
+            MOVE_ARM_OUT_OF_START_POSITION = false;
+          }
+          ROS_INFO("Autonomous Action Server: Finished moving arm.");
+
+          for (int run = 1; run < RUNS; run++) { // to control amount of autonomous runs
             ROS_INFO("Autonomous Action Server: mission started");
             if (server.isPreemptRequested() || ! ros::ok())
             {
@@ -179,7 +209,7 @@ class AutonomousExecutive
             if (NAVIGATION_TO)
             {
                 ROS_INFO("Autonomous Action Server: commencing navigation to");
- 
+
                 tfr_msgs::NavigationGoal goal;
                 //messages can't support user defined types
                 goal.location_code= static_cast<uint8_t>(tfr_utilities::LocationCode::MINING);
@@ -259,7 +289,7 @@ class AutonomousExecutive
                 ROS_INFO("Autonomous Action Server: Connected to navigation server");
 
                 ROS_INFO("Autonomous Action Server: commencing Navigation From");
- 
+
                 tfr_msgs::NavigationGoal goal;
                 //messages can't support user defined types
                 goal.location_code=
@@ -300,7 +330,7 @@ class AutonomousExecutive
                 ROS_INFO("Autonomous Action Server: Connected to dumping server");
 
                 ROS_INFO("Autonomous Action Server: commencing dumping");
- 
+
                 tfr_msgs::EmptyGoal goal;
                 dumpingClient.sendGoal(goal);
                 //handle preemption
@@ -326,14 +356,16 @@ class AutonomousExecutive
 
             }
             ROS_INFO("Autonomous Action Server: AUTONOMOUS MISSION SUCCESS");
-            server.setSucceeded();
+
+          } // end autonomous runs for loop
+          server.setSucceeded();
         }
         /*
         * PRECONDITIONS:
-        * Localize accepts a boolean value for odomtry and a 
+        * Localize accepts a boolean value for odomtry and a
         * double value for yaw (motion around axis)
-        * POSTCONDITIONS: 
-        * If localized goal fails, server is aborted. If 
+        * POSTCONDITIONS:
+        * If localized goal fails, server is aborted. If
         * success the loclization is completed.
         */
         void localize(bool set_odometry, double yaw)
@@ -352,14 +384,14 @@ class AutonomousExecutive
                     status_publisher.info(StatusCode::EXC_CONNECT_LOCALIZATION, 1.0);
                 }
             }
-            
-            
+
+
             ROS_INFO("Autonomous Action Server: commencing localization");
             ROS_INFO("Autonomous Action Server: yaw %f", yaw);
             ROS_INFO("Autonomous Action Server: odometryi %d", set_odometry);
-            
-            
-            
+
+
+
             tfr_msgs::LocalizationGoal goal{};
             goal.set_odometry = set_odometry;
             goal.target_yaw = yaw;
@@ -369,12 +401,12 @@ class AutonomousExecutive
             {
                 if (server.isPreemptRequested() || !server.isActive() || ! ros::ok())
                 {
-                    
+
                     localizationClient.cancelAllGoals();
                     ROS_INFO("Autonomous Action Server: localization preempted");
                     localizationClient.waitForResult();
                     ROS_INFO("Autonomous Action Server: localization finished");
-                    
+
                     server.setPreempted();
                     return;
                 }
@@ -405,6 +437,7 @@ class AutonomousExecutive
             ROS_INFO("Autonomous Action Server: localization finished");
         }
 
+        ArmManipulator arm_manipulator;
         actionlib::SimpleActionServer<tfr_msgs::EmptyAction> server;
         actionlib::SimpleActionClient<tfr_msgs::LocalizationAction> localizationClient;
         actionlib::SimpleActionClient<tfr_msgs::NavigationAction> navigationClient;
@@ -414,6 +447,7 @@ class AutonomousExecutive
 
        StatusPublisher status_publisher;
 
+        bool MOVE_ARM_OUT_OF_START_POSITION;
         bool LOCALIZATION_TO;
         bool LOCALIZATION_FROM;
         bool LOCALIZATION_FINISH;
@@ -421,6 +455,7 @@ class AutonomousExecutive
         bool NAVIGATION_FROM;
         bool DIGGING;
         bool DUMPING;
+        int RUNS;
         //how often to check for preemption
         ros::Duration frequency;
         ros::Publisher drivebase_publisher;
