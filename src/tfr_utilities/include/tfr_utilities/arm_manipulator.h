@@ -62,6 +62,7 @@ class ArmManipulator
         ros::Subscriber scoop_subscriber;
         float scoopToleranceLimit;
         std_msgs::Bool scoopMoving;
+        double double_scoop_position;
  };
 
 #endif
