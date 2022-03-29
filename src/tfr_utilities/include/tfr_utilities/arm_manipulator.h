@@ -12,6 +12,7 @@
 #include <sensor_msgs/JointState.h>
 #include <std_msgs/Bool.h>
 #include <std_msgs/Int32.h>
+#include <std_msgs/Float64.h>
 
 /**
  * Provides a simple method for moving the arm.
@@ -44,7 +45,7 @@ class ArmManipulator
         bool turntable_target_position_reached = false;
 
         // Daniel/Matthew
-        void scoopCallback(const std_msgs::float64& scoop_position);
+        void scoopCallback(const std_msgs::Float64& scoop_position);
         void scoopIncremental();
         void scoopDecremental();
 
