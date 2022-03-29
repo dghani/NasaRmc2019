@@ -74,7 +74,7 @@ void ArmManipulator::scoopIncremental()
     scoop_joint_state.header.stamp = ros::Time::now();
     scoop_joint_state.position.push_back(double_scoop_position + 0.1); // scoop_joint_state.data isn't correct
 
-    scoop_publisher.publish(double_scoop_position + 0.1);
+    scoop_publisher.publish(scoop_joint_state);
 }
 
 // Daniel/Matthew
@@ -86,7 +86,7 @@ void ArmManipulator::scoopDecremental()
     scoop_joint_state.header.stamp = ros::Time::now();
     scoop_joint_state.position.push_back(double_scoop_position - 0.1); // scoop_joint_state.data isn't correct
 
-    scoop_publisher.publish(double_scoop_position - 0.1);
+    scoop_publisher.publish(scoop_joint_state);
 }
 
 void ArmManipulator::moveLeftBinPosition(double leftBin)
