@@ -156,7 +156,7 @@ void ArmManipulator::updateTurntableTargetPosition(const std_msgs::UInt16 &value
 
 // Daniel/Matthew
 // Calls-back scoop for arm
-void ArmManipulator::scoopCallback(const std_msgs::Float64& scoop_position) 
+void ArmManipulator::scoopCallback(const std_msgs::float64& scoop_position) 
 {
     double_scoop_position = scoop_position.data;
    /* if (scoop_position.data < scoopToleranceLimit && scoop_position.data > -scoopToleranceLimit) {
