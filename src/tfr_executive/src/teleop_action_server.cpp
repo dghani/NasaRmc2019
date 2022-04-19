@@ -208,7 +208,7 @@ class TeleopExecutive
                 case (tfr_utilities::TeleopCode::CLOCKWISE):
                     {
                         ROS_INFO("Teleop Action Server: Command Recieved, CLOCKWISE");
-                        arm_manipulator.moveTurntablePosition(3.14); // Move arm to origin
+                        arm_manipulator.moveTurntablePosition(-3.14); // Move arm to origin
                         break;
                     }
 
