@@ -159,7 +159,7 @@ void ArmManipulator::updateTurntableTargetPosition(const std_msgs::UInt16 &value
 void ArmManipulator::scoopCallback(const std_msgs::Int32& scoop_position) 
 {
     double_scoop_position = scoop_position.data;
-    ROS_INFO("Daniel/Matthew: scoopCallback called. double_scoop_position = " + double_scoop_position);
+    ROS_INFO("Daniel/Matthew: scoopCallback called. double_scoop_position: %d ", double_scoop_position);
    /* if (scoop_position.data < scoopToleranceLimit && scoop_position.data > -scoopToleranceLimit) {
       this->scoopMoving.data = false;
     }

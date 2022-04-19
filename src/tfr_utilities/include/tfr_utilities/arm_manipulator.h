@@ -1,6 +1,7 @@
 #ifndef ARM_MANIPULATOR_H
 #define ARM_MANIPULATOR_H
 #include <ros/ros.h>
+#include <ros/console.h>
 #include <tfr_msgs/ArmMoveAction.h>
 #include <std_msgs/Float64MultiArray.h>
 #include <std_msgs/UInt16.h>
