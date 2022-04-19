@@ -69,24 +69,28 @@ void ArmManipulator::moveScoopPosition(double scoop)
 // Scoop increments
 void ArmManipulator::scoopIncremental()
 {
+    ROS_INFO("Daniel/Matthew: scoopIncremental called. double_scoop_position: %d ", double_scoop_position);
     sensor_msgs::JointState scoop_joint_state;
 
     scoop_joint_state.header.stamp = ros::Time::now();
     scoop_joint_state.position.push_back(double_scoop_position + 1);
 
     scoop_publisher.publish(scoop_joint_state);
+    ROS_INFO("Daniel/Matthew: scoopIncremental completed. double_scoop_position: %d ", double_scoop_position);
 }
 
 // Daniel/Matthew
 // Scoop decrements
 void ArmManipulator::scoopDecremental()
 {
+    ROS_INFO("Daniel/Matthew: scoopDecremental called. double_scoop_position: %d ", double_scoop_position);
     sensor_msgs::JointState scoop_joint_state;
 
     scoop_joint_state.header.stamp = ros::Time::now();
     scoop_joint_state.position.push_back(double_scoop_position - 1);
 
     scoop_publisher.publish(scoop_joint_state);
+    ROS_INFO("Daniel/Matthew: scoopDecremental completed. double_scoop_position: %d ", double_scoop_position);
 }
 
 void ArmManipulator::moveLeftBinPosition(double leftBin)
@@ -158,8 +162,9 @@ void ArmManipulator::updateTurntableTargetPosition(const std_msgs::UInt16 &value
 // Calls-back scoop for arm
 void ArmManipulator::scoopCallback(const std_msgs::Int32& scoop_position) 
 {
-    double_scoop_position = scoop_position.data;
     ROS_INFO("Daniel/Matthew: scoopCallback called. double_scoop_position: %d ", double_scoop_position);
+    double_scoop_position = scoop_position.data;
+    ROS_INFO("Daniel/Matthew: scoopCallback completed. double_scoop_position: %d ", double_scoop_position);
    /* if (scoop_position.data < scoopToleranceLimit && scoop_position.data > -scoopToleranceLimit) {
       this->scoopMoving.data = false;
     }
