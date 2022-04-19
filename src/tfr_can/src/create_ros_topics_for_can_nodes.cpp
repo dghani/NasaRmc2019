@@ -129,10 +129,10 @@ void setupMaxonDevice(kaco::Device& device, kaco::Bridge& bridge, std::string& e
 
     // min: 0 -> 0, 
     // max: 16 hall clicks * ?? Maxon gear * 34 worm gear = 4093   
-    auto jspub = std::make_shared<kaco::JointStatePublisher>(device, -4093, 4093); 
+    auto jspub = std::make_shared<kaco::JointStatePublisher>(device, -3142, 3142); 
     bridge.add_publisher(jspub, loop_rate);
     
-    auto jssub = std::make_shared<kaco::JointStateSubscriber>(device, -4093, 4093); 
+    auto jssub = std::make_shared<kaco::JointStateSubscriber>(device, -3142, 3142); 
     bridge.add_subscriber(jssub);		
 
     // Read the "statusword" from the CANopen device.
