@@ -72,7 +72,7 @@ void ArmManipulator::scoopIncremental()
     sensor_msgs::JointState scoop_joint_state;
 
     scoop_joint_state.header.stamp = ros::Time::now();
-    scoop_joint_state.position.push_back(double_scoop_position + 1); // scoop_joint_state.data isn't correct
+    scoop_joint_state.position.push_back(double_scoop_position + 1);
 
     scoop_publisher.publish(scoop_joint_state);
 }
@@ -84,7 +84,7 @@ void ArmManipulator::scoopDecremental()
     sensor_msgs::JointState scoop_joint_state;
 
     scoop_joint_state.header.stamp = ros::Time::now();
-    scoop_joint_state.position.push_back(double_scoop_position - 1); // scoop_joint_state.data isn't correct
+    scoop_joint_state.position.push_back(double_scoop_position - 1);
 
     scoop_publisher.publish(scoop_joint_state);
 }
