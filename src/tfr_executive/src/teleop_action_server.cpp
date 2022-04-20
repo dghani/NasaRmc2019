@@ -208,14 +208,14 @@ class TeleopExecutive
                 case (tfr_utilities::TeleopCode::CLOCKWISE):
                     {
                         ROS_INFO("Teleop Action Server: Command Recieved, CLOCKWISE");
-                        arm_manipulator.moveTurntablePosition(-3.14); // Move arm to origin
+                        arm_manipulator.moveTurntablePosition(-3.14); // Rotate arm 180 clockwise
                         break;
                     }
 
                 case (tfr_utilities::TeleopCode::COUNTERCLOCKWISE):
                     {
                         ROS_INFO("Teleop Action Server: Command Recieved, COUNTERCLOCKWISE");
-                        arm_manipulator.moveTurntablePosition(0); // rotate arm 180 degrees
+                        arm_manipulator.moveTurntablePosition(0); // Return arm to origin
                         break;
                     }
                     
