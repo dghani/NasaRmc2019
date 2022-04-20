@@ -23,7 +23,11 @@ void ArmManipulator::moveArm(const double& turntable, const double& lower_arm ,c
 }
 
 void ArmManipulator::moveTurntablePosition(double turntable)
-{
+{  
+    // Invert turntable value
+    // Positive = counterclockwise
+    // Negative = clockwise
+    turntable = turntable * -1;
     sensor_msgs::JointState turntable_joint_state;
 
     turntable_joint_state.header.stamp = ros::Time::now();
