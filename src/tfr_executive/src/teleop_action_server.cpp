@@ -50,7 +50,12 @@
 #include <actionlib/server/simple_action_server.h>
 #include <actionlib/client/simple_action_client.h>
 
-
+// NEW CODE
+double turntable_location = 3.14;
+double lower_arm_location = 3.2;
+double upper_arm_location = 2.3;
+double scoop_location = 1.0;
+// END OF NEW CODE
 
 class TeleopExecutive
 {
@@ -207,67 +212,121 @@ class TeleopExecutive
 
                 case (tfr_utilities::TeleopCode::CLOCKWISE):
                     {
-                        ROS_INFO("Teleop Action Server: Command Recieved, CLOCKWISE");
-                        arm_manipulator.moveTurntablePosition(3.14); // Move arm to origin
+                        if ((turntable_location + 0.1) <= 3.14) {
+                            ROS_INFO("Teleop Action Server: Command Recieved, CLOCKWISE (+ 0.1)");
+                            // arm_manipulator.moveTurntablePosition(3.14); // Move arm to origin
+                            turntable_location = turntable_location + 0.1;
+                            arm_manipulator.moveTurntablePosition(turntable_location);
+                        }
+                        else {
+                            ROS_INFO("Teleop Action Server: Command Recieved, CLOCKWISE (LIMIT REACHED!!! Nothing happened)");
+                        }
                         break;
                     }
 
                 case (tfr_utilities::TeleopCode::COUNTERCLOCKWISE):
                     {
-                        ROS_INFO("Teleop Action Server: Command Recieved, COUNTERCLOCKWISE");
-                        arm_manipulator.moveTurntablePosition(1.57); // rotate arm 180 degrees
+                        if ((turntable_location - 0.1) >= 1.57) {
+                            ROS_INFO("Teleop Action Server: Command Recieved, COUNTERCLOCKWISE (- 0.1)");
+                            // arm_manipulator.moveTurntablePosition(1.57); // rotate arm 180 degrees
+                            turntable_location = turntable_location - 0.1;
+                            arm_manipulator.moveTurntablePosition(turntable_location);
+                        }
+                        else {
+                            ROS_INFO("Teleop Action Server: Command Recieved, COUNTERCLOCKWISE (LIMIT REACHED!!! Nothing happened)");
+                        }
                         break;
                     }
                     
                 case (tfr_utilities::TeleopCode::LOWER_ARM_EXTEND):
                     {
-                        ROS_INFO("Teleop Action Server: Command Recieved, LOWER_ARM_EXTEND");
-			arm_manipulator.moveLowerArmPosition(1.6); // Move lower arm to a low position
+                        if ((lower_arm_location - 0.1) >= 1.6) {
+                            ROS_INFO("Teleop Action Server: Command Recieved, LOWER_ARM_EXTEND (- 0.1)");
+			                // arm_manipulator.moveLowerArmPosition(1.6); // Move lower arm to a low position
+                            lower_arm_location = lower_arm_location - 0.1;
+                            arm_manipulator.moveLowerArmPosition(lower_arm_location);
+                        }
+                        else {
+                           ROS_INFO("Teleop Action Server: Command Recieved, LOWER_ARM_EXTEND (LIMIT REACHED!!! Nothing happened)"); 
+                        }
                         break;
                     }
                     
                     
                 case (tfr_utilities::TeleopCode::LOWER_ARM_RETRACT):
                     {
-                        ROS_INFO("Teleop Action Server: Command Recieved, LOWER_ARM_RETRACT");
-			arm_manipulator.moveLowerArmPosition(4.8); // Move lower arm to a high position
+                        if ((lower_arm_location + 0.1) <= 4.8) {
+                            ROS_INFO("Teleop Action Server: Command Recieved, LOWER_ARM_RETRACT (+ 0.1)");
+			                // arm_manipulator.moveLowerArmPosition(4.8); // Move lower arm to a high position
+                            lower_arm_location = lower_arm_location + 0.1;
+                            arm_manipulator.moveLowerArmPosition(lower_arm_location);
+                        }
+                        else {
+                            ROS_INFO("Teleop Action Server: Command Recieved, LOWER_ARM_RETRACT (LIMIT REACHED!!! Nothing happened)");
+                        }
                         break;
                     }
                     
                 case (tfr_utilities::TeleopCode::UPPER_ARM_EXTEND):
                     {
-			ROS_INFO("Teleop Action Server: Command Recieved, UPPER_ARM_EXTEND");
-			arm_manipulator.moveUpperArmPosition(1.1); // Extend upper arm
+                        if ((upper_arm_location - 0.1) >= 1.1) {
+			                ROS_INFO("Teleop Action Server: Command Recieved, UPPER_ARM_EXTEND (- 0.1)");
+			                // arm_manipulator.moveUpperArmPosition(1.1); // Extend upper arm
+                            upper_arm_location = upper_arm_location - 0.1;
+                            arm_manipulator.moveUpperArmPosition(upper_arm_location);
+                        }
+                        else {
+                            ROS_INFO("Teleop Action Server: Command Recieved, UPPER_ARM_EXTEND (LIMIT REACHED!!! Nothing happened)");
+                        }
                         break;
                     }
                     
                 case (tfr_utilities::TeleopCode::UPPER_ARM_RETRACT):
                     {
- 			ROS_INFO("Teleop Action Server: Command Recieved, UPPER_ARM_RETRACT");
-			arm_manipulator.moveUpperArmPosition(3.5); // Retract upper arm
-			break;
+                        if ((upper_arm_location + 0.1) <= 3.5) {
+ 			                ROS_INFO("Teleop Action Server: Command Recieved, UPPER_ARM_RETRACT (+ 0.1)");
+			                // arm_manipulator.moveUpperArmPosition(3.5); // Retract upper arm
+                            upper_arm_location = upper_arm_location + 0.1;
+                            arm_manipulator.moveUpperArmPosition(upper_arm_location);
+                        }
+                        else {
+                            ROS_INFO("Teleop Action Server: Command Recieved, UPPER_ARM_RETRACT (LIMIT REACHED!!! Nothing happened)");
+                        }
+			            break;
                     }
                     
                 case (tfr_utilities::TeleopCode::SCOOP_EXTEND):
                     {
-                        ROS_INFO("Teleop Action Server: Command Recieved, SCOOP_EXTEND");
-            //Old -> goes to predetermined position
-			//arm_manipulator.moveScoopPosition(0.3); // Extend scoop
-
-            //Daniel/Matthew
-            arm_manipulator.scoopIncremental(); //Increase/Extend scoop
-			break;
+                        if ((scoop_location - 0.1) >= 0.3) {
+                            ROS_INFO("Teleop Action Server: Command Recieved, SCOOP_EXTEND (-0.1)");
+                            //Old -> goes to predetermined position
+			                //arm_manipulator.moveScoopPosition(0.3); // Extend scoop
+                            //Daniel/Matthew
+                            // arm_manipulator.scoopIncremental(); //Increase/Extend scoop
+                            scoop_location = scoop_location - 0.1;
+                            arm_manipulator.moveScoopPosition(scoop_location);
+                        }
+                        else {
+                            ROS_INFO("Teleop Action Server: Command Recieved, SCOOP_EXTEND (LIMIT REACHED!!! Nothing happened)");
+                        }
+			            break;
                     }
                     
                 case (tfr_utilities::TeleopCode::SCOOP_RETRACT):
                     {
-                        ROS_INFO("Teleop Action Server: Command Recieved, SCOOP_RETRACT");
-            //Old -> goes to predetermined position
-			//arm_manipulator.moveScoopPosition(1.7);// Retract scoop
-
-            //Daniel/Matthew
-            arm_manipulator.scoopDecremental(); // Decrease/retract scoop
-			break;
+                        if ((scoop_location + 0.1) <= 1.7) {
+                            ROS_INFO("Teleop Action Server: Command Recieved, SCOOP_RETRACT");
+                            //Old -> goes to predetermined position
+			                //arm_manipulator.moveScoopPosition(1.7);// Retract scoop
+                            //Daniel/Matthew
+                            // arm_manipulator.scoopDecremental(); // Decrease/retract scoop
+                            scoop_location = scoop_location + 0.1;
+                            arm_manipulator.moveScoopPosition(scoop_location);
+                        }
+                        else {
+                            ROS_INFO("Teleop Action Server: Command Recieved, SCOOP_RETRACT (LIMIT REACHED!!! Nothing happened)");
+                        }
+			            break;
                     }
 
                 case (tfr_utilities::TeleopCode::DIG):
