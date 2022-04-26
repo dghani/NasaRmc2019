@@ -14,7 +14,9 @@ namespace tfr_mission_control {
      * */
      MissionControl::MissionControl()
         : rqt_gui_cpp::Plugin(),
-        widget(nullptr)
+         widget(nullptr),
+         robotEnabled{false},
+         robotMode{teleoperated}
     {
         setObjectName("MissionControl");
     }
@@ -58,22 +60,27 @@ namespace tfr_mission_control {
         //boilerplate
         context.addWidget(widget);
 
+        //Startup stuff
         setupToolTips();
+        setupButtons();
 
         countdownClock = new QTimer(this);
 
 
+        /*Slots*/
 
-        //Connect the slots
-
+        //Disable/enable buttons
         connect(ui.enable_button, &QPushButton::clicked, this, &MissionControl::enableRobot);
+        connect(ui.disable_button, &QPushButton::clicked, this, &MissionControl::disableRobot);
+
+        //Robot modes
+        connect(ui.teleop_button, &QPushButton::clicked, [this] () {setRobotMode(MissionControl::RobotMode::teleoperated);});
+        connect(ui.auto_button, &QPushButton::clicked, [this] () {setRobotMode(MissionControl::RobotMode::autonomous);});
 
         connect(countdownClock, &QTimer::timeout, this, &MissionControl::renderClock);
         
-
-
-
     }
+
 
     /*
      * This get's called before the destructor, and apparently we need to
@@ -86,6 +93,90 @@ namespace tfr_mission_control {
     }
 
     /*
+    * Enables the robot and runs its selected mode.
+    * 
+    */
+    void MissionControl::enableRobot() {
+        startTimeService();
+        ui.enable_button->setEnabled(false);
+        ui.disable_button->setEnabled(true);
+
+        //Prevent people from selecting mode while running
+        ui.teleop_button->setEnabled(false);
+        ui.auto_button->setEnabled(false);
+    }
+
+    /*
+    * Disables the robot. Stops the mission clock
+    * 
+    */
+    void MissionControl::disableRobot() {
+        ui.enable_button->setEnabled(true);
+        ui.disable_button->setEnabled(false);
+
+        //Used to renable the mode buttons 
+        setRobotMode(robotMode);
+
+        countdownClock->stop();
+        ui.time_display->display(0);
+    }
+
+    /*
+    * Sets the mode of the robot and updates the gui
+    * to reflect that
+    */
+    void MissionControl::setRobotMode(MissionControl::RobotMode mode) {
+        robotMode = mode;
+
+        switch (mode) {
+            case(MissionControl::RobotMode::autonomous):
+                ui.teleop_button->setEnabled(true);
+                ui.auto_button->setEnabled(false);
+                break;
+            case(MissionControl::RobotMode::teleoperated):
+                ui.teleop_button->setEnabled(false);
+                ui.auto_button->setEnabled(true);
+                break;
+        }
+    }
+
+    /*
+    * Starts the timer. I do not know how it works,
+    * I just copy/pasted the method that already was here in the old gui
+    */
+    void MissionControl::startTimeService() {
+        std_srvs::Empty start;
+        ros::service::call("start_mission", start);
+        countdownClock->start(500);
+    }
+
+    /*
+    * Renders the clock on the gui. 
+    * Copy/pasted method from old gui
+    */
+    void MissionControl::renderClock() {
+        tfr_msgs::DurationSrv remaining_time;
+        ros::service::call("time_remaining", remaining_time);
+        ui.time_display->display(remaining_time.response.duration.toSec());
+    }
+
+    /*
+    * This sets up the initial conditions, visual wise, when the 
+    * application starts
+    */
+    void MissionControl::setupButtons() {
+        //Enable/disable buttons
+        ui.enable_button->setEnabled(true);
+        ui.disable_button->setEnabled(false);
+
+        //Robot Mode, default is teleop
+        ui.teleop_button->setEnabled(false);
+        ui.auto_button->setEnabled(true);
+    }
+
+    /*
+    * Create tooltips for buttons and such
+    * 
     * I tried to use Qt Desinger's toolTip thing, but it did not work.
     * So I am implementing it via code instead
     * 
@@ -112,23 +203,6 @@ namespace tfr_mission_control {
         ui.controller_button->setToolTipDuration(5000);
 
     }
-
-    void MissionControl::enableRobot() {
-        startTimeService();
-    }
-
-    void MissionControl::startTimeService() {
-        std_srvs::Empty start;
-        ros::service::call("start_mission", start);
-        countdownClock->start(500);
-    }
-
-    void MissionControl::renderClock() {
-        tfr_msgs::DurationSrv remaining_time;
-        ros::service::call("time_remaining", remaining_time);
-        ui.time_display->display(remaining_time.response.duration.toSec());
-    }
-   
 }
 
 PLUGINLIB_EXPORT_CLASS(tfr_mission_control::MissionControl,

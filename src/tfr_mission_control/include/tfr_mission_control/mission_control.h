@@ -60,7 +60,11 @@ namespace tfr_mission_control {
 
             void shutdownPlugin() override;
 
-        private:
+        private:            
+            enum RobotMode {
+                teleoperated,
+                autonomous
+            };
 
             /* ======================================================================== */
             /* Variables                                                                */
@@ -73,12 +77,29 @@ namespace tfr_mission_control {
             //the mission timer
             QTimer* countdownClock;
 
+            //Represents if the robot is going to run one of the RobotModes
+            std::atomic<bool> robotEnabled;
+
+            //Represents the current running mode of the robot
+            std::atomic<RobotMode> robotMode;
 
 
-            void setupToolTips();
+
+            /*Robot Specific*/
             void enableRobot();
+            void disableRobot();
+            void setRobotMode(MissionControl::RobotMode mode);
+
+            /*ROS Specific*/
             void startTimeService();
+
+            /*GUI Specific*/
             void renderClock();
+            void setupButtons();
+            void setupToolTips();
+
+
+
 
 
     };
