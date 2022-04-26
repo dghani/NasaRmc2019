@@ -70,9 +70,15 @@ namespace tfr_mission_control {
             Ui::MissionControlWidget ui;
             //Out application context
             QWidget* widget;
+            //the mission timer
+            QTimer* countdownClock;
+
 
 
             void setupToolTips();
+            void enableRobot();
+            void startTimeService();
+            void renderClock();
 
 
     };

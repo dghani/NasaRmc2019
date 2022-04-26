@@ -28,6 +28,7 @@ namespace tfr_mission_control {
     MissionControl::~MissionControl()
     {
         delete widget;
+        delete countdownClock;
     }
 
     /* ========================================================================== */
@@ -58,6 +59,19 @@ namespace tfr_mission_control {
         context.addWidget(widget);
 
         setupToolTips();
+
+        countdownClock = new QTimer(this);
+
+
+
+        //Connect the slots
+
+        connect(ui.enable_button, &QPushButton::clicked, this, &MissionControl::enableRobot);
+
+        connect(countdownClock, &QTimer::timeout, this, &MissionControl::renderClock);
+        
+
+
 
     }
 
@@ -99,6 +113,21 @@ namespace tfr_mission_control {
 
     }
 
+    void MissionControl::enableRobot() {
+        startTimeService();
+    }
+
+    void MissionControl::startTimeService() {
+        std_srvs::Empty start;
+        ros::service::call("start_mission", start);
+        countdownClock->start(500);
+    }
+
+    void MissionControl::renderClock() {
+        tfr_msgs::DurationSrv remaining_time;
+        ros::service::call("time_remaining", remaining_time);
+        ui.time_display->display(remaining_time.response.duration.toSec());
+    }
    
 }
 
