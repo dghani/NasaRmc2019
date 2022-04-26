@@ -216,6 +216,7 @@ class TeleopExecutive
                             ROS_INFO("Teleop Action Server: Command Recieved, CLOCKWISE (+ 0.1)");
                             // arm_manipulator.moveTurntablePosition(3.14); // Move arm to origin
                             turntable_location = turntable_location + 0.1;
+                            ROS_INFO("Turntable current position = %d", turntable_location);
                             arm_manipulator.moveTurntablePosition(turntable_location);
                         }
                         else {
@@ -230,6 +231,7 @@ class TeleopExecutive
                             ROS_INFO("Teleop Action Server: Command Recieved, COUNTERCLOCKWISE (- 0.1)");
                             // arm_manipulator.moveTurntablePosition(1.57); // rotate arm 180 degrees
                             turntable_location = turntable_location - 0.1;
+                            ROS_INFO("Turntable current position = %d", turntable_location);
                             arm_manipulator.moveTurntablePosition(turntable_location);
                         }
                         else {
@@ -244,6 +246,7 @@ class TeleopExecutive
                             ROS_INFO("Teleop Action Server: Command Recieved, LOWER_ARM_EXTEND (- 0.1)");
 			                // arm_manipulator.moveLowerArmPosition(1.6); // Move lower arm to a low position
                             lower_arm_location = lower_arm_location - 0.1;
+                            ROS_INFO("Lower Arm current position = %d", lower_arm_location);
                             arm_manipulator.moveLowerArmPosition(lower_arm_location);
                         }
                         else {
@@ -259,6 +262,7 @@ class TeleopExecutive
                             ROS_INFO("Teleop Action Server: Command Recieved, LOWER_ARM_RETRACT (+ 0.1)");
 			                // arm_manipulator.moveLowerArmPosition(4.8); // Move lower arm to a high position
                             lower_arm_location = lower_arm_location + 0.1;
+                            ROS_INFO("Lower Arm current position = %d", lower_arm_location);
                             arm_manipulator.moveLowerArmPosition(lower_arm_location);
                         }
                         else {
@@ -273,6 +277,7 @@ class TeleopExecutive
 			                ROS_INFO("Teleop Action Server: Command Recieved, UPPER_ARM_EXTEND (- 0.1)");
 			                // arm_manipulator.moveUpperArmPosition(1.1); // Extend upper arm
                             upper_arm_location = upper_arm_location - 0.1;
+                            ROS_INFO("Upper Arm current position = %d", upper_arm_location);
                             arm_manipulator.moveUpperArmPosition(upper_arm_location);
                         }
                         else {
@@ -287,6 +292,7 @@ class TeleopExecutive
  			                ROS_INFO("Teleop Action Server: Command Recieved, UPPER_ARM_RETRACT (+ 0.1)");
 			                // arm_manipulator.moveUpperArmPosition(3.5); // Retract upper arm
                             upper_arm_location = upper_arm_location + 0.1;
+                            ROS_INFO("Upper Arm current position = %d", upper_arm_location);
                             arm_manipulator.moveUpperArmPosition(upper_arm_location);
                         }
                         else {
@@ -304,6 +310,7 @@ class TeleopExecutive
                             //Daniel/Matthew
                             // arm_manipulator.scoopIncremental(); //Increase/Extend scoop
                             scoop_location = scoop_location - 0.1;
+                            ROS_INFO("Scoop current position = %d", scoop_location);
                             arm_manipulator.moveScoopPosition(scoop_location);
                         }
                         else {
@@ -321,6 +328,7 @@ class TeleopExecutive
                             //Daniel/Matthew
                             // arm_manipulator.scoopDecremental(); // Decrease/retract scoop
                             scoop_location = scoop_location + 0.1;
+                            ROS_INFO("Scoop current position = %d", scoop_location);
                             arm_manipulator.moveScoopPosition(scoop_location);
                         }
                         else {
