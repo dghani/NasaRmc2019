@@ -1,7 +1,6 @@
 #ifndef ARM_MANIPULATOR_H
 #define ARM_MANIPULATOR_H
 #include <ros/ros.h>
-#include <ros/console.h>
 #include <tfr_msgs/ArmMoveAction.h>
 #include <std_msgs/Float64MultiArray.h>
 #include <std_msgs/UInt16.h>
@@ -11,9 +10,6 @@
 #include <urdf/model.h>
 #include <actionlib/client/simple_action_client.h>
 #include <sensor_msgs/JointState.h>
-#include <std_msgs/Bool.h>
-#include <std_msgs/Int32.h>
-#include <std_msgs/Float64.h>
 
 /**
  * Provides a simple method for moving the arm.
@@ -45,11 +41,6 @@ class ArmManipulator
 
         bool turntable_target_position_reached = false;
 
-        // Daniel/Matthew
-        void scoopCallback(const std_msgs::Int32& scoop_position);
-        void scoopIncremental();
-        void scoopDecremental();
-
     private:
         ros::Publisher turntable_publisher;
         ros::Publisher lower_arm_publisher;
@@ -59,12 +50,6 @@ class ArmManipulator
         ros::Publisher right_bin_publisher;
         ros::Subscriber turntable_statusword_subscriber;
         void updateTurntableTargetPosition(const std_msgs::UInt16 &value);
-
-        // Daniel/Matthew
-        ros::Subscriber scoop_subscriber;
-        float scoopToleranceLimit;
-        std_msgs::Bool scoopMoving;
-        double double_scoop_position;
  };
 
 #endif
