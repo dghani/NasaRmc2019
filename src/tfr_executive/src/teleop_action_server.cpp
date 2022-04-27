@@ -212,31 +212,31 @@ class TeleopExecutive
 
                 case (tfr_utilities::TeleopCode::CLOCKWISE):
                     {
-                        if ((turntable_location + 0.1) <= 3.14) {
+                        //if ((turntable_location + 0.1) <= 3.14) {
                             ROS_INFO("Teleop Action Server: Command Recieved, CLOCKWISE (+ 0.1)");
                             // arm_manipulator.moveTurntablePosition(3.14); // Move arm to origin
                             turntable_location = turntable_location + 0.1;
                             ROS_INFO("Turntable current position = %d", turntable_location);
                             arm_manipulator.moveTurntablePosition(turntable_location);
-                        }
-                        else {
-                            ROS_INFO("Teleop Action Server: Command Recieved, CLOCKWISE (LIMIT REACHED!!! Nothing happened)");
-                        }
+                        //}
+                        //else {
+                        //    ROS_INFO("Teleop Action Server: Command Recieved, CLOCKWISE (LIMIT REACHED!!! Nothing happened)");
+                        //}
                         break;
                     }
 
                 case (tfr_utilities::TeleopCode::COUNTERCLOCKWISE):
                     {
-                        if ((turntable_location - 0.1) >= 1.57) {
+                        //if ((turntable_location - 0.1) >= 1.57) {
                             ROS_INFO("Teleop Action Server: Command Recieved, COUNTERCLOCKWISE (- 0.1)");
                             // arm_manipulator.moveTurntablePosition(1.57); // rotate arm 180 degrees
                             turntable_location = turntable_location - 0.1;
                             ROS_INFO("Turntable current position = %d", turntable_location);
                             arm_manipulator.moveTurntablePosition(turntable_location);
-                        }
-                        else {
-                            ROS_INFO("Teleop Action Server: Command Recieved, COUNTERCLOCKWISE (LIMIT REACHED!!! Nothing happened)");
-                        }
+                        //}
+                        //else {
+                        //    ROS_INFO("Teleop Action Server: Command Recieved, COUNTERCLOCKWISE (LIMIT REACHED!!! Nothing happened)");
+                        //}
                         break;
                     }
                     
