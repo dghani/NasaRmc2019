@@ -16,7 +16,8 @@ namespace tfr_mission_control {
         : rqt_gui_cpp::Plugin(),
          widget(nullptr),
          robotEnabled{false},
-         robotMode{teleoperated}
+         robotMode{teleoperated},
+         inputType{keyboard}
     {
         setObjectName("MissionControl");
     }
@@ -77,6 +78,11 @@ namespace tfr_mission_control {
         connect(ui.teleop_button, &QPushButton::clicked, [this] () {setRobotMode(MissionControl::RobotMode::teleoperated);});
         connect(ui.auto_button, &QPushButton::clicked, [this] () {setRobotMode(MissionControl::RobotMode::autonomous);});
 
+        //Control modes
+        connect(ui.keyboard_button, &QPushButton::clicked, [this]() {setInputType(MissionControl::InputType::keyboard);});
+        connect(ui.controller_button, &QPushButton::clicked, [this]() {setInputType(MissionControl::InputType::controller);});
+
+        //Clock
         connect(countdownClock, &QTimer::timeout, this, &MissionControl::renderClock);
         
     }
@@ -104,6 +110,10 @@ namespace tfr_mission_control {
         //Prevent people from selecting mode while running
         ui.teleop_button->setEnabled(false);
         ui.auto_button->setEnabled(false);
+
+        //Prevent people from selecting input type while running
+        ui.keyboard_button->setEnabled(false);
+        ui.controller_button->setEnabled(false);
     }
 
     /*
@@ -116,6 +126,9 @@ namespace tfr_mission_control {
 
         //Used to renable the mode buttons 
         setRobotMode(robotMode);
+
+        //Used to renable the input type buttons
+        setInputType(inputType);
 
         countdownClock->stop();
         ui.time_display->display(0);
@@ -136,6 +149,24 @@ namespace tfr_mission_control {
             case(MissionControl::RobotMode::teleoperated):
                 ui.teleop_button->setEnabled(false);
                 ui.auto_button->setEnabled(true);
+                break;
+        }
+    }
+
+    /*
+    * Sets the control type to be the specified mode
+    */
+    void MissionControl::setInputType(MissionControl::InputType mode) {
+        inputType = mode;
+
+        switch (mode) {
+            case (MissionControl::InputType::controller):
+                ui.keyboard_button->setEnabled(true);
+                ui.controller_button->setEnabled(false);
+                break;
+            case (MissionControl::InputType::keyboard):
+                ui.keyboard_button->setEnabled(false);
+                ui.controller_button->setEnabled(true);
                 break;
         }
     }
@@ -172,6 +203,10 @@ namespace tfr_mission_control {
         //Robot Mode, default is teleop
         ui.teleop_button->setEnabled(false);
         ui.auto_button->setEnabled(true);
+
+        //Input type, default is keyboard
+        ui.keyboard_button->setEnabled(false);
+        ui.controller_button->setEnabled(true);
     }
 
     /*
