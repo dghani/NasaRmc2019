@@ -66,6 +66,12 @@ namespace tfr_mission_control {
                 autonomous
             };
 
+            enum InputType {
+                keyboard,
+                controller
+            };
+
+
             /* ======================================================================== */
             /* Variables                                                                */
             /* ======================================================================== */
@@ -83,12 +89,15 @@ namespace tfr_mission_control {
             //Represents the current running mode of the robot
             std::atomic<RobotMode> robotMode;
 
+            std::atomic<InputType> inputType;
+
 
 
             /*Robot Specific*/
             void enableRobot();
             void disableRobot();
             void setRobotMode(MissionControl::RobotMode mode);
+            void setInputType(MissionControl::InputType mode);
 
             /*ROS Specific*/
             void startTimeService();
