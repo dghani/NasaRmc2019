@@ -33,6 +33,8 @@
 #include <QPlainTextEdit>
 #include <QKeyEvent>
 
+#include "tfr_mission_control/arm_tab.h"
+
 namespace tfr_mission_control {
 
     /* Main entry point for the qt application, contains all of state, business
@@ -90,6 +92,8 @@ namespace tfr_mission_control {
             std::atomic<RobotMode> robotMode;
 
             std::atomic<InputType> inputType;
+
+            ArmTab* armTab;
 
 
 

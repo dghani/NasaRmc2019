@@ -68,6 +68,17 @@ namespace tfr_mission_control {
         countdownClock = new QTimer(this);
 
 
+        QWidget* tab = ui.tab_widget->widget(0);//Arm tab
+        armTab = static_cast<ArmTab*>(tab);
+        //QPushButton* button = armTab->findChild<QPushButton*>("test_button");
+
+        //armTab = new ArmTab(tab);
+        //tab->connect(button, &QPushButton::clicked, armTab, &ArmTab::setupSignalsAndSlotss);
+
+        //armTab->pressButton();
+        armTab->setupSignalsAndSlotss();
+
+
         /*Slots*/
 
         //Disable/enable buttons
@@ -207,6 +218,7 @@ namespace tfr_mission_control {
         //Input type, default is keyboard
         ui.keyboard_button->setEnabled(false);
         ui.controller_button->setEnabled(true);
+
     }
 
     /*
