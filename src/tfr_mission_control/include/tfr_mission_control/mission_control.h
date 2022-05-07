@@ -109,7 +109,6 @@ namespace tfr_mission_control {
             /*GUI Specific*/
             void renderClock();
             void setupButtons();
-            void setupToolTips();
 
 
 
