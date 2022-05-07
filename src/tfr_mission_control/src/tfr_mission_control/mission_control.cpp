@@ -142,6 +142,9 @@ namespace tfr_mission_control {
 
         countdownClock->stop();
         ui.time_display->display(0);
+
+        //Disable the tab buttons
+        armTab->setButtonAvailability(false);
     }
 
     /*

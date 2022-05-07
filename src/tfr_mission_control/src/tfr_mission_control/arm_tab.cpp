@@ -12,15 +12,44 @@ namespace tfr_mission_control {
 
 	}
 
-	void ArmTab::pressButton() {
-		QLabel* label = findChild<QLabel*>("label");
-
-		label->setText("asdasasdsa");
-	}
 
 	void ArmTab::setupSignalsAndSlots() {
-		QPushButton* button = findChild<QPushButton*>("test_button");
-		connect(button, &QPushButton::clicked, this, &ArmTab::pressButton);
+
+		//Preset buttons
+		QPushButton* button = findChild<QPushButton*>("starting_pos_button");
+		connect(button, &QPushButton::clicked, this, &ArmTab::startingPosition);
+
+		button = findChild<QPushButton*>("mining_pos_button");
+		connect(button, &QPushButton::clicked, this, &ArmTab::miningPosition);
+
+		button = findChild<QPushButton*>("dumping_pos_button");
+		connect(button, &QPushButton::clicked, this, &ArmTab::dumpingPosition);
+
+		button = findChild<QPushButton*>("face_fowards_button");
+		connect(button, &QPushButton::clicked, this, &ArmTab::faceFowards);
+
+		//Arm keyboard controls
+		button = findChild<QPushButton*>("extend_upper_arm_button");
+		connect(button, &QPushButton::clicked, this, &ArmTab::upperArmExtend);
+
+		button = findChild<QPushButton*>("retract_upper_arm_button");
+		connect(button, &QPushButton::clicked, this, &ArmTab::upperArmRetract);
+
+		button = findChild<QPushButton*>("extend_lower_arm_button");
+		connect(button, &QPushButton::clicked, this, &ArmTab::lowerArmExtend);
+
+		button = findChild<QPushButton*>("retract_lower_arm_button");
+		connect(button, &QPushButton::clicked, this, &ArmTab::lowerArmRetract);
+
+		button = findChild<QPushButton*>("extend_scoop_button");
+		connect(button, &QPushButton::clicked, this, &ArmTab::scoopExtend);
+
+		button = findChild<QPushButton*>("retract_scoop_button");
+		connect(button, &QPushButton::clicked, this, &ArmTab::scoopRetract);
+
+
+
+
 	}
 
 	void ArmTab::setButtonAvailability(bool availability) {
@@ -29,6 +58,46 @@ namespace tfr_mission_control {
 		for (QPushButton* button : allButtons) {
 			button->setEnabled(availability);
 		}
+	}
+
+	void ArmTab::startingPosition() {
+
+	}
+
+	void ArmTab::miningPosition() {
+
+	}
+
+	void ArmTab::dumpingPosition() {
+
+	}
+
+	void ArmTab::faceFowards() {
+
+	}
+
+	void ArmTab::upperArmExtend() {
+
+	}
+
+	void ArmTab::upperArmRetract() {
+
+	}
+
+	void ArmTab::lowerArmExtend() {
+
+	}
+
+	void ArmTab::lowerArmRetract() {
+
+	}
+
+	void ArmTab::scoopExtend() {
+
+	}
+
+	void ArmTab::scoopRetract() {
+
 	}
 
 

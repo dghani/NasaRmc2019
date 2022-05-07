@@ -23,11 +23,24 @@ namespace tfr_mission_control {
 			~ArmTab();
 			void setupSignalsAndSlots();
 			void setButtonAvailability(bool availability);
-			void pressButton();
 
 
 		private:
 			QWidget* widget;
+
+
+		protected slots:
+			void startingPosition();
+			void miningPosition();
+			void dumpingPosition();
+			void faceFowards();
+
+			void upperArmExtend();
+			void upperArmRetract();
+			void lowerArmExtend();
+			void lowerArmRetract();
+			void scoopExtend();
+			void scoopRetract();
 
 
 
