@@ -88,7 +88,6 @@ namespace tfr_mission_control {
         armTab->setupSignalsAndSlots();
 
         //Startup stuff
-        setupToolTips();
         setupButtons();
         
     }
@@ -224,35 +223,7 @@ namespace tfr_mission_control {
 
     }
 
-    /*
-    * Create tooltips for buttons and such
-    * 
-    * I tried to use Qt Desinger's toolTip thing, but it did not work.
-    * So I am implementing it via code instead
-    * 
-    */
-    void MissionControl::setupToolTips() {
 
-        //General Info Panel Tool Tips
-        ui.enable_button->setToolTip("Enables the robot");
-        ui.enable_button->setToolTipDuration(5000);
-
-        ui.disable_button->setToolTip("Disables the robot");
-        ui.disable_button->setToolTipDuration(5000);
-
-        ui.teleop_button->setToolTip("Sets the robot to the teleoperated mode");
-        ui.teleop_button->setToolTipDuration(5000);
-
-        ui.auto_button->setToolTip("Sets the robot to the autonomous mode");
-        ui.auto_button->setToolTipDuration(5000);
-
-        ui.keyboard_button->setToolTip("Sets the control type to a keyboard");
-        ui.keyboard_button->setToolTipDuration(5000);
-
-        ui.controller_button->setToolTip("Sets the control type to a controller");
-        ui.controller_button->setToolTipDuration(5000);
-
-    }
 }
 
 PLUGINLIB_EXPORT_CLASS(tfr_mission_control::MissionControl,
