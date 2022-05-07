@@ -61,22 +61,10 @@ namespace tfr_mission_control {
         //boilerplate
         context.addWidget(widget);
 
-        //Startup stuff
-        setupToolTips();
-        setupButtons();
-
         countdownClock = new QTimer(this);
-
 
         QWidget* tab = ui.tab_widget->widget(0);//Arm tab
         armTab = static_cast<ArmTab*>(tab);
-        //QPushButton* button = armTab->findChild<QPushButton*>("test_button");
-
-        //armTab = new ArmTab(tab);
-        //tab->connect(button, &QPushButton::clicked, armTab, &ArmTab::setupSignalsAndSlotss);
-
-        //armTab->pressButton();
-        armTab->setupSignalsAndSlotss();
 
 
         /*Slots*/
@@ -95,6 +83,13 @@ namespace tfr_mission_control {
 
         //Clock
         connect(countdownClock, &QTimer::timeout, this, &MissionControl::renderClock);
+
+        //Tab slots
+        armTab->setupSignalsAndSlots();
+
+        //Startup stuff
+        setupToolTips();
+        setupButtons();
         
     }
 
@@ -125,6 +120,11 @@ namespace tfr_mission_control {
         //Prevent people from selecting input type while running
         ui.keyboard_button->setEnabled(false);
         ui.controller_button->setEnabled(false);
+
+        //Turn on the tab buttons if it is in teleop
+        if (robotMode == teleoperated) {
+            armTab->setButtonAvailability(true);
+        }
     }
 
     /*
@@ -218,6 +218,9 @@ namespace tfr_mission_control {
         //Input type, default is keyboard
         ui.keyboard_button->setEnabled(false);
         ui.controller_button->setEnabled(true);
+
+        //Disable all tab buttons initially
+        armTab->setButtonAvailability(false);
 
     }
 
