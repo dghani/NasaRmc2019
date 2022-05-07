@@ -6,14 +6,6 @@
 namespace tfr_mission_control {
 
 	ArmTab::ArmTab() {
-		//widget = tab;
-
-		//QPushButton* button = findChild<QPushButton*>("test_button");
-
-		//QObject::connect(button, &QPushButton::clicked, [&] {(ArmTab::setupSignalsAndSlotss);});
-
-		//button->setEnabled(false);
-		//widget->connect(button, &QPushButton::clicked, this, &ArmTab::setupSignalsAndSlotss);
 	}
 
 	ArmTab::~ArmTab() {
@@ -26,15 +18,21 @@ namespace tfr_mission_control {
 		label->setText("asdasasdsa");
 	}
 
-	void ArmTab::setupSignalsAndSlotss() {
+	void ArmTab::setupSignalsAndSlots() {
 		QPushButton* button = findChild<QPushButton*>("test_button");
-		//button->setEnabled(false);
-
-		//QLabel* label = findChild<QLabel*>("label");
-
-		//label->setText("asdasasdsa");
-
 		connect(button, &QPushButton::clicked, this, &ArmTab::pressButton);
 	}
+
+	void ArmTab::setButtonAvailability(bool availability) {
+		QList<QPushButton*> allButtons = findChildren<QPushButton*>();
+
+		for (QPushButton* button : allButtons) {
+			button->setEnabled(availability);
+		}
+	}
+
+
+
+
 
 }

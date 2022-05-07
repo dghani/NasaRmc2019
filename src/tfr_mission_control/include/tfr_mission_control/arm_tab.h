@@ -21,7 +21,8 @@ namespace tfr_mission_control {
 		public:
 			ArmTab();
 			~ArmTab();
-			void setupSignalsAndSlotss();
+			void setupSignalsAndSlots();
+			void setButtonAvailability(bool availability);
 			void pressButton();
 
 
