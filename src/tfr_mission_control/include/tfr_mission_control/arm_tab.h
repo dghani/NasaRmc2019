@@ -26,7 +26,6 @@ namespace tfr_mission_control {
 
 
 		private:
-			QWidget* widget;
 
 
 		protected slots:

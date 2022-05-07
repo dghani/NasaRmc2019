@@ -66,6 +66,9 @@ namespace tfr_mission_control {
         QWidget* tab = ui.tab_widget->widget(0);//Arm tab
         armTab = static_cast<ArmTab*>(tab);
 
+        tab = ui.tab_widget->widget(1);//Bin tab
+        binTab = static_cast<BinTab*>(tab);
+
 
         /*Slots*/
 
@@ -86,6 +89,7 @@ namespace tfr_mission_control {
 
         //Tab slots
         armTab->setupSignalsAndSlots();
+        binTab->setupSignalsAndSlots();
 
         //Startup stuff
         setupButtons();
@@ -123,6 +127,7 @@ namespace tfr_mission_control {
         //Turn on the tab buttons if it is in teleop
         if (robotMode == teleoperated) {
             armTab->setButtonAvailability(true);
+            binTab->setButtonAvailability(true);
         }
     }
 
@@ -145,6 +150,7 @@ namespace tfr_mission_control {
 
         //Disable the tab buttons
         armTab->setButtonAvailability(false);
+        binTab->setButtonAvailability(false);
     }
 
     /*
@@ -223,6 +229,7 @@ namespace tfr_mission_control {
 
         //Disable all tab buttons initially
         armTab->setButtonAvailability(false);
+        binTab->setButtonAvailability(false);
 
     }
 
