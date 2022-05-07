@@ -34,6 +34,7 @@
 #include <QKeyEvent>
 
 #include "tfr_mission_control/arm_tab.h"
+#include "tfr_mission_control/bin_tab.h"
 
 namespace tfr_mission_control {
 
@@ -94,6 +95,7 @@ namespace tfr_mission_control {
             std::atomic<InputType> inputType;
 
             ArmTab* armTab;
+            BinTab* binTab;
 
 
 
