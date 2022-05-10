@@ -215,7 +215,7 @@ class TeleopExecutive
                         //if ((turntable_location + 0.1) <= 3.14) {
                             ROS_INFO("Teleop Action Server: Command Recieved, CLOCKWISE (+ 0.1)");
                             // arm_manipulator.moveTurntablePosition(3.14); // Move arm to origin
-                            turntable_location = turntable_location + 0.05;
+                            turntable_location = turntable_location + 0.1;
                             ROS_INFO("Turntable current position = %d", turntable_location);
                             arm_manipulator.moveTurntablePosition(turntable_location);
                         //}
@@ -230,7 +230,7 @@ class TeleopExecutive
                         //if ((turntable_location - 0.1) >= 1.57) {
                             ROS_INFO("Teleop Action Server: Command Recieved, COUNTERCLOCKWISE (- 0.1)");
                             // arm_manipulator.moveTurntablePosition(1.57); // rotate arm 180 degrees
-                            turntable_location = turntable_location - 0.05;
+                            turntable_location = turntable_location - 0.1;
                             ROS_INFO("Turntable current position = %d", turntable_location);
                             arm_manipulator.moveTurntablePosition(turntable_location);
                         //}
@@ -309,7 +309,7 @@ class TeleopExecutive
 			                //arm_manipulator.moveScoopPosition(0.3); // Extend scoop
                             //Daniel/Matthew
                             // arm_manipulator.scoopIncremental(); //Increase/Extend scoop
-                            scoop_location = scoop_location - 0.05;
+                            scoop_location = scoop_location - 0.1;
                             ROS_INFO("Scoop current position = %d", scoop_location);
                             arm_manipulator.moveScoopPosition(scoop_location);
                         //}
@@ -327,7 +327,7 @@ class TeleopExecutive
 			                //arm_manipulator.moveScoopPosition(1.7);// Retract scoop
                             //Daniel/Matthew
                             // arm_manipulator.scoopDecremental(); // Decrease/retract scoop
-                            scoop_location = scoop_location + 0.05;
+                            scoop_location = scoop_location + 0.1;
                             ROS_INFO("Scoop current position = %d", scoop_location);
                             arm_manipulator.moveScoopPosition(scoop_location);
                         //}
