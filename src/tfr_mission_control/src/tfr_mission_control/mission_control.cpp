@@ -63,11 +63,8 @@ namespace tfr_mission_control {
 
         countdownClock = new QTimer(this);
 
-        QWidget* tab = ui.tab_widget->widget(0);//Arm tab
-        armTab = static_cast<ArmTab*>(tab);
-
-        tab = ui.tab_widget->widget(1);//Bin tab
-        binTab = static_cast<BinTab*>(tab);
+        QWidget* tab = ui.tab_widget->widget(0);//Robot Controls Tab
+        robotControlsTab = static_cast<RobotControlsTab*>(tab);
 
 
         /*Slots*/
@@ -88,8 +85,7 @@ namespace tfr_mission_control {
         connect(countdownClock, &QTimer::timeout, this, &MissionControl::renderClock);
 
         //Tab slots
-        armTab->setupSignalsAndSlots();
-        binTab->setupSignalsAndSlots();
+
 
         //Startup stuff
         setupButtons();
@@ -126,8 +122,7 @@ namespace tfr_mission_control {
 
         //Turn on the tab buttons if it is in teleop
         if (robotMode == teleoperated) {
-            armTab->setButtonAvailability(true);
-            binTab->setButtonAvailability(true);
+
         }
     }
 
@@ -148,9 +143,7 @@ namespace tfr_mission_control {
         countdownClock->stop();
         ui.time_display->display(0);
 
-        //Disable the tab buttons
-        armTab->setButtonAvailability(false);
-        binTab->setButtonAvailability(false);
+
     }
 
     /*
@@ -227,9 +220,8 @@ namespace tfr_mission_control {
         ui.keyboard_button->setEnabled(false);
         ui.controller_button->setEnabled(true);
 
-        //Disable all tab buttons initially
-        armTab->setButtonAvailability(false);
-        binTab->setButtonAvailability(false);
+        robotControlsTab->setButtonAvailability(false);
+
 
     }
 

@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>688</width>
-    <height>599</height>
+    <width>630</width>
+    <height>676</height>
    </rect>
   </property>
   <property name="focusPolicy">
@@ -56,6 +56,32 @@
          </property>
          <property name="indent">
           <number>-1</number>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="e_stop_button">
+         <property name="font">
+          <font>
+           <weight>75</weight>
+           <italic>false</italic>
+           <bold>true</bold>
+           <underline>false</underline>
+           <strikeout>false</strikeout>
+           <kerning>true</kerning>
+          </font>
+         </property>
+         <property name="toolTip">
+          <string>Stops all future commands to the robot, and freezes the robot at the position when the button was pressed</string>
+         </property>
+         <property name="toolTipDuration">
+          <number>5000</number>
+         </property>
+         <property name="text">
+          <string>EMERGENCY STOP</string>
+         </property>
+         <property name="checkable">
+          <bool>false</bool>
          </property>
         </widget>
        </item>
@@ -243,115 +269,21 @@
      <property name="currentIndex">
       <number>0</number>
      </property>
-     <widget class="QWidget" name="arm_turntable_tab">
+     <widget class="QWidget" name="robot_controls_tab">
       <attribute name="title">
-       <string>Arm/Turntable</string>
+       <string>Robot Controls</string>
       </attribute>
       <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
-        <layout class="QVBoxLayout" name="arm_turntable_main_layout">
+        <layout class="QVBoxLayout" name="robot_controls_root_layout" stretch="1,1,1">
          <item>
-          <layout class="QHBoxLayout" name="preset_buttons_row" stretch="1,3">
+          <layout class="QVBoxLayout" name="preset_buttons">
            <item>
-            <layout class="QVBoxLayout" name="preset_buttons">
-             <item>
-              <widget class="QLabel" name="preset_buttons_label">
-               <property name="font">
-                <font>
-                 <pointsize>10</pointsize>
-                 <weight>75</weight>
-                 <bold>true</bold>
-                </font>
-               </property>
-               <property name="text">
-                <string>Preset Buttons</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="starting_pos_button">
-               <property name="toolTip">
-                <string>Moves turntable &amp; arm facing towards the bin</string>
-               </property>
-               <property name="toolTipDuration">
-                <number>5000</number>
-               </property>
-               <property name="text">
-                <string>Starting Position</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="mining_pos_button">
-               <property name="toolTip">
-                <string>Move turntable &amp; arm to mining position</string>
-               </property>
-               <property name="toolTipDuration">
-                <number>5000</number>
-               </property>
-               <property name="text">
-                <string>Mining Position</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="dumping_pos_button">
-               <property name="toolTip">
-                <string>Moves arm &amp; turntable to the bin to dump contents</string>
-               </property>
-               <property name="toolTipDuration">
-                <number>5000</number>
-               </property>
-               <property name="text">
-                <string>Dumping Position</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="face_fowards_button">
-               <property name="toolTip">
-                <string>Moves turntable &amp; arm to face fowards</string>
-               </property>
-               <property name="toolTipDuration">
-                <number>5000</number>
-               </property>
-               <property name="text">
-                <string>Face Fowards</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-           <item>
-            <layout class="QVBoxLayout" name="other_preset_buttons_layout">
-             <item>
-              <spacer name="preset_buttons_spacer">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>40</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-            </layout>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <layout class="QVBoxLayout" name="keyboard_controls">
-           <property name="sizeConstraint">
-            <enum>QLayout::SetDefaultConstraint</enum>
-           </property>
-           <item>
-            <widget class="QLabel" name="keyboard_controls_label">
+            <widget class="QLabel" name="label">
              <property name="maximumSize">
               <size>
                <width>16777215</width>
-               <height>50</height>
+               <height>20</height>
               </size>
              </property>
              <property name="font">
@@ -362,16 +294,22 @@
               </font>
              </property>
              <property name="text">
-              <string>Keyboard Controls</string>
+              <string>Preset Buttons</string>
              </property>
             </widget>
            </item>
            <item>
-            <layout class="QHBoxLayout" name="key_board_controls_layout" stretch="0,0">
+            <layout class="QHBoxLayout" name="preset_buttons_horizontal">
              <item>
-              <layout class="QVBoxLayout" name="arm_keyboard_controls" stretch="0,2">
+              <layout class="QVBoxLayout" name="arm_train_preset">
                <item>
                 <widget class="QLabel" name="arm_label">
+                 <property name="maximumSize">
+                  <size>
+                   <width>16777215</width>
+                   <height>20</height>
+                  </size>
+                 </property>
                  <property name="font">
                   <font>
                    <pointsize>10</pointsize>
@@ -382,153 +320,61 @@
                  <property name="text">
                   <string>Arm</string>
                  </property>
-                 <property name="textFormat">
-                  <enum>Qt::PlainText</enum>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="arm_storing_pos_button">
+                 <property name="text">
+                  <string>Storing Position</string>
                  </property>
                 </widget>
                </item>
                <item>
-                <layout class="QHBoxLayout" name="button_container">
-                 <item>
-                  <layout class="QVBoxLayout" name="upper_arm_container" stretch="0,0,0">
-                   <item>
-                    <widget class="QLabel" name="upp_arm_label">
-                     <property name="maximumSize">
-                      <size>
-                       <width>16777215</width>
-                       <height>20</height>
-                      </size>
-                     </property>
-                     <property name="text">
-                      <string>Upper Arm</string>
-                     </property>
-                     <property name="textFormat">
-                      <enum>Qt::PlainText</enum>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QPushButton" name="extend_upper_arm_button">
-                     <property name="toolTip">
-                      <string>Press to extend upper arm by a little bit</string>
-                     </property>
-                     <property name="toolTipDuration">
-                      <number>5000</number>
-                     </property>
-                     <property name="text">
-                      <string>Extend Up</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QPushButton" name="retract_upper_arm_button">
-                     <property name="toolTip">
-                      <string>Press to retract upper arm by a little bit</string>
-                     </property>
-                     <property name="toolTipDuration">
-                      <number>5000</number>
-                     </property>
-                     <property name="text">
-                      <string>Retract Down</string>
-                     </property>
-                    </widget>
-                   </item>
-                  </layout>
-                 </item>
-                 <item>
-                  <layout class="QVBoxLayout" name="lower_arm_container">
-                   <item>
-                    <widget class="QLabel" name="lower_arm_label">
-                     <property name="maximumSize">
-                      <size>
-                       <width>16777215</width>
-                       <height>20</height>
-                      </size>
-                     </property>
-                     <property name="text">
-                      <string>Lower Arm</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QPushButton" name="extend_lower_arm_button">
-                     <property name="toolTip">
-                      <string>Press to extend lower arm by a little bit</string>
-                     </property>
-                     <property name="toolTipDuration">
-                      <number>5000</number>
-                     </property>
-                     <property name="text">
-                      <string>Extend Up</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QPushButton" name="retract_lower_arm_button">
-                     <property name="toolTip">
-                      <string>Press to retract lower arm by a little bit</string>
-                     </property>
-                     <property name="toolTipDuration">
-                      <number>5000</number>
-                     </property>
-                     <property name="text">
-                      <string>Retract Down</string>
-                     </property>
-                    </widget>
-                   </item>
-                  </layout>
-                 </item>
-                 <item>
-                  <layout class="QVBoxLayout" name="scoop_container">
-                   <item>
-                    <widget class="QLabel" name="scoop_label">
-                     <property name="maximumSize">
-                      <size>
-                       <width>16777215</width>
-                       <height>20</height>
-                      </size>
-                     </property>
-                     <property name="text">
-                      <string>Scoop</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QPushButton" name="extend_scoop_button">
-                     <property name="toolTip">
-                      <string>Press to extend scoop by a little bit</string>
-                     </property>
-                     <property name="toolTipDuration">
-                      <number>5000</number>
-                     </property>
-                     <property name="text">
-                      <string>Extend Out</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QPushButton" name="retract_scoop_button">
-                     <property name="toolTip">
-                      <string>Press to retract scoop by a little bit</string>
-                     </property>
-                     <property name="toolTipDuration">
-                      <number>5000</number>
-                     </property>
-                     <property name="text">
-                      <string>Retract In</string>
-                     </property>
-                    </widget>
-                   </item>
-                  </layout>
-                 </item>
-                </layout>
+                <widget class="QPushButton" name="arm_mining_pos_button">
+                 <property name="text">
+                  <string>Mining Position</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="arm_dumping_pos_button">
+                 <property name="text">
+                  <string>Dumping Position</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="arm_face_fowards_button">
+                 <property name="text">
+                  <string>Face Fowards</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <spacer name="arm_spacer">
+                 <property name="orientation">
+                  <enum>Qt::Vertical</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>20</width>
+                   <height>40</height>
+                  </size>
+                 </property>
+                </spacer>
                </item>
               </layout>
              </item>
              <item>
-              <layout class="QVBoxLayout" name="turntable_keyboard_controls" stretch="0,0,0">
+              <layout class="QVBoxLayout" name="turntable_train_preset">
                <item>
-                <widget class="QLabel" name="turntable_label">
+                <widget class="QLabel" name="label_4">
+                 <property name="maximumSize">
+                  <size>
+                   <width>16777215</width>
+                   <height>20</height>
+                  </size>
+                 </property>
                  <property name="font">
                   <font>
                    <pointsize>10</pointsize>
@@ -542,37 +388,151 @@
                 </widget>
                </item>
                <item>
-                <layout class="QHBoxLayout" name="button_layout" stretch="0,0">
-                 <item>
-                  <widget class="QPushButton" name="rotate_left_button">
-                   <property name="toolTip">
-                    <string>Rotate turntable to the left a little bit</string>
-                   </property>
-                   <property name="toolTipDuration">
-                    <number>5000</number>
-                   </property>
-                   <property name="text">
-                    <string>&lt;- Rotate Left</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QPushButton" name="rotate_right_button">
-                   <property name="toolTip">
-                    <string>Rotate turntable to the right a little bit</string>
-                   </property>
-                   <property name="toolTipDuration">
-                    <number>5000</number>
-                   </property>
-                   <property name="text">
-                    <string>Rotate Right -&gt;</string>
-                   </property>
-                  </widget>
-                 </item>
-                </layout>
+                <widget class="QPushButton" name="turntable_storing_pos_button">
+                 <property name="text">
+                  <string>Storing Position</string>
+                 </property>
+                </widget>
                </item>
                <item>
-                <spacer name="turntable_space">
+                <widget class="QPushButton" name="turntable_mining_pos_button">
+                 <property name="text">
+                  <string>Mining Position</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="turntable_dumping_pos_button">
+                 <property name="text">
+                  <string>Dumping Position</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="turntable_face_fowards_button">
+                 <property name="text">
+                  <string>Face Fowards</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <spacer name="turntable_spacer">
+                 <property name="orientation">
+                  <enum>Qt::Vertical</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>20</width>
+                   <height>40</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <layout class="QVBoxLayout" name="bin_train_preset">
+               <item>
+                <widget class="QLabel" name="label_5">
+                 <property name="maximumSize">
+                  <size>
+                   <width>16777215</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                 <property name="font">
+                  <font>
+                   <pointsize>10</pointsize>
+                   <weight>75</weight>
+                   <bold>true</bold>
+                  </font>
+                 </property>
+                 <property name="text">
+                  <string>Bin</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="bin_dumping_pos_button">
+                 <property name="text">
+                  <string>Dumping Position</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="bin_collection_pos_button">
+                 <property name="text">
+                  <string>Collection Position</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <spacer name="bin_spacer">
+                 <property name="orientation">
+                  <enum>Qt::Vertical</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>20</width>
+                   <height>40</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <layout class="QVBoxLayout" name="drive_train_preset">
+               <item>
+                <widget class="QLabel" name="label_6">
+                 <property name="maximumSize">
+                  <size>
+                   <width>16777215</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                 <property name="font">
+                  <font>
+                   <pointsize>10</pointsize>
+                   <weight>75</weight>
+                   <bold>true</bold>
+                  </font>
+                 </property>
+                 <property name="text">
+                  <string>Drivetrain</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="foward3ft_button">
+                 <property name="text">
+                  <string>Move Fowards 3 Feet</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="backward3ft_button">
+                 <property name="text">
+                  <string>Move Backwards 3 Feet</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="left_90_deg_button">
+                 <property name="text">
+                  <string>Turn Left 90 Degrees</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="right_90_deg_button">
+                 <property name="text">
+                  <string>Turn Right 90 Degrees</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <spacer name="drivetrain_spacer">
                  <property name="orientation">
                   <enum>Qt::Vertical</enum>
                  </property>
@@ -591,86 +551,9 @@
           </layout>
          </item>
          <item>
-          <layout class="QHBoxLayout" name="controller_controls">
+          <layout class="QVBoxLayout" name="keyboard_controls">
            <item>
-            <spacer name="verticalSpacer">
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>20</width>
-               <height>40</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-          </layout>
-         </item>
-        </layout>
-       </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="bin_tab">
-      <attribute name="title">
-       <string>Bin</string>
-      </attribute>
-      <layout class="QHBoxLayout" name="horizontalLayout_2">
-       <item>
-        <layout class="QVBoxLayout" name="verticalLayout_3">
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_7" stretch="1,3">
-           <item>
-            <layout class="QVBoxLayout" name="verticalLayout_11">
-             <item>
-              <widget class="QLabel" name="label_9">
-               <property name="font">
-                <font>
-                 <pointsize>10</pointsize>
-                 <weight>75</weight>
-                 <bold>true</bold>
-                </font>
-               </property>
-               <property name="text">
-                <string>Preset Button</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="pushButton_2">
-               <property name="text">
-                <string>Dumping Position</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="pushButton_5">
-               <property name="text">
-                <string>Collection Position</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-           <item>
-            <spacer name="horizontalSpacer">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>40</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <layout class="QVBoxLayout" name="verticalLayout_8">
-           <item>
-            <widget class="QLabel" name="label_8">
+            <widget class="QLabel" name="label_2">
              <property name="font">
               <font>
                <pointsize>12</pointsize>
@@ -684,84 +567,328 @@
             </widget>
            </item>
            <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_11" stretch="1,3">
-             <item>
-              <layout class="QVBoxLayout" name="verticalLayout_17">
+            <layout class="QGridLayout" name="controls_grid">
+             <item row="3" column="0">
+              <layout class="QVBoxLayout" name="bin_controls">
                <item>
-                <widget class="QPushButton" name="pushButton_14">
+                <widget class="QLabel" name="bin_controls_label">
+                 <property name="maximumSize">
+                  <size>
+                   <width>16777215</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                 <property name="font">
+                  <font>
+                   <pointsize>10</pointsize>
+                   <weight>75</weight>
+                   <bold>true</bold>
+                  </font>
+                 </property>
                  <property name="text">
-                  <string>Extend Bin</string>
+                  <string>Bin</string>
                  </property>
                 </widget>
                </item>
                <item>
-                <widget class="QPushButton" name="pushButton_15">
+                <widget class="QPushButton" name="extend_bin_controls_button">
                  <property name="text">
-                  <string> Retract Bin</string>
+                  <string>Extend to Dumping Position</string>
                  </property>
                 </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="retract_bin_controls_button">
+                 <property name="text">
+                  <string>Retract to Colleciton Position</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <spacer name="bin_controls_spacer">
+                 <property name="orientation">
+                  <enum>Qt::Vertical</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>20</width>
+                   <height>40</height>
+                  </size>
+                 </property>
+                </spacer>
                </item>
               </layout>
              </item>
-             <item>
-              <spacer name="horizontalSpacer_2">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>40</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
+             <item row="2" column="0">
+              <layout class="QVBoxLayout" name="arm_controls">
+               <item>
+                <widget class="QLabel" name="arm_controls_label">
+                 <property name="font">
+                  <font>
+                   <pointsize>10</pointsize>
+                   <weight>75</weight>
+                   <bold>true</bold>
+                  </font>
+                 </property>
+                 <property name="text">
+                  <string>Arm</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <layout class="QHBoxLayout" name="arm_controls_horizontal">
+                 <item>
+                  <layout class="QVBoxLayout" name="upper_arm_controls">
+                   <item>
+                    <widget class="QLabel" name="upper_arm_label">
+                     <property name="text">
+                      <string>Upper Arm</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QPushButton" name="extend_upper_arm_button">
+                     <property name="text">
+                      <string>Extend Up</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QPushButton" name="retract_upper_arm_button">
+                     <property name="text">
+                      <string>Retract Down</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </item>
+                 <item>
+                  <layout class="QVBoxLayout" name="lower_arm_controls">
+                   <item>
+                    <widget class="QLabel" name="lower_arm_label">
+                     <property name="text">
+                      <string>Lower Arm</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QPushButton" name="extend_lower_arm_button">
+                     <property name="text">
+                      <string>Extend Up</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QPushButton" name="retract_lower_arm_button">
+                     <property name="text">
+                      <string>Retract Down</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </item>
+                 <item>
+                  <layout class="QVBoxLayout" name="scoop_controls">
+                   <item>
+                    <widget class="QLabel" name="scoop_label">
+                     <property name="text">
+                      <string>Scoop</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QPushButton" name="extend_scoop_button">
+                     <property name="text">
+                      <string>Extend Out</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QPushButton" name="retract_scoop_button">
+                     <property name="text">
+                      <string>Retract In</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </item>
+                </layout>
+               </item>
+               <item>
+                <spacer name="arm_controls_spacer">
+                 <property name="orientation">
+                  <enum>Qt::Vertical</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>20</width>
+                   <height>40</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+              </layout>
+             </item>
+             <item row="2" column="1">
+              <layout class="QVBoxLayout" name="turntable_controls">
+               <item>
+                <widget class="QLabel" name="turntable_controls_label">
+                 <property name="maximumSize">
+                  <size>
+                   <width>16777215</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                 <property name="font">
+                  <font>
+                   <pointsize>10</pointsize>
+                   <weight>75</weight>
+                   <bold>true</bold>
+                  </font>
+                 </property>
+                 <property name="text">
+                  <string>Turntable</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <layout class="QHBoxLayout" name="turntable_controls_horizontal">
+                 <item>
+                  <widget class="QPushButton" name="rotate_left_button">
+                   <property name="text">
+                    <string>&lt;- Rotate Left</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="rotate_right_button">
+                   <property name="text">
+                    <string>Rotate Right -&gt;</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item>
+                <spacer name="turntable_controls_spacer">
+                 <property name="orientation">
+                  <enum>Qt::Vertical</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>20</width>
+                   <height>40</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+              </layout>
+             </item>
+             <item row="3" column="1">
+              <layout class="QVBoxLayout" name="drivetrain_controls">
+               <item>
+                <widget class="QLabel" name="drivetrain_controls_label">
+                 <property name="maximumSize">
+                  <size>
+                   <width>16777215</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                 <property name="font">
+                  <font>
+                   <pointsize>10</pointsize>
+                   <weight>75</weight>
+                   <bold>true</bold>
+                  </font>
+                 </property>
+                 <property name="text">
+                  <string>Drivetrain</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="move_forward_button">
+                 <property name="text">
+                  <string>/\ Move Fowards /\</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="move_backward_button">
+                 <property name="text">
+                  <string>\/ Move Backwards \/</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="turn_left_button">
+                 <property name="text">
+                  <string> &lt;-  Turn Left &lt;-</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="turn_right_button">
+                 <property name="text">
+                  <string>-&gt; Turn Right -&gt;</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <layout class="QHBoxLayout" name="tread_controls">
+                 <item>
+                  <widget class="QPushButton" name="left_tread_button">
+                   <property name="text">
+                    <string>/\ Move Left Tread</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="right_tread_button">
+                   <property name="text">
+                    <string>Move right Tread /\</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item>
+                <spacer name="drivetrain_controls_spacer">
+                 <property name="orientation">
+                  <enum>Qt::Vertical</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>20</width>
+                   <height>40</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+              </layout>
              </item>
             </layout>
            </item>
           </layout>
          </item>
          <item>
-          <layout class="QVBoxLayout" name="verticalLayout_9">
-           <item>
-            <spacer name="verticalSpacer_2">
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>20</width>
-               <height>40</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-          </layout>
+          <layout class="QVBoxLayout" name="idk"/>
          </item>
         </layout>
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="drivetrain_tab">
+     <widget class="QWidget" name="info_tab">
       <attribute name="title">
-       <string>Drivetrain</string>
+       <string>Info</string>
       </attribute>
-      <layout class="QHBoxLayout" name="horizontalLayout_3">
+      <layout class="QHBoxLayout" name="horizontalLayout_2">
        <item>
-        <layout class="QVBoxLayout" name="verticalLayout_4">
-         <item>
-          <layout class="QVBoxLayout" name="verticalLayout_18">
-           <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_14"/>
-           </item>
-           <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_13"/>
-           </item>
-           <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_12"/>
-           </item>
-          </layout>
-         </item>
-        </layout>
+        <widget class="QLabel" name="label_3">
+         <property name="text">
+          <string>Info on keryboard shortcuts and gamepad controls</string>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>
