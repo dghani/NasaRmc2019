@@ -68,8 +68,9 @@ namespace tfr_mission_control {
 
 
         /*Slots*/
-
+        
         //Disable/enable buttons
+        connect(ui.e_stop_button, &QPushButton::clicked, this, &MissionControl::emergencyStop);
         connect(ui.enable_button, &QPushButton::clicked, this, &MissionControl::enableRobot);
         connect(ui.disable_button, &QPushButton::clicked, this, &MissionControl::disableRobot);
 
@@ -85,7 +86,7 @@ namespace tfr_mission_control {
         connect(countdownClock, &QTimer::timeout, this, &MissionControl::renderClock);
 
         //Tab slots
-
+        robotControlsTab->setupSignalsAndSlots();
 
         //Startup stuff
         setupButtons();
@@ -122,7 +123,7 @@ namespace tfr_mission_control {
 
         //Turn on the tab buttons if it is in teleop
         if (robotMode == teleoperated) {
-
+            robotControlsTab->setButtonAvailability(true);
         }
     }
 
@@ -142,6 +143,8 @@ namespace tfr_mission_control {
 
         countdownClock->stop();
         ui.time_display->display(0);
+
+        robotControlsTab->setButtonAvailability(false);
 
 
     }
@@ -181,6 +184,11 @@ namespace tfr_mission_control {
                 ui.controller_button->setEnabled(true);
                 break;
         }
+    }
+
+
+    void MissionControl::emergencyStop() {
+
     }
 
     /*
