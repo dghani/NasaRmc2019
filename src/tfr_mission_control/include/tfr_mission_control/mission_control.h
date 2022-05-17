@@ -102,6 +102,7 @@ namespace tfr_mission_control {
             void disableRobot();
             void setRobotMode(MissionControl::RobotMode mode);
             void setInputType(MissionControl::InputType mode);
+            void emergencyStop();
 
             /*ROS Specific*/
             void startTimeService();
@@ -109,6 +110,8 @@ namespace tfr_mission_control {
             /*GUI Specific*/
             void renderClock();
             void setupButtons();
+
+
 
 
 

@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>630</width>
-    <height>676</height>
+    <width>680</width>
+    <height>639</height>
    </rect>
   </property>
   <property name="focusPolicy">
@@ -76,6 +76,9 @@
          </property>
          <property name="toolTipDuration">
           <number>5000</number>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">background-color: rgb(255, 78, 81);</string>
          </property>
          <property name="text">
           <string>EMERGENCY STOP</string>
@@ -275,7 +278,7 @@
       </attribute>
       <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
-        <layout class="QVBoxLayout" name="robot_controls_root_layout" stretch="1,1,1">
+        <layout class="QVBoxLayout" name="robot_controls_root_layout" stretch="1,1">
          <item>
           <layout class="QVBoxLayout" name="preset_buttons">
            <item>
@@ -344,9 +347,9 @@
                 </widget>
                </item>
                <item>
-                <widget class="QPushButton" name="arm_face_fowards_button">
+                <widget class="QPushButton" name="arm_face_forwards_button">
                  <property name="text">
-                  <string>Face Fowards</string>
+                  <string>Face Forwards</string>
                  </property>
                 </widget>
                </item>
@@ -409,9 +412,9 @@
                 </widget>
                </item>
                <item>
-                <widget class="QPushButton" name="turntable_face_fowards_button">
+                <widget class="QPushButton" name="turntable_face_forwards_button">
                  <property name="text">
-                  <string>Face Fowards</string>
+                  <string>Face Forwards</string>
                  </property>
                 </widget>
                </item>
@@ -504,28 +507,28 @@
                 </widget>
                </item>
                <item>
-                <widget class="QPushButton" name="foward3ft_button">
+                <widget class="QPushButton" name="drivetrain_preset_forwards">
                  <property name="text">
                   <string>Move Fowards 3 Feet</string>
                  </property>
                 </widget>
                </item>
                <item>
-                <widget class="QPushButton" name="backward3ft_button">
+                <widget class="QPushButton" name="drivetrain_preset_backwards">
                  <property name="text">
                   <string>Move Backwards 3 Feet</string>
                  </property>
                 </widget>
                </item>
                <item>
-                <widget class="QPushButton" name="left_90_deg_button">
+                <widget class="QPushButton" name="drivetrain_preset_left">
                  <property name="text">
                   <string>Turn Left 90 Degrees</string>
                  </property>
                 </widget>
                </item>
                <item>
-                <widget class="QPushButton" name="right_90_deg_button">
+                <widget class="QPushButton" name="drivetrain_preset_forwards_2">
                  <property name="text">
                   <string>Turn Right 90 Degrees</string>
                  </property>
@@ -807,32 +810,36 @@
                 </widget>
                </item>
                <item>
-                <widget class="QPushButton" name="move_forward_button">
-                 <property name="text">
-                  <string>/\ Move Fowards /\</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QPushButton" name="move_backward_button">
-                 <property name="text">
-                  <string>\/ Move Backwards \/</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QPushButton" name="turn_left_button">
-                 <property name="text">
-                  <string> &lt;-  Turn Left &lt;-</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QPushButton" name="turn_right_button">
-                 <property name="text">
-                  <string>-&gt; Turn Right -&gt;</string>
-                 </property>
-                </widget>
+                <layout class="QGridLayout" name="drivetrain_grid">
+                 <item row="1" column="1">
+                  <widget class="QPushButton" name="move_backward_button">
+                   <property name="text">
+                    <string>\/ Move Backwards \/</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="0" column="1">
+                  <widget class="QPushButton" name="move_forward_button">
+                   <property name="text">
+                    <string>/\ Move Forwards /\</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="1" column="0">
+                  <widget class="QPushButton" name="turn_left_button">
+                   <property name="text">
+                    <string> &lt;-  Turn Left &lt;-</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="1" column="2">
+                  <widget class="QPushButton" name="turn_right_button">
+                   <property name="text">
+                    <string>-&gt; Turn Right -&gt;</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
                </item>
                <item>
                 <layout class="QHBoxLayout" name="tread_controls">
@@ -870,9 +877,6 @@
             </layout>
            </item>
           </layout>
-         </item>
-         <item>
-          <layout class="QVBoxLayout" name="idk"/>
          </item>
         </layout>
        </item>
