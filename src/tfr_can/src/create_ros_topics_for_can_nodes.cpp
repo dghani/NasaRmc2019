@@ -128,11 +128,11 @@ void setupMaxonDevice(kaco::Device& device, kaco::Bridge& bridge, std::string& e
 
 
     // min: 0 -> 0, 
-    // max: 16 hall clicks * 4.3 Maxon gear * 34 worm gear = 4093   
-    auto jspub = std::make_shared<kaco::JointStatePublisher>(device, -8186, 8186); 
+    // max: TODO figure out the math 3072 goes from origin to front of robot, so 6144 should be 360 degrees.  
+    auto jspub = std::make_shared<kaco::JointStatePublisher>(device, 0, 6144); 
     bridge.add_publisher(jspub, loop_rate);
     
-    auto jssub = std::make_shared<kaco::JointStateSubscriber>(device, -8186, 8186); 
+    auto jssub = std::make_shared<kaco::JointStateSubscriber>(device, 0, 6144); 
     bridge.add_subscriber(jssub);		
 
     // Read the "statusword" from the CANopen device.
