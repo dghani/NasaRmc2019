@@ -4,8 +4,7 @@
 # -2.4 is dumping excess spot
 # -3.14 is mining spot
 #[turntable, lowerArm, upperArm, scoop]
-positions: [
-  [-3.14, 5.0, 0.7, 3.5], # scoop facing forward
+positions: [[-3.14, 5.0, 0.7, 3.5], # scoop facing forward
   [-3.14, 4.3, 0.7, 0.3], # SCOOP 1 ZERO POSITION
   [-3.14, 3.0, 1.1, 0.3], # move over mining spot 1
   [-3.14, 2.0, 1.1, 0.3], # stick into dirt 2
