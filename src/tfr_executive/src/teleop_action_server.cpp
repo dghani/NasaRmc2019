@@ -313,8 +313,8 @@ class TeleopExecutive
 			        arm_manipulator.moveLeftBinPosition(2.5); // Extend left bin actuator
 			        arm_manipulator.moveRightBinPosition(2.5); // Extend right bin actuator
 			    		 ros::Duration(2.0).sleep();
-                                arm_manipulator.moveLeftBinPosition(0.2); // Retract left bin actuator
-			        arm_manipulator.moveRightBinPosition(0.2); // Retract right bin actuator
+                                arm_manipulator.moveLeftBinPosition(0.5); // Retract left bin actuator
+			        arm_manipulator.moveRightBinPosition(0.5); // Retract right bin actuator
                         ROS_INFO("Teleop Action Server: DUMPING_RESET finished");
                         break;
                     }
