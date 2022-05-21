@@ -296,11 +296,11 @@ class TeleopExecutive
                         
                         //TODO: Match the rate to avoid torquing the bin. 
                         ROS_INFO("Teleop Action Server: Command Recieved, DUMP");
-			    arm_manipulator.moveLeftBinPosition(2.5); // Extend left bin actuator
-			            arm_manipulator.moveRightBinPosition(2.5); // Extend right bin actuator
-			    		 ros::Duration(2.0).sleep();
-			            arm_manipulator.moveLeftBinPosition(4.5); // Extend left bin actuator
-			            arm_manipulator.moveRightBinPosition(4.5); // Extend right bin actuator
+			    arm_manipulator.moveLeftBinPosition(2.0); // Extend left bin actuator
+			            arm_manipulator.moveRightBinPosition(2.0); // Extend right bin actuator
+			    		 ros::Duration(1.5).sleep();
+			            arm_manipulator.moveLeftBinPosition(4.0); // Extend left bin actuator
+			            arm_manipulator.moveRightBinPosition(4.0); // Extend right bin actuator
 			    	
                         ROS_INFO("Teleop Action Server: DUMP finished");
                         break;
