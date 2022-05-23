@@ -1,6 +1,9 @@
 #include <cstddef>
 #include <mutex>
 
+#include <tfr_utilities/arm_manipulator.h>
+
+
 #include <QWidget>
 #include <QObject>
 #include <QTimer>
@@ -20,7 +23,11 @@ namespace tfr_mission_control {
 			RobotControlsTab();
 			~RobotControlsTab();
 			void setupSignalsAndSlots();
+			void setupROS(ros::NodeHandle& node);
 			void setButtonAvailability(bool availability);
+
+		private:
+			ArmManipulator* arm_manipulator;
 
 
 		protected slots:

@@ -90,6 +90,7 @@ namespace tfr_mission_control {
 
         //Startup stuff
         setupButtons();
+        robotControlsTab->setupROS(getNodeHandle());
         
     }
 

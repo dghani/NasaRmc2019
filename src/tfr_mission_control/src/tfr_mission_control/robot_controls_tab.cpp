@@ -7,7 +7,8 @@ namespace tfr_mission_control {
 
 
 
-	RobotControlsTab::RobotControlsTab() {
+	RobotControlsTab::RobotControlsTab()
+	{
 	
 	}
 
@@ -16,7 +17,6 @@ namespace tfr_mission_control {
 	}
 
 	void RobotControlsTab::setupSignalsAndSlots() {
-
 		//Preset Buttons
 		//Arm
 		QPushButton* button = findChild<QPushButton*>("arm_storing_pos_button");
@@ -121,6 +121,10 @@ namespace tfr_mission_control {
 
 	}
 
+	void RobotControlsTab::setupROS(ros::NodeHandle& node) {
+		arm_manipulator = new ArmManipulator(node);
+	}
+
 	void RobotControlsTab::setButtonAvailability(bool availability) {
 		QList<QPushButton*> allButtons = findChildren<QPushButton*>();
 
@@ -165,7 +169,8 @@ namespace tfr_mission_control {
 
 
 	void RobotControlsTab::binDumpingPos() {
-
+		arm_manipulator->moveLeftBinPosition(5.0); // Extend left bin actuator
+		arm_manipulator->moveRightBinPosition(5.0);// Extend right bin actuator
 	}
 
 	void RobotControlsTab::binCollectionPos() {
