@@ -3,7 +3,7 @@
       type="navigation_action_server" output="screen">
         <rosparam>
             height_adjustment: .05
-            safe_mining_distance: 3.5
+            safe_mining_distance: 2
             finish_line: 1.0
         </rosparam>
     </node>

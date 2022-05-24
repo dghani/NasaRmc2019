@@ -61,8 +61,6 @@ void setupServoCylinderDevice(kaco::Device& device, kaco::Bridge& bridge, std::s
     auto iopub_1 = std::make_shared<kaco::EntryPublisher>(device, "torque_actual_value");
     bridge.add_publisher(iopub_1, loop_rate);
     
-    auto iosub_1 = std::make_shared<kaco::EntrySubscriber>(device, "torque_actual_value");
-    bridge.add_subscriber(iosub_1);
     
     // read/write the max allowed torque value
     auto iopub_2 = std::make_shared<kaco::EntryPublisher>(device, "max_torque");
@@ -130,11 +128,11 @@ void setupMaxonDevice(kaco::Device& device, kaco::Bridge& bridge, std::string& e
 
 
     // min: 0 -> 0, 
-    // max: 1024 encoder clicks * 4.3 Maxon gear * 34 worm gear = 149708   
-    auto jspub = std::make_shared<kaco::JointStatePublisher>(device, -6321, 6321); 
+    // max: TODO figure out the math 3072 goes from origin to front of robot, so 6144 should be 360 degrees.  
+    auto jspub = std::make_shared<kaco::JointStatePublisher>(device, 0, 6144); 
     bridge.add_publisher(jspub, loop_rate);
     
-    auto jssub = std::make_shared<kaco::JointStateSubscriber>(device, -6321, 6321); 
+    auto jssub = std::make_shared<kaco::JointStateSubscriber>(device, 0, 6144); 
     bridge.add_subscriber(jssub);		
 
     // Read the "statusword" from the CANopen device.
@@ -155,12 +153,14 @@ void setupMaxonDevice(kaco::Device& device, kaco::Bridge& bridge, std::string& e
     auto iopub_3 = std::make_shared<kaco::EntryPublisher>(device, "velocity_actual_values/velocity_actual_value_averaged");
     bridge.add_publisher(iopub_3, loop_rate);
 	
-	auto iopub_4 = std::make_shared<kaco::EntryPublisher>(device, "Digital_incremental_encoder_1/Digital_incremental_encoder_1_index_position");
+    auto iopub_4 = std::make_shared<kaco::EntryPublisher>(device, "Digital_incremental_encoder_1/Digital_incremental_encoder_1_index_position");
     bridge.add_publisher(iopub_4, loop_rate);
 	
-	auto iopub_5 = std::make_shared<kaco::EntryPublisher>(device, "Digital_incremental_encoder_2/Digital_incremental_encoder_2_index_position");
+    auto iopub_5 = std::make_shared<kaco::EntryPublisher>(device, "Digital_incremental_encoder_2/Digital_incremental_encoder_2_index_position");
     bridge.add_publisher(iopub_5, loop_rate);
 	
+    auto iopub_6 = std::make_shared<kaco::EntryPublisher>(device, "current_actual_values/current_actual_value_averaged");
+    bridge.add_publisher(iopub_6, slow_loop_rate);	
 
 }
 

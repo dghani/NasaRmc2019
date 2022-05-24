@@ -1,5 +1,5 @@
 #This is the frequency in Hz, this outputs a position estimate.
-frequency: 16
+frequency: 8
 
 #These are all map variable definations for the kalman filter.
 #stock settings for robots without gps and no big hills
@@ -27,15 +27,23 @@ print_diagnostics: true
 #This is messaging the change in yaw over time.
 imu0: sensors/imu/data
 imu0_config: [false, false, false,
+<<<<<<< HEAD
                false,  false,  false,
                false,  false,  false,
                false,  false,  true,
                true,  false,  false]
 imu0_differential: false
+=======
+              false, false, true,
+              false, false, false,
+              false, false, true,
+              true, false, false]
+imu0_differential: true
+>>>>>>> master
 imu0_nodelay: false
 imu0_relative: true
 #outputs at ~200 hz so want to average a lot of values
-imu0_queue_size: 75
+imu0_queue_size: 150
 imu0_remove_gravitational_acceleration: true
 #imu0_pose_rejection_threshold: 1.8  
 #imu0_twist_rejection_threshold: 1.8              
