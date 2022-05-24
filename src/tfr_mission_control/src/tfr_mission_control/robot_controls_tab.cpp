@@ -169,8 +169,8 @@ namespace tfr_mission_control {
 
 
 	void RobotControlsTab::binDumpingPos() {
-		arm_manipulator->moveLeftBinPosition(4.5); // Extend left bin actuator
-		arm_manipulator->moveRightBinPosition(4.5);// Extend right bin actuator
+		arm_manipulator->moveLeftBinPosition(4); // Extend left bin actuator
+		arm_manipulator->moveRightBinPosition(4);// Extend right bin actuator
 	}
 
 	void RobotControlsTab::binCollectionPos() {
