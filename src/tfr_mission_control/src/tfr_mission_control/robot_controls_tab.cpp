@@ -13,7 +13,8 @@ namespace tfr_mission_control {
 	}
 
 	RobotControlsTab::~RobotControlsTab() {
-
+		delete arm_manipulator;
+		delete controlsTabSubHandler;
 	}
 
 	void RobotControlsTab::setupSignalsAndSlots() {
@@ -121,7 +122,18 @@ namespace tfr_mission_control {
 
 	}
 
-	void RobotControlsTab::setupROS(ros::NodeHandle& node) {
+	void RobotControlsTab::setupROS(ros::NodeHandle node) {
+		//binPositionSub = node.subscribe("/device77/positioning_option_code", 5, &RobotControlsTab::updateBinPosition, this);
+
+
+		//ros::Subscriber test = node.subscribe("/tf", 5, &RobotControlsTab::updateBinPosition, this);
+		//binPositionSub = test;
+
+
+		controlsTabSubHandler = new ControlsTabSubHandler();
+		controlsTabSubHandler->binPositionSub = node.subscribe("/device77/positioning_option_code", 5, &RobotControlsTab::updateBinPosition, this);
+
+
 		arm_manipulator = new ArmManipulator(node);
 	}
 
@@ -138,33 +150,67 @@ namespace tfr_mission_control {
 
 	}
 
+	/*
+	* I got these positions from 
+	* https://github.com/TrickfireRobotics/NasaRmc2019/blob/master/src/tfr_mining/data/use_this_one.yaml
+	*/
 	void RobotControlsTab::armMiningPos() {
-
+		arm_manipulator->moveLowerArmPosition(3.0);
+		arm_manipulator->moveUpperArmPosition(1.1);
+		arm_manipulator->moveScoopPosition(0.3);
 	}
 
+	/*
+	* I got these positions from
+	* https://github.com/TrickfireRobotics/NasaRmc2019/blob/master/src/tfr_mining/data/use_this_one.yaml
+	*/
 	void RobotControlsTab::armDumpingPos() {
-
+		arm_manipulator->moveLowerArmPosition(5.0);
+		arm_manipulator->moveUpperArmPosition(3.6);
+		arm_manipulator->moveScoopPosition(3.5);
 	}
 
+	/*
+	* I got these positions from
+	* https://github.com/TrickfireRobotics/NasaRmc2019/blob/master/src/tfr_mining/data/use_this_one.yaml
+	*/
 	void RobotControlsTab::armFaceForwards() {
-
+		arm_manipulator->moveLowerArmPosition(5.0);
+		arm_manipulator->moveUpperArmPosition(0.7);
+		arm_manipulator->moveScoopPosition(3.5);
 	}
 
 
+	/*
+	* I got these positions from
+	* https://github.com/TrickfireRobotics/NasaRmc2019/blob/master/src/tfr_mining/data/use_this_one.yaml
+	*/
 	void RobotControlsTab::turntableStoringPos() {
-
+		arm_manipulator->moveTurntablePosition(0.0);
 	}
 
+	/*
+	* I got these positions from
+	* https://github.com/TrickfireRobotics/NasaRmc2019/blob/master/src/tfr_mining/data/use_this_one.yaml
+	*/
 	void RobotControlsTab::turntableMiningPos() {
-
+		arm_manipulator->moveTurntablePosition(-3.14);
 	}
 
+	/*
+	* I got these positions from
+	* https://github.com/TrickfireRobotics/NasaRmc2019/blob/master/src/tfr_mining/data/use_this_one.yaml
+	*/
 	void RobotControlsTab::turntableDumpingPos() {
-
+		arm_manipulator->moveTurntablePosition(-2.4);
 	}
 
+	/*
+	* I got these positions from
+	* https://github.com/TrickfireRobotics/NasaRmc2019/blob/master/src/tfr_mining/data/use_this_one.yaml
+	*/
 	void RobotControlsTab::turntableFaceForwards() {
-
+		arm_manipulator->moveTurntablePosition(-3.4);
 	}
 
 
@@ -262,6 +308,15 @@ namespace tfr_mission_control {
 	}
 
 	void RobotControlsTab::drivetrainMoveRightTread() {
+
+	}
+
+
+
+	//Callbacks
+
+	void RobotControlsTab::updateBinPosition(const std_msgs::Int16 binSensorCount) {
+		setButtonAvailability(true);
 
 	}
 

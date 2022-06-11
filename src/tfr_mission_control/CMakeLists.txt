@@ -25,11 +25,13 @@ SET(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
 set(${PROJECT_NAME}_SRCS
     src/${PROJECT_NAME}/mission_control.cpp
     src/${PROJECT_NAME}/robot_controls_tab.cpp
+    src/${PROJECT_NAME}/controls_tab_sub_handler.cpp
 )
 
 set(${PROJECT_NAME}_HDRS
     include/${PROJECT_NAME}/mission_control.h
     include/${PROJECT_NAME}/robot_controls_tab.h
+    include/${PROJECT_NAME}/controls_tab_sub_handler.h
 )
 
 set(${PROJECT_NAME}_UIS
