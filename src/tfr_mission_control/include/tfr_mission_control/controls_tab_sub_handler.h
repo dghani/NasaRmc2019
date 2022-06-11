@@ -33,12 +33,21 @@
 #include <QPlainTextEdit>
 #include <QKeyEvent>
 
+/**
+* This class is a work around of the fact that you cannot
+* store ros::Subscribers in a class that a QWidget/Q_OBJECT.
+* If you do, it will segfault and when assigning a subscriber.
+* I do not know why this is the case, but this work around works.
+* 
+* This class is initialized within the RobotControlsTab::setupROS and then
+* assigns subscriber in here through a pointer.
+* 
+* The sole purpose is to store subscribers
+* 
+* 
+*/
 namespace tfr_mission_control {
 
-    /* Main entry point for the qt application, contains all of state, business
-     * logic, and only has one screen. Uses the associated .ui file for layout
-     * and design.
-     * */
     class ControlsTabSubHandler{
         
 
@@ -49,10 +58,6 @@ namespace tfr_mission_control {
             ~ControlsTabSubHandler();
 
             ros::Subscriber binPositionSub;
-
-      
-        
-        
 
     };
 }

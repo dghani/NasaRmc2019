@@ -92,16 +92,7 @@ namespace tfr_mission_control {
         //Startup stuff
         setupButtons();
         robotControlsTab->setupROS(getNodeHandle());
-        
-        //binPositionSub = getNodeHandle().subscribe("/tf", 5, &MissionControl::updateBinPosition, this);
-        ROS_ERROR("BEFORE");
 
-        //Test* test = new Test();
-        //test->binPositionSub = getNodeHandle().subscribe("/tf", 5, &tfr_mission_control::RobotControlsTab::updateBinPosition, this);
-
-        //robotControlsTab->binPositionSub = getNodeHandle().subscribe("/tf", 5, &MissionControl::updateBinPosition, this);
-        ROS_ERROR("AFTER");
-        //robotControlsTab->binPositionSub.transport_hints = ros::TransportHints().unreliable();
     }
 
 

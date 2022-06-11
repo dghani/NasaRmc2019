@@ -1,4 +1,4 @@
-#include "tfr_mission_control/robot_controls_tab.h"
+﻿#include "tfr_mission_control/robot_controls_tab.h"
 
 #include <pluginlib/class_list_macros.h>
 
@@ -6,17 +6,29 @@
 namespace tfr_mission_control {
 
 
-
+	/**
+	* A default constructor, but this is never called as a QWidget from the tab
+	* is casted into a RobotControlsTab, so the object already exists.
+	*
+	*/
 	RobotControlsTab::RobotControlsTab()
 	{
 	
 	}
 
+	/**
+	* This destructor is called in the MissionControl's destructor
+	*/
 	RobotControlsTab::~RobotControlsTab() {
 		delete arm_manipulator;
 		delete controlsTabSubHandler;
 	}
 
+
+	/**
+	* Connects all of the buttons in the tab to their according slot.
+	* 
+	*/
 	void RobotControlsTab::setupSignalsAndSlots() {
 		//Preset Buttons
 		//Arm
@@ -122,14 +134,18 @@ namespace tfr_mission_control {
 
 	}
 
+	/**
+	* Sets up all the ROS related prereqs needed such as 
+	* setting up subscribers, creating new instances of trickfire ROS
+	* handlers and so on.
+	* 
+	* As a note for the subscribers, for some reason you cannot assign ros::Subscribers
+	* within QWdiget/QT_OBJECT classes. I have no idea why this is the case, but as a work
+	* around I made a new class, ControlsTabSubHandler that will store the subscribers for this QWidget.
+	* 
+	* 
+	*/
 	void RobotControlsTab::setupROS(ros::NodeHandle node) {
-		//binPositionSub = node.subscribe("/device77/positioning_option_code", 5, &RobotControlsTab::updateBinPosition, this);
-
-
-		//ros::Subscriber test = node.subscribe("/tf", 5, &RobotControlsTab::updateBinPosition, this);
-		//binPositionSub = test;
-
-
 		controlsTabSubHandler = new ControlsTabSubHandler();
 		controlsTabSubHandler->binPositionSub = node.subscribe("/device77/positioning_option_code", 5, &RobotControlsTab::updateBinPosition, this);
 
@@ -137,6 +153,13 @@ namespace tfr_mission_control {
 		arm_manipulator = new ArmManipulator(node);
 	}
 
+	/**
+	* Set whether the buttons in the tab are able to be pressed or not
+	* 
+	* @param availability The target availability state. 
+	*		true = buttons can be pressed, false = buttons cannot be pressed
+	* 
+	*/
 	void RobotControlsTab::setButtonAvailability(bool availability) {
 		QList<QPushButton*> allButtons = findChildren<QPushButton*>();
 
@@ -146,13 +169,31 @@ namespace tfr_mission_control {
 	}
 
 
+	// --------------------PRESET BUTTONS--------------------
+
+
 	void RobotControlsTab::armStoringPos() {
 
 	}
 
 	/*
+	* Moves the whole arm to the mining position.
+	* This does not move the turntable, move the turntable by its preset buttons.
+	* 
+	* Make sure that this will not hit anything when pressing
+	* 
 	* I got these positions from 
 	* https://github.com/TrickfireRobotics/NasaRmc2019/blob/master/src/tfr_mining/data/use_this_one.yaml
+	* 
+	* " #[turntable, lowerArm, upperArm, scoop]
+	* [[-3.14, 5.0, 0.7, 3.5], # scoop facing forward
+	* [-3.14, 4.3, 0.7, 0.3], # SCOOP 1 ZERO POSITION
+	* [-3.14, 3.0, 1.1, 0.3], # move over mining spot 1  <- I used this one
+	* [-3.14, 2.0, 1.1, 0.3], # stick into dirt 2
+	* [-3.14, 2.1, 2.8, 2.0], # pull scoop through 3
+	* [-3.14, 4.2, 3.0, 3.3], # Come back up 4
+	* [-3.14, 5.0, 3.6, 3.5], # Prep for rotation to discard 5
+	* [-2.4, 5.0, 3.6, 3.5], # Rotate to discard position 6"
 	*/
 	void RobotControlsTab::armMiningPos() {
 		arm_manipulator->moveLowerArmPosition(3.0);
@@ -161,8 +202,24 @@ namespace tfr_mission_control {
 	}
 
 	/*
+	* Moves the whole arm to the dumping position.
+	* This does not move the turntable, move the turntable by its preset buttons.
+	* 
+	* Make sure that this will not hit anything when pressing
+	* 
 	* I got these positions from
 	* https://github.com/TrickfireRobotics/NasaRmc2019/blob/master/src/tfr_mining/data/use_this_one.yaml
+	* 
+	* 
+	* " #[turntable, lowerArm, upperArm, scoop]
+	* [[-3.14, 5.0, 0.7, 3.5], # scoop facing forward
+	* [-3.14, 4.3, 0.7, 0.3], # SCOOP 1 ZERO POSITION
+	* [-3.14, 3.0, 1.1, 0.3], # move over mining spot 1  
+	* [-3.14, 2.0, 1.1, 0.3], # stick into dirt 2
+	* [-3.14, 2.1, 2.8, 2.0], # pull scoop through 3
+	* [-3.14, 4.2, 3.0, 3.3], # Come back up 4
+	* [-3.14, 5.0, 3.6, 3.5], # Prep for rotation to discard 5 <- I used this one
+	* [-2.4, 5.0, 3.6, 3.5], # Rotate to discard position 6"
 	*/
 	void RobotControlsTab::armDumpingPos() {
 		arm_manipulator->moveLowerArmPosition(5.0);
@@ -171,8 +228,24 @@ namespace tfr_mission_control {
 	}
 
 	/*
+	* Moves the whole arm to face forwards
+	* This does not move the turntable, move the turntable by its preset buttons.
+	*
+	* Make sure that this will not hit anything when pressing
+	* 
+	* 
 	* I got these positions from
 	* https://github.com/TrickfireRobotics/NasaRmc2019/blob/master/src/tfr_mining/data/use_this_one.yaml
+	* 
+	* " #[turntable, lowerArm, upperArm, scoop]
+	* [[-3.14, 5.0, 0.7, 3.5], # scoop facing forward <- I used this one
+	* [-3.14, 4.3, 0.7, 0.3], # SCOOP 1 ZERO POSITION
+	* [-3.14, 3.0, 1.1, 0.3], # move over mining spot 1  
+	* [-3.14, 2.0, 1.1, 0.3], # stick into dirt 2
+	* [-3.14, 2.1, 2.8, 2.0], # pull scoop through 3
+	* [-3.14, 4.2, 3.0, 3.3], # Come back up 4
+	* [-3.14, 5.0, 3.6, 3.5], # Prep for rotation to discard 5 
+	* [-2.4, 5.0, 3.6, 3.5], # Rotate to discard position 6"
 	*/
 	void RobotControlsTab::armFaceForwards() {
 		arm_manipulator->moveLowerArmPosition(5.0);
@@ -182,49 +255,103 @@ namespace tfr_mission_control {
 
 
 	/*
+	* This moves the turntable to the storing position.
+	* The storing position is when the scoop is facing the bin.
+	* 
+	* Make sure that the arm will not hit anything when pressing the button
+	* 
 	* I got these positions from
 	* https://github.com/TrickfireRobotics/NasaRmc2019/blob/master/src/tfr_mining/data/use_this_one.yaml
+	* 
+	* "#For Turntable:
+	* # 0 is facing towards the bin
+	* # -2.4 is dumping excess spot
+	* # -3.14 is mining spot"
 	*/
 	void RobotControlsTab::turntableStoringPos() {
 		arm_manipulator->moveTurntablePosition(0.0);
 	}
 
 	/*
+	* This moves the turntable to the mining position.
+	*
+	* Make sure that the arm will not hit anything when pressing the button
+	* 
 	* I got these positions from
 	* https://github.com/TrickfireRobotics/NasaRmc2019/blob/master/src/tfr_mining/data/use_this_one.yaml
+	* 
+	* "#For Turntable:
+	* # 0 is facing towards the bin
+	* # -2.4 is dumping excess spot
+	* # -3.14 is mining spot"
 	*/
 	void RobotControlsTab::turntableMiningPos() {
 		arm_manipulator->moveTurntablePosition(-3.14);
 	}
 
 	/*
+	* This moves the turntable to the dumping position.
+	*
+	* Make sure that the arm will not hit anything when pressing the button
+	* 
 	* I got these positions from
 	* https://github.com/TrickfireRobotics/NasaRmc2019/blob/master/src/tfr_mining/data/use_this_one.yaml
+	* 
+	* "#For Turntable:
+	* # 0 is facing towards the bin
+	* # -2.4 is dumping excess spot
+	* # -3.14 is mining spot"
 	*/
 	void RobotControlsTab::turntableDumpingPos() {
 		arm_manipulator->moveTurntablePosition(-2.4);
 	}
 
 	/*
+	* This moves the turntable to face fowards.
+	* Forwards is when the scoop is facing away from the bin
+	*
+	* Make sure that the arm will not hit anything when pressing the button
+	* 
+	* 
 	* I got these positions from
 	* https://github.com/TrickfireRobotics/NasaRmc2019/blob/master/src/tfr_mining/data/use_this_one.yaml
+	* 
+	* 
+	* "#For Turntable:
+	* # 0 is facing towards the bin
+	* # -2.4 is dumping excess spot
+	* # -3.14 is mining spot"
 	*/
 	void RobotControlsTab::turntableFaceForwards() {
 		arm_manipulator->moveTurntablePosition(-3.4);
 	}
 
-
+	/**
+	* Extends the bin actuators by four inches, thus extending the
+	* dumping bin.
+	* 
+	* The units are in inches
+	* 
+	*/
 	void RobotControlsTab::binDumpingPos() {
 		arm_manipulator->moveLeftBinPosition(4); // Extend left bin actuator
 		arm_manipulator->moveRightBinPosition(4);// Extend right bin actuator
 	}
 
+
+	/**
+	* Retracts the bin actuators back to the collection position
+	* 
+	* The units are in inches
+	* 
+	*/
 	void RobotControlsTab::binCollectionPos() {
-		arm_manipulator->moveLeftBinPosition(1.0); // Extend left bin actuator
-		arm_manipulator->moveRightBinPosition(1.0);// Extend right bin actuator
+		arm_manipulator->moveLeftBinPosition(1.0); // Retract left bin actuator
+		arm_manipulator->moveRightBinPosition(1.0);// Retract right bin actuator
 	}
 
-
+	//There are talks about redoing the drivtrain ros system, 
+	//so implementation will not be here just yet
 	void RobotControlsTab::drivetrainPresetForwards() {
 
 	}
@@ -240,6 +367,9 @@ namespace tfr_mission_control {
 	void RobotControlsTab::drivetrainPresetTurnRight() {
 
 	}
+
+
+	// --------------------KEYBOARD CONTROLS--------------------
 
 
 
@@ -315,8 +445,24 @@ namespace tfr_mission_control {
 
 	//Callbacks
 
+	/**
+	* Will convert sensor counts from the bin actuator (device77) and
+	* convert that into the current position of the actuator in inches.
+	* 
+	* To convert counts into inches from the manual:
+	* Note: "Linear Position with respect to retracted endstop (rPos) of the
+	*  actuator. The retracted endstop is always at 𝑁 = 1024."
+	* Range of sensor counts: rPos to ePos
+	* Conversion to physical units: Position = ((SensorUnits - 1024) *  L) / (1024)
+	*	L = "Screw lead, measured in inches. The lead of the drive screw"
+	*		"The screw lead is the liner distance traveled per single rotation of the screw"
+	* 
+	* 
+	* @param binSensorCounts Gives us the sensor counts from the servo cylinder
+	* 
+	*/
 	void RobotControlsTab::updateBinPosition(const std_msgs::Int16 binSensorCount) {
-		setButtonAvailability(true);
+		
 
 	}
 

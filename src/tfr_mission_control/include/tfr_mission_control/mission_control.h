@@ -35,6 +35,14 @@
 
 #include "tfr_mission_control/robot_controls_tab.h"
 
+/**
+* Note: A lot of the boilerplate UI code was done by the previous dev, Collin.
+* 
+* This class will handle the the row of buttons and contains a pointer to the
+* controls tab. 
+* 
+* 
+*/
 namespace tfr_mission_control {
 
     /* Main entry point for the qt application, contains all of state, business

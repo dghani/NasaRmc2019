@@ -49,7 +49,18 @@
 #include "tfr_mission_control/controls_tab_sub_handler.h"
 
 
-
+/**
+* To prevent MissonControl from becoming too large, the controls tab is represented by 
+* this class. This will handle any button logic, UI visualizations, business logic, etc
+* for this tab. 
+* 
+* Note: ros::Subscribers are stored in ControlTabSubhandler. The reason is explain in ControlTabSubhandler.h
+* 
+* We extend QWidget as we cast a real QWidget from the tab element of the ui so that we can add our
+* additional functionality. 
+* 
+* 
+*/
 namespace tfr_mission_control {
 
 	class RobotControlsTab : public QWidget {
@@ -69,14 +80,11 @@ namespace tfr_mission_control {
 			ControlsTabSubHandler* controlsTabSubHandler;
 			
 
-
-
-
 			//Subscriber callbacks
 			void updateBinPosition(const std_msgs::Int16 binSensorCount);
 
 
-		protected slots:
+		protected slots://QT specific syntax
 			void armStoringPos();
 			void armMiningPos();
 			void armDumpingPos();
