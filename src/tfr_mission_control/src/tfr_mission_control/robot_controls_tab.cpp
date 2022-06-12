@@ -147,7 +147,18 @@ namespace tfr_mission_control {
 	*/
 	void RobotControlsTab::setupROS(ros::NodeHandle node) {
 		controlsTabSubHandler = new ControlsTabSubHandler();
-		controlsTabSubHandler->binPositionSub = node.subscribe("/device77/positioning_option_code", 5, &RobotControlsTab::updateBinPosition, this);
+		controlsTabSubHandler->binPositionSub = node.subscribe("/device77/position_actual_value", 5, &RobotControlsTab::updateBinPosition, this);
+
+		controlsTabSubHandler->upperArmPositionSub = node.subscribe("/device45/position_actual_value", 5, &RobotControlsTab::updateUpperArmPosition, this);
+		controlsTabSubHandler->lowerArmPositionSub = node.subscribe("/device23/position_actual_value", 5, &RobotControlsTab::updateLowerArmPosition, this);
+		controlsTabSubHandler->scoopPositionSub = node.subscribe("/device56/position_actual_value", 5, &RobotControlsTab::updateScoopPosition, this);
+
+
+
+		binPos = 0;
+		upperArmPos = 0;
+		lowerArmPos = 0;
+		scoopPos = 0;
 
 
 		arm_manipulator = new ArmManipulator(node);
@@ -443,28 +454,39 @@ namespace tfr_mission_control {
 
 
 
-	//Callbacks
+	//------------------Callbacks-----------------
 
 	/**
-	* Will convert sensor counts from the bin actuator (device77) and
-	* convert that into the current position of the actuator in inches.
+	* This will update the current position of the bin position in inches.
 	* 
-	* To convert counts into inches from the manual:
-	* Note: "Linear Position with respect to retracted endstop (rPos) of the
-	*  actuator. The retracted endstop is always at 𝑁 = 1024."
-	* Range of sensor counts: rPos to ePos
-	* Conversion to physical units: Position = ((SensorUnits - 1024) *  L) / (1024)
-	*	L = "Screw lead, measured in inches. The lead of the drive screw"
-	*		"The screw lead is the liner distance traveled per single rotation of the screw"
+	* Luckily, the CAN topic /device77/position_actual_value will give us
+	* the inches directly
 	* 
+	* But the topic gives us an int, not a double, which might be concerning if not tested
 	* 
-	* @param binSensorCounts Gives us the sensor counts from the servo cylinder
+	* @param binSensorCounts Gives us the current position of the bin actuator
 	* 
 	*/
 	void RobotControlsTab::updateBinPosition(const std_msgs::Int16 binSensorCount) {
 		
+		binPos = binSensorCount.data;
 
 	}
+
+
+	void RobotControlsTab::updateUpperArmPosition(const std_msgs::Int16 upperArmSensorCount) {
+
+	}
+
+	void RobotControlsTab::updateLowerArmPosition(const std_msgs::Int16 lowerArmSensorCount) {
+
+	}
+
+
+	void RobotControlsTab::updateScoopPosition(const std_msgs::Int16 scoopSensorCount) {
+
+	}
+
 
 
 

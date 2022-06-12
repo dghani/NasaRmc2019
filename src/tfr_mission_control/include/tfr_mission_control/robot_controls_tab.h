@@ -78,10 +78,20 @@ namespace tfr_mission_control {
 		private:
 			ArmManipulator* arm_manipulator;
 			ControlsTabSubHandler* controlsTabSubHandler;
+
+			//Current positions of the robot
+			double binPos;
+			double upperArmPos;
+			double lowerArmPos;
+			double scoopPos;
 			
 
 			//Subscriber callbacks
 			void updateBinPosition(const std_msgs::Int16 binSensorCount);
+			void updateUpperArmPosition(const std_msgs::Int16 upperArmSensorCount);
+			void updateLowerArmPosition(const std_msgs::Int16 lowerArmSensorCount);
+			void updateScoopPosition(const std_msgs::Int16 scoopSensorCount);
+
 
 
 		protected slots://QT specific syntax

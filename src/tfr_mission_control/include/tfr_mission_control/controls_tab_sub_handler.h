@@ -58,6 +58,9 @@ namespace tfr_mission_control {
             ~ControlsTabSubHandler();
 
             ros::Subscriber binPositionSub;
+            ros::Subscriber upperArmPositionSub;
+            ros::Subscriber lowerArmPositionSub;
+            ros::Subscriber scoopPositionSub;
 
     };
 }
