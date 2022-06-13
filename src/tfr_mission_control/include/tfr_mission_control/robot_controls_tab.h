@@ -46,6 +46,8 @@
 #include <QPlainTextEdit>
 #include <QKeyEvent>
 
+#include <sensor_msgs/JointState.h>
+
 #include "tfr_mission_control/controls_tab_sub_handler.h"
 
 
@@ -84,6 +86,29 @@ namespace tfr_mission_control {
 			double upperArmPos;
 			double lowerArmPos;
 			double scoopPos;
+			double turntablePos;//Represented in radians
+
+
+			//Keyboard control limits
+
+			/**
+			* Each time a keyboard control button is pressed for an actuator,
+			* it will move the actuator 0.5 inches 
+			*/
+			const double ACTUATOR_MANUAL_MOVE_VALUE = 0.5;
+
+
+			const double BIN_MAX_POSITION = 4.0;
+			const double BIN_MIN_POSITION = 1.0;
+
+			const double UPPER_ARM_MAX_POSITION = 10.0;//NEEDS TESTING
+			const double UPPER_ARM_MIN_POSITION = 1.0;//NEEDS TESTING
+
+			const double LOWER_ARM_MAX_POSITION = 10.0;//NEEDS TESTING
+			const double LOWER_ARM_MIN_POSITION = 1.0;//NEEDS TESTING
+
+			const double SCOOP_MAX_POSITION = 5.0;//NEEDS TESTING
+			const double SCOOP_MIN_POSITION = 1.0;//NEEDS TESTING
 			
 
 			//Subscriber callbacks
@@ -91,6 +116,7 @@ namespace tfr_mission_control {
 			void updateUpperArmPosition(const std_msgs::Int16 upperArmSensorCount);
 			void updateLowerArmPosition(const std_msgs::Int16 lowerArmSensorCount);
 			void updateScoopPosition(const std_msgs::Int16 scoopSensorCount);
+			void updateTurntablePosition(const sensor_msgs::JointState turntableJointState);
 
 
 

@@ -147,11 +147,15 @@ namespace tfr_mission_control {
 	*/
 	void RobotControlsTab::setupROS(ros::NodeHandle node) {
 		controlsTabSubHandler = new ControlsTabSubHandler();
-		controlsTabSubHandler->binPositionSub = node.subscribe("/device77/position_actual_value", 5, &RobotControlsTab::updateBinPosition, this);
 
+		//Actuators
+		controlsTabSubHandler->binPositionSub = node.subscribe("/device77/position_actual_value", 5, &RobotControlsTab::updateBinPosition, this);
 		controlsTabSubHandler->upperArmPositionSub = node.subscribe("/device45/position_actual_value", 5, &RobotControlsTab::updateUpperArmPosition, this);
 		controlsTabSubHandler->lowerArmPositionSub = node.subscribe("/device23/position_actual_value", 5, &RobotControlsTab::updateLowerArmPosition, this);
 		controlsTabSubHandler->scoopPositionSub = node.subscribe("/device56/position_actual_value", 5, &RobotControlsTab::updateScoopPosition, this);
+
+		//Turntable
+		controlsTabSubHandler->turntablePosSub = node.subscribe("/device1/get_joint_state", 5, &RobotControlsTab::updateTurntablePosition, this);
 
 
 
@@ -385,28 +389,66 @@ namespace tfr_mission_control {
 
 
 	void RobotControlsTab::extendUpperArm() {
+		double newTarget = ACTUATOR_MANUAL_MOVE_VALUE + upperArmPos;
 
+
+		arm_manipulator->moveUpperArmPosition(newTarget);
+		
+
+		//if (newTarget <= UPPER_ARM_MAX_POSITION) {
+
+		//}
 	}
 
 	void RobotControlsTab::retractUpperArm() {
+		double newTarget = upperArmPos - ACTUATOR_MANUAL_MOVE_VALUE;
 
+		arm_manipulator->moveUpperArmPosition(newTarget);
+
+		//if (newTarget >= UPPER_ARM_MIN_POSITION) {
+
+		//}
 	}
 
 	void RobotControlsTab::extendLowerArm() {
+		double newTarget = lowerArmPos + ACTUATOR_MANUAL_MOVE_VALUE;
 
+		arm_manipulator->moveLowerArmPosition(newTarget);
+
+		//if (newTarget <= LOWER_ARM_MAX_POSITION) {
+
+		//}
 	}
 
 	void RobotControlsTab::retractLowerArm() {
+		double newTarget = lowerArmPos - ACTUATOR_MANUAL_MOVE_VALUE;
 
+		arm_manipulator->moveLowerArmPosition(newTarget);
+
+		//if (newTarget >= LOWER_ARM_MIN_POSITION) {
+
+		//}
 	}
 
 
 	void RobotControlsTab::extendScoop() {
+		double newTarget = scoopPos + ACTUATOR_MANUAL_MOVE_VALUE;
 
+		arm_manipulator->moveScoopPosition(newTarget);
+
+		//if (newTarget <= SCOOP_MAX_POSITION) {
+
+		//}
 	}
 
 	void RobotControlsTab::retractScoop() {
+		double newTarget = scoopPos - ACTUATOR_MANUAL_MOVE_VALUE;
 
+		arm_manipulator->moveScoopPosition(newTarget);
+
+		//if (newTarget >= SCOOP_MIN_POSITION) {
+
+		//}
 	}
 
 
@@ -420,11 +462,23 @@ namespace tfr_mission_control {
 
 
 	void RobotControlsTab::binExtend() {
+		double newTarget = ACTUATOR_MANUAL_MOVE_VALUE + binPos;
 
+		//make sure that we do not over extend anything
+		if (newTarget <= BIN_MAX_POSITION) {
+			arm_manipulator->moveLeftBinPosition(newTarget);
+			arm_manipulator->moveRightBinPosition(newTarget);
+		}
 	}
 
 	void RobotControlsTab::binRetract() {
+		double newTarget = binPos - ACTUATOR_MANUAL_MOVE_VALUE;
 
+		//make sure that we do not over extend anything
+		if (newTarget >= BIN_MIN_POSITION) {
+			arm_manipulator->moveLeftBinPosition(newTarget); 
+			arm_manipulator->moveRightBinPosition(newTarget);
+		}
 	}
 
 
@@ -468,24 +522,28 @@ namespace tfr_mission_control {
 	* 
 	*/
 	void RobotControlsTab::updateBinPosition(const std_msgs::Int16 binSensorCount) {
-		
 		binPos = binSensorCount.data;
-
 	}
 
 
 	void RobotControlsTab::updateUpperArmPosition(const std_msgs::Int16 upperArmSensorCount) {
-
+		upperArmPos = upperArmSensorCount.data;
 	}
 
 	void RobotControlsTab::updateLowerArmPosition(const std_msgs::Int16 lowerArmSensorCount) {
-
+		lowerArmPos = lowerArmSensorCount.data;
 	}
 
 
 	void RobotControlsTab::updateScoopPosition(const std_msgs::Int16 scoopSensorCount) {
-
+		scoopPos = scoopSensorCount.data;
 	}
+
+
+	void RobotControlsTab::updateTurntablePosition(const sensor_msgs::JointState turntableJointState) {
+		turntablePos = turntableJointState.position[0];
+	}
+
 
 
 

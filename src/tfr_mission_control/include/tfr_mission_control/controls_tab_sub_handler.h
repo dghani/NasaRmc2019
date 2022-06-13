@@ -62,5 +62,7 @@ namespace tfr_mission_control {
             ros::Subscriber lowerArmPositionSub;
             ros::Subscriber scoopPositionSub;
 
+            ros::Subscriber turntablePosSub;
+
     };
 }
