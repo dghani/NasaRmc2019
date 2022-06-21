@@ -239,8 +239,8 @@ namespace tfr_mission_control {
 	* [-2.4, 5.0, 3.6, 3.5], # Rotate to discard position 6"
 	*/
 	void RobotControlsTab::armDumpingPos() {
-		arm_manipulator->moveLowerArmPosition(3.2);
-		arm_manipulator->moveUpperArmPosition(1.1);
+		arm_manipulator->moveLowerArmPosition(5.0);
+		arm_manipulator->moveUpperArmPosition(3.6);
 		arm_manipulator->moveScoopPosition(0.3);
 	}
 
