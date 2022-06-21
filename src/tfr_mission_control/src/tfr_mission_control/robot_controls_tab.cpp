@@ -338,7 +338,7 @@ namespace tfr_mission_control {
 	* # -3.14 is mining spot"
 	*/
 	void RobotControlsTab::turntableFaceForwards() {
-		arm_manipulator->moveTurntablePosition(-3.4);
+		arm_manipulator->moveTurntablePosition(-3.14);
 	}
 
 	/**
