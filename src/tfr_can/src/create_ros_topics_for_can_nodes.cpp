@@ -114,8 +114,8 @@ void setupServoCylinderDevice(kaco::Device& device, kaco::Bridge& bridge, std::s
 
 
     // actuator position
-    auto iosub10 = std::make_shared<kaco::EntrySubscriber>(device, "position_actual_value");
-    bridge.add_subscriber(iosub10);
+    auto iosub10 = std::make_shared<kaco::EntryPublisher>(device, "position_actual_value");
+    bridge.add_publisher(iosub10,slow_loop_rate);
 }
 
 void setupMaxonDevice(kaco::Device& device, kaco::Bridge& bridge, std::string& eds_files_path)

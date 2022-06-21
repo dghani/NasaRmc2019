@@ -149,10 +149,10 @@ namespace tfr_mission_control {
 		controlsTabSubHandler = new ControlsTabSubHandler();
 
 		//Actuators
-		//controlsTabSubHandler->binPositionSub = node.subscribe("/device77/position_actual_value", 5, &RobotControlsTab::updateBinPosition, this);
-		//controlsTabSubHandler->upperArmPositionSub = node.subscribe("/device45/position_actual_value", 5, &RobotControlsTab::updateUpperArmPosition, this);
-		//controlsTabSubHandler->lowerArmPositionSub = node.subscribe("/device23/position_actual_value", 5, &RobotControlsTab::updateLowerArmPosition, this);
-		//controlsTabSubHandler->scoopPositionSub = node.subscribe("/device56/position_actual_value", 5, &RobotControlsTab::updateScoopPosition, this);
+                controlsTabSubHandler->binPositionSub = node.subscribe("/device77/position_actual_value", 5, &RobotControlsTab::updateBinPosition, this);
+                controlsTabSubHandler->upperArmPositionSub = node.subscribe("/device45/position_actual_value", 5, &RobotControlsTab::updateUpperArmPosition, this);
+                controlsTabSubHandler->lowerArmPositionSub = node.subscribe("/device23/position_actual_value", 5, &RobotControlsTab::updateLowerArmPosition, this);
+                controlsTabSubHandler->scoopPositionSub = node.subscribe("/device56/position_actual_value", 5, &RobotControlsTab::updateScoopPosition, this);
 
 		//Turntable
 		//controlsTabSubHandler->turntablePosSub = node.subscribe("/device1/get_joint_state", 5, &RobotControlsTab::updateTurntablePosition, this);
@@ -464,6 +464,7 @@ namespace tfr_mission_control {
 
 
 	void RobotControlsTab::binExtend() {
+                ROS_ERROR("%d",binPos);
 		double newTarget = ACTUATOR_MANUAL_MOVE_VALUE + binPos;
 
 		//make sure that we do not over extend anything
