@@ -252,8 +252,24 @@ namespace tfr_mission_control {
 
 
 
-	void RobotControlsTab::armDumpingBinPos() {
 
+	/*
+	* Moves the whole arm to the bin to dump the load into.
+	* This does not move the turntable, move the turntable by its preset buttons.
+	* 
+	* Make sure that this will not hit anything when pressing
+	* 
+	* I got these positions from
+	* https://github.com/TrickfireRobotics/NasaRmc2019/blob/master/src/tfr_mining/data/use_this_one.yaml
+	* 
+	* 
+	* " #[turntable, lowerArm, upperArm, scoop]
+	*  [0.0, 5.5, 0.3, 2.0], # Open scoop partly to dump BP1 11" <- I used this one
+	*/
+	void RobotControlsTab::armDumpingBinPos() {
+		arm_manipulator->moveLowerArmPosition(5.5);
+		arm_manipulator->moveUpperArmPosition(0.3);
+		arm_manipulator->moveScoopPosition(2.0);
 	}
 
 
@@ -321,7 +337,7 @@ namespace tfr_mission_control {
 	}
 
 	/*
-	* This moves the turntable to the dumping position.
+	* This moves the turntable to the dumping excess position.
 	*
 	* Make sure that the arm will not hit anything when pressing the button
 	* 
@@ -337,9 +353,21 @@ namespace tfr_mission_control {
 		arm_manipulator->moveTurntablePosition(-2.4);
 	}
 
-
+	/*
+	* This moves the turntable to the bin dumping position.
+	*
+	* Make sure that the arm will not hit anything when pressing the button
+	*
+	* I got these positions from
+	* https://github.com/TrickfireRobotics/NasaRmc2019/blob/master/src/tfr_mining/data/use_this_one.yaml
+	*
+	* "#For Turntable:
+	* # 0 is facing towards the bin
+	* # -2.4 is dumping excess spot
+	* # -3.14 is mining spot"
+	*/
 	void RobotControlsTab::turntableDumpingBinPos() {
-
+		arm_manipulator->moveTurntablePosition(0);
 	}
 
 
