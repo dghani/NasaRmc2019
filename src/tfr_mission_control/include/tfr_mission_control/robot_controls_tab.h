@@ -123,12 +123,14 @@ namespace tfr_mission_control {
 		protected slots://QT specific syntax
 			void armStoringPos();
 			void armMiningPos();
-			void armDumpingPos();
+			void armDumpingExcessPos();
+			void armDumpingBinPos();
 			void armFaceForwards();
 
 			void turntableStoringPos();
 			void turntableMiningPos();
-			void turntableDumpingPos();
+			void turntableDumpingExcessPos();
+			void turntableDumpingBinPos();
 			void turntableFaceForwards();
 
 			void binDumpingPos();

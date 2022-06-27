@@ -38,8 +38,11 @@ namespace tfr_mission_control {
 		button = findChild<QPushButton*>("arm_mining_pos_button");
 		connect(button, &QPushButton::clicked, this, &RobotControlsTab::armMiningPos);
 
-		button = findChild<QPushButton*>("arm_dumping_pos_button");
-		connect(button, &QPushButton::clicked, this, &RobotControlsTab::armDumpingPos);
+		button = findChild<QPushButton*>("arm_dumping_excess_pos_button");
+		connect(button, &QPushButton::clicked, this, &RobotControlsTab::armDumpingExcessPos);
+
+		button = findChild<QPushButton*>("arm_dumping_bin_pos_button");
+		connect(button, &QPushButton::clicked, this, &RobotControlsTab::armDumpingBinPos);
 
 		button = findChild<QPushButton*>("arm_face_forwards_button");
 		connect(button, &QPushButton::clicked, this, &RobotControlsTab::armFaceForwards);
@@ -51,8 +54,11 @@ namespace tfr_mission_control {
 		button = findChild<QPushButton*>("turntable_mining_pos_button");
 		connect(button, &QPushButton::clicked, this, &RobotControlsTab::turntableMiningPos);
 
-		button = findChild<QPushButton*>("turntable_dumping_pos_button");
-		connect(button, &QPushButton::clicked, this, &RobotControlsTab::turntableDumpingPos);
+		button = findChild<QPushButton*>("turntable_dumping_excess_pos_button");
+		connect(button, &QPushButton::clicked, this, &RobotControlsTab::turntableDumpingExcessPos);
+
+		button = findChild<QPushButton*>("turntable_dumping_bin_pos_button");
+		connect(button, &QPushButton::clicked, this, &RobotControlsTab::turntableDumpingBinPos);
 
 		button = findChild<QPushButton*>("turntable_face_forwards_button");
 		connect(button, &QPushButton::clicked, this, &RobotControlsTab::turntableFaceForwards);
@@ -219,7 +225,7 @@ namespace tfr_mission_control {
 	}
 
 	/*
-	* Moves the whole arm to the dumping position.
+	* Moves the whole arm to the dumping excess dirt position.
 	* This does not move the turntable, move the turntable by its preset buttons.
 	* 
 	* Make sure that this will not hit anything when pressing
@@ -238,11 +244,19 @@ namespace tfr_mission_control {
 	* [-3.14, 5.0, 3.6, 3.5], # Prep for rotation to discard 5 <- I used this one
 	* [-2.4, 5.0, 3.6, 3.5], # Rotate to discard position 6"
 	*/
-	void RobotControlsTab::armDumpingPos() {
+	void RobotControlsTab::armDumpingExcessPos() {
 		arm_manipulator->moveLowerArmPosition(5.0);
 		arm_manipulator->moveUpperArmPosition(3.6);
 		arm_manipulator->moveScoopPosition(0.3);
 	}
+
+
+
+	void RobotControlsTab::armDumpingBinPos() {
+
+	}
+
+
 
 	/*
 	* Moves the whole arm to face forwards
@@ -319,9 +333,16 @@ namespace tfr_mission_control {
 	* # -2.4 is dumping excess spot
 	* # -3.14 is mining spot"
 	*/
-	void RobotControlsTab::turntableDumpingPos() {
+	void RobotControlsTab::turntableDumpingExcessPos() {
 		arm_manipulator->moveTurntablePosition(-2.4);
 	}
+
+
+	void RobotControlsTab::turntableDumpingBinPos() {
+
+	}
+
+
 
 	/*
 	* This moves the turntable to face fowards.
@@ -464,7 +485,7 @@ namespace tfr_mission_control {
 
 
 	void RobotControlsTab::binExtend() {
-                ROS_ERROR("%d",binPos);
+        ROS_ERROR("%d",binPos);
 		double newTarget = ACTUATOR_MANUAL_MOVE_VALUE + binPos;
 
 		//make sure that we do not over extend anything

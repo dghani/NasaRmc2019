@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>680</width>
-    <height>639</height>
+    <width>714</width>
+    <height>641</height>
    </rect>
   </property>
   <property name="focusPolicy">
@@ -340,9 +340,16 @@
                 </widget>
                </item>
                <item>
-                <widget class="QPushButton" name="arm_dumping_pos_button">
+                <widget class="QPushButton" name="arm_dumping_excess_pos_button">
                  <property name="text">
-                  <string>Dumping Position</string>
+                  <string>Dumping Excess Position</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="arm_dumping_bin_pos_button">
+                 <property name="text">
+                  <string>Dump at Bin Position</string>
                  </property>
                 </widget>
                </item>
@@ -371,7 +378,7 @@
              <item>
               <layout class="QVBoxLayout" name="turntable_train_preset">
                <item>
-                <widget class="QLabel" name="label_4">
+                <widget class="QLabel" name="turntable_label">
                  <property name="maximumSize">
                   <size>
                    <width>16777215</width>
@@ -405,9 +412,16 @@
                 </widget>
                </item>
                <item>
-                <widget class="QPushButton" name="turntable_dumping_pos_button">
+                <widget class="QPushButton" name="turntable_dumping_excess_pos_button">
                  <property name="text">
-                  <string>Dumping Position</string>
+                  <string>Dumping Excess Position</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="turntable_dumping_bin_pos_button">
+                 <property name="text">
+                  <string>Dump at Bin Position</string>
                  </property>
                 </widget>
                </item>
