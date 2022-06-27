@@ -72,7 +72,7 @@
           </font>
          </property>
          <property name="toolTip">
-          <string>Stops all future commands to the robot, and freezes the robot at the position when the button was pressed</string>
+          <string>(NOT IMPLEMENTED, lol) Stops all future commands to the robot, and freezes the robot at the position when the button was pressed</string>
          </property>
          <property name="toolTipDuration">
           <number>5000</number>
@@ -164,7 +164,7 @@
        <item>
         <widget class="QPushButton" name="auto_button">
          <property name="toolTip">
-          <string>Sets the robot to the autonomous mode</string>
+          <string>(NOT IMPLEMENTED) Sets the robot to the autonomous mode</string>
          </property>
          <property name="toolTipDuration">
           <number>5000</number>
@@ -327,6 +327,12 @@
                </item>
                <item>
                 <widget class="QPushButton" name="arm_storing_pos_button">
+                 <property name="toolTip">
+                  <string>Folds the arm up to fit in the back of the robot for storing</string>
+                 </property>
+                 <property name="toolTipDuration">
+                  <number>5000</number>
+                 </property>
                  <property name="text">
                   <string>Storing Position</string>
                  </property>
@@ -334,6 +340,12 @@
                </item>
                <item>
                 <widget class="QPushButton" name="arm_mining_pos_button">
+                 <property name="toolTip">
+                  <string>Extends the arm to one of the mining positions</string>
+                 </property>
+                 <property name="toolTipDuration">
+                  <number>5000</number>
+                 </property>
                  <property name="text">
                   <string>Mining Position</string>
                  </property>
@@ -341,6 +353,12 @@
                </item>
                <item>
                 <widget class="QPushButton" name="arm_dumping_excess_pos_button">
+                 <property name="toolTip">
+                  <string>Folds the arm to dump excess material from the scoop</string>
+                 </property>
+                 <property name="toolTipDuration">
+                  <number>5000</number>
+                 </property>
                  <property name="text">
                   <string>Dumping Excess Position</string>
                  </property>
@@ -348,6 +366,12 @@
                </item>
                <item>
                 <widget class="QPushButton" name="arm_dumping_bin_pos_button">
+                 <property name="toolTip">
+                  <string>Fold the arm to dump material into the bin</string>
+                 </property>
+                 <property name="toolTipDuration">
+                  <number>5000</number>
+                 </property>
                  <property name="text">
                   <string>Dump at Bin Position</string>
                  </property>
@@ -355,6 +379,12 @@
                </item>
                <item>
                 <widget class="QPushButton" name="arm_face_forwards_button">
+                 <property name="toolTip">
+                  <string>Extends the arm outwards and high up</string>
+                 </property>
+                 <property name="toolTipDuration">
+                  <number>5000</number>
+                 </property>
                  <property name="text">
                   <string>Face Forwards</string>
                  </property>
@@ -399,6 +429,12 @@
                </item>
                <item>
                 <widget class="QPushButton" name="turntable_storing_pos_button">
+                 <property name="toolTip">
+                  <string>Rotates the turntable to face the bin</string>
+                 </property>
+                 <property name="toolTipDuration">
+                  <number>5000</number>
+                 </property>
                  <property name="text">
                   <string>Storing Position</string>
                  </property>
@@ -406,6 +442,12 @@
                </item>
                <item>
                 <widget class="QPushButton" name="turntable_mining_pos_button">
+                 <property name="toolTip">
+                  <string>Rotates the turntable to the mining position</string>
+                 </property>
+                 <property name="toolTipDuration">
+                  <number>5000</number>
+                 </property>
                  <property name="text">
                   <string>Mining Position</string>
                  </property>
@@ -413,6 +455,12 @@
                </item>
                <item>
                 <widget class="QPushButton" name="turntable_dumping_excess_pos_button">
+                 <property name="toolTip">
+                  <string>Rotates the turntable to the position to dump excess material</string>
+                 </property>
+                 <property name="toolTipDuration">
+                  <number>5000</number>
+                 </property>
                  <property name="text">
                   <string>Dumping Excess Position</string>
                  </property>
@@ -420,6 +468,12 @@
                </item>
                <item>
                 <widget class="QPushButton" name="turntable_dumping_bin_pos_button">
+                 <property name="toolTip">
+                  <string>Rotates the turntable to face the bin</string>
+                 </property>
+                 <property name="toolTipDuration">
+                  <number>5000</number>
+                 </property>
                  <property name="text">
                   <string>Dump at Bin Position</string>
                  </property>
@@ -427,6 +481,12 @@
                </item>
                <item>
                 <widget class="QPushButton" name="turntable_face_forwards_button">
+                 <property name="toolTip">
+                  <string>Rotates the turntable to look 180 degrees away from the bin</string>
+                 </property>
+                 <property name="toolTipDuration">
+                  <number>5000</number>
+                 </property>
                  <property name="text">
                   <string>Face Forwards</string>
                  </property>
@@ -471,6 +531,12 @@
                </item>
                <item>
                 <widget class="QPushButton" name="bin_dumping_pos_button">
+                 <property name="toolTip">
+                  <string>Fully extends the bin to dump material</string>
+                 </property>
+                 <property name="toolTipDuration">
+                  <number>5000</number>
+                 </property>
                  <property name="text">
                   <string>Dumping Position</string>
                  </property>
@@ -478,6 +544,12 @@
                </item>
                <item>
                 <widget class="QPushButton" name="bin_collection_pos_button">
+                 <property name="toolTip">
+                  <string>Full retracts the bin to collect material</string>
+                 </property>
+                 <property name="toolTipDuration">
+                  <number>5000</number>
+                 </property>
                  <property name="text">
                   <string>Collection Position</string>
                  </property>
@@ -522,6 +594,12 @@
                </item>
                <item>
                 <widget class="QPushButton" name="drivetrain_preset_forwards">
+                 <property name="toolTip">
+                  <string>(NOT IMPLEMENTED) Moves the robot three feet fowards</string>
+                 </property>
+                 <property name="toolTipDuration">
+                  <number>5000</number>
+                 </property>
                  <property name="text">
                   <string>Move Fowards 3 Feet</string>
                  </property>
@@ -529,6 +607,12 @@
                </item>
                <item>
                 <widget class="QPushButton" name="drivetrain_preset_backwards">
+                 <property name="toolTip">
+                  <string>(NOT IMPLEMENTED) Moves the robot three feet backwards</string>
+                 </property>
+                 <property name="toolTipDuration">
+                  <number>5000</number>
+                 </property>
                  <property name="text">
                   <string>Move Backwards 3 Feet</string>
                  </property>
@@ -536,6 +620,12 @@
                </item>
                <item>
                 <widget class="QPushButton" name="drivetrain_preset_left">
+                 <property name="toolTip">
+                  <string>(NOT IMPLEMENTED) Turns the robot left</string>
+                 </property>
+                 <property name="toolTipDuration">
+                  <number>5000</number>
+                 </property>
                  <property name="text">
                   <string>Turn Left 90 Degrees</string>
                  </property>
@@ -543,6 +633,12 @@
                </item>
                <item>
                 <widget class="QPushButton" name="drivetrain_preset_forwards_2">
+                 <property name="toolTip">
+                  <string>(NOT IMPLEMENTED) Turns the robot right</string>
+                 </property>
+                 <property name="toolTipDuration">
+                  <number>5000</number>
+                 </property>
                  <property name="text">
                   <string>Turn Right 90 Degrees</string>
                  </property>
@@ -609,6 +705,12 @@
                </item>
                <item>
                 <widget class="QPushButton" name="extend_bin_controls_button">
+                 <property name="toolTip">
+                  <string>Extends the bin by 1/2 inches</string>
+                 </property>
+                 <property name="toolTipDuration">
+                  <number>5000</number>
+                 </property>
                  <property name="text">
                   <string>Extend to Dumping Position</string>
                  </property>
@@ -616,6 +718,12 @@
                </item>
                <item>
                 <widget class="QPushButton" name="retract_bin_controls_button">
+                 <property name="toolTip">
+                  <string>Retracts the bin by 1/2 inches</string>
+                 </property>
+                 <property name="toolTipDuration">
+                  <number>5000</number>
+                 </property>
                  <property name="text">
                   <string>Retract to Colleciton Position</string>
                  </property>
@@ -665,6 +773,12 @@
                    </item>
                    <item>
                     <widget class="QPushButton" name="extend_upper_arm_button">
+                     <property name="toolTip">
+                      <string>Extends the upper arm by 1/2 inches</string>
+                     </property>
+                     <property name="toolTipDuration">
+                      <number>5000</number>
+                     </property>
                      <property name="text">
                       <string>Extend Up</string>
                      </property>
@@ -672,6 +786,12 @@
                    </item>
                    <item>
                     <widget class="QPushButton" name="retract_upper_arm_button">
+                     <property name="toolTip">
+                      <string>Retracts the upper arm by 1/2 inches</string>
+                     </property>
+                     <property name="toolTipDuration">
+                      <number>5000</number>
+                     </property>
                      <property name="text">
                       <string>Retract Down</string>
                      </property>
@@ -690,6 +810,12 @@
                    </item>
                    <item>
                     <widget class="QPushButton" name="extend_lower_arm_button">
+                     <property name="toolTip">
+                      <string>Extends the lower arm by 1/2 inches</string>
+                     </property>
+                     <property name="toolTipDuration">
+                      <number>5000</number>
+                     </property>
                      <property name="text">
                       <string>Extend Up</string>
                      </property>
@@ -697,6 +823,12 @@
                    </item>
                    <item>
                     <widget class="QPushButton" name="retract_lower_arm_button">
+                     <property name="toolTip">
+                      <string>Retracts the lower arm by 1/2 inches</string>
+                     </property>
+                     <property name="toolTipDuration">
+                      <number>5000</number>
+                     </property>
                      <property name="text">
                       <string>Retract Down</string>
                      </property>
@@ -715,6 +847,12 @@
                    </item>
                    <item>
                     <widget class="QPushButton" name="extend_scoop_button">
+                     <property name="toolTip">
+                      <string>Extends the scoop arm by 1/2 inches</string>
+                     </property>
+                     <property name="toolTipDuration">
+                      <number>5000</number>
+                     </property>
                      <property name="text">
                       <string>Extend Out</string>
                      </property>
@@ -722,6 +860,12 @@
                    </item>
                    <item>
                     <widget class="QPushButton" name="retract_scoop_button">
+                     <property name="toolTip">
+                      <string>Retracts the scoop arm by 1/2 inches</string>
+                     </property>
+                     <property name="toolTipDuration">
+                      <number>5000</number>
+                     </property>
                      <property name="text">
                       <string>Retract In</string>
                      </property>
@@ -772,6 +916,12 @@
                 <layout class="QHBoxLayout" name="turntable_controls_horizontal">
                  <item>
                   <widget class="QPushButton" name="rotate_left_button">
+                   <property name="toolTip">
+                    <string>(NOT IMPLEMENTED) Rotates the turntable left by x</string>
+                   </property>
+                   <property name="toolTipDuration">
+                    <number>5000</number>
+                   </property>
                    <property name="text">
                     <string>&lt;- Rotate Left</string>
                    </property>
@@ -779,6 +929,12 @@
                  </item>
                  <item>
                   <widget class="QPushButton" name="rotate_right_button">
+                   <property name="toolTip">
+                    <string>(NOT IMPLEMENTED) Rotates the turntable right by x</string>
+                   </property>
+                   <property name="toolTipDuration">
+                    <number>5000</number>
+                   </property>
                    <property name="text">
                     <string>Rotate Right -&gt;</string>
                    </property>
@@ -827,6 +983,12 @@
                 <layout class="QGridLayout" name="drivetrain_grid">
                  <item row="1" column="1">
                   <widget class="QPushButton" name="move_backward_button">
+                   <property name="toolTip">
+                    <string>(NOT IMPLEMENTED) Moves the robot backwards by x inches/feet</string>
+                   </property>
+                   <property name="toolTipDuration">
+                    <number>5000</number>
+                   </property>
                    <property name="text">
                     <string>\/ Move Backwards \/</string>
                    </property>
@@ -834,6 +996,12 @@
                  </item>
                  <item row="0" column="1">
                   <widget class="QPushButton" name="move_forward_button">
+                   <property name="toolTip">
+                    <string>(NOT IMPLEMENTED) Moves the robot fowards by x inches/feet</string>
+                   </property>
+                   <property name="toolTipDuration">
+                    <number>5000</number>
+                   </property>
                    <property name="text">
                     <string>/\ Move Forwards /\</string>
                    </property>
@@ -841,6 +1009,12 @@
                  </item>
                  <item row="1" column="0">
                   <widget class="QPushButton" name="turn_left_button">
+                   <property name="toolTip">
+                    <string>(NOT IMPLEMENTED) Moves the robot fowards by x degrees</string>
+                   </property>
+                   <property name="toolTipDuration">
+                    <number>5000</number>
+                   </property>
                    <property name="text">
                     <string> &lt;-  Turn Left &lt;-</string>
                    </property>
@@ -848,6 +1022,12 @@
                  </item>
                  <item row="1" column="2">
                   <widget class="QPushButton" name="turn_right_button">
+                   <property name="toolTip">
+                    <string>(NOT IMPLEMENTED) Moves the robot fowards by x degrees</string>
+                   </property>
+                   <property name="toolTipDuration">
+                    <number>5000</number>
+                   </property>
                    <property name="text">
                     <string>-&gt; Turn Right -&gt;</string>
                    </property>
@@ -859,6 +1039,12 @@
                 <layout class="QHBoxLayout" name="tread_controls">
                  <item>
                   <widget class="QPushButton" name="left_tread_button">
+                   <property name="toolTip">
+                    <string>(NOT IMPLEMENTED) Moves the left tread fowards</string>
+                   </property>
+                   <property name="toolTipDuration">
+                    <number>5000</number>
+                   </property>
                    <property name="text">
                     <string>/\ Move Left Tread</string>
                    </property>
@@ -866,6 +1052,12 @@
                  </item>
                  <item>
                   <widget class="QPushButton" name="right_tread_button">
+                   <property name="toolTip">
+                    <string>(NOT IMPLEMENTED) Moves the right tread fowards</string>
+                   </property>
+                   <property name="toolTipDuration">
+                    <number>5000</number>
+                   </property>
                    <property name="text">
                     <string>Move right Tread /\</string>
                    </property>
