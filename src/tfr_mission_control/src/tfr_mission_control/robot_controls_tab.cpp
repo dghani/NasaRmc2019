@@ -195,7 +195,7 @@ namespace tfr_mission_control {
 
 	void RobotControlsTab::armStoringPos() {
 		arm_manipulator->moveLowerArmPosition(5.0);
-		arm_manipulator->moveUpperArmPosition(2.0);
+		arm_manipulator->moveUpperArmPosition(3.0);
 		arm_manipulator->moveScoopPosition(3.5);
 	}
 
