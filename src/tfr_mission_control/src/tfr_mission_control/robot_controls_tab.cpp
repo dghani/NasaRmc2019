@@ -44,8 +44,8 @@ namespace tfr_mission_control {
 		button = findChild<QPushButton*>("arm_dumping_bin_pos_button");
 		connect(button, &QPushButton::clicked, this, &RobotControlsTab::armDumpingBinPos);
 
-		button = findChild<QPushButton*>("arm_face_forwards_button");
-		connect(button, &QPushButton::clicked, this, &RobotControlsTab::armFaceForwards);
+		button = findChild<QPushButton*>("arm_hold_gravel");
+		connect(button, &QPushButton::clicked, this, &RobotControlsTab::armHoldGravel);
 
 		//Turntable
 		button = findChild<QPushButton*>("turntable_storing_pos_button");
@@ -294,7 +294,7 @@ namespace tfr_mission_control {
 	* [-3.14, 5.0, 3.6, 3.5], # Prep for rotation to discard 5 
 	* [-2.4, 5.0, 3.6, 3.5], # Rotate to discard position 6"
 	*/
-	void RobotControlsTab::armFaceForwards() {
+	void RobotControlsTab::armHoldGravel() {
 		arm_manipulator->moveLowerArmPosition(5.0);
 		arm_manipulator->moveUpperArmPosition(0.7);
 		arm_manipulator->moveScoopPosition(3.5);

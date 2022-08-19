@@ -125,7 +125,7 @@ namespace tfr_mission_control {
 			void armMiningPos();
 			void armDumpingExcessPos();
 			void armDumpingBinPos();
-			void armFaceForwards();
+			void armHoldGravel();
 
 			void turntableStoringPos();
 			void turntableMiningPos();
